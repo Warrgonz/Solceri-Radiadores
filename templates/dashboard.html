@@ -1,0 +1,186 @@
+{% extends "layout.html" %}
+{% block content %}
+<section class="tt-dashboard sectionTabs">
+    <div class="row py-1">
+        <ul class="nav nav-tabs d-flex justify-content-center">
+            <li class="col-lg-3 pb-4">
+                <a class="nav-link active show" href="/dashboard">
+                    <h4>Tiquetes</h4>
+                </a>
+            </li>
+
+            <li class="col-lg-3 pb-4">
+                <a class="nav-link" href="/dashboardRtm">
+                    <h4>Empleados</h4>
+                </a>
+            </li>
+        </ul>
+    </div>
+
+    <!--Tiquetes-->
+    <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; justify-content: center;">
+        <div class="card tt-on-time" style="width: 20rem;">
+            <div class="card-header border-bottom border-primary">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div>
+                            <div>
+                                <strong>
+                                    <h3 class="mb-0"># R102315</h3>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex">
+                            <strong>Status:</strong>
+                            <p class="px-1">activo</p>
+                        </div>
+                        <div class="d-flex">
+                            <strong>Tiempo:</strong>
+                            <p class="px-1">30:15</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+                    <strong class="card-text">Cliente:</strong>
+                    <p class="px-2">Warren González Reyes.</p>
+                </div>
+                <div class="d-flex">
+                    <strong class="card-text">Prioridad:</strong>
+                    <p class="px-2">Alta.</p>
+                </div>
+
+                <div>
+                    <strong>Fecha creación:</strong>
+                    <p>10/04/2024</p>
+                </div>
+                <div>
+                    <strong>Asignado:</strong>
+                    <p class="d-block">Alejandro Castro García</p>
+                </div>
+                <div>
+                    <strong>Grupo asignado:</strong>
+                    <p class="d-block">Limpieza</p>
+                </div>
+                <div>
+                    <strong>Resumen:</strong>
+                    <p class="d-block">El radiador está muy sucio, necesita limpieza.</p>
+                </div>
+            </div>
+        </div>
+        <div class="card tt-on-time" style="width: 20rem;">
+            <div class="card-header border-bottom border-primary">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div>
+                            <div>
+                                <strong>
+                                    <h3 class="mb-0"># R102315</h3>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex">
+                            <strong>Status:</strong>
+                            <p class="px-1">activo</p>
+                        </div>
+                        <div class="d-flex">
+                            <strong>Tiempo:</strong>
+                            <p class="px-1">30:15</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+                    <strong class="card-text">Cliente:</strong>
+                    <p class="px-2">Warren González Reyes.</p>
+                </div>
+                <div class="d-flex">
+                    <strong class="card-text">Prioridad:</strong>
+                    <p class="px-2">Alta.</p>
+                </div>
+
+                <div>
+                    <strong>Fecha creación:</strong>
+                    <p>10/04/2024</p>
+                </div>
+                <div>
+                    <strong>Asignado:</strong>
+                    <p class="d-block">Alejandro Castro García</p>
+                </div>
+                <div>
+                    <strong>Grupo asignado:</strong>
+                    <p class="d-block">Limpieza</p>
+                </div>
+                <div>
+                    <strong>Resumen:</strong>
+                    <p class="d-block">El radiador está muy sucio, necesita limpieza.</p>
+                </div>
+            </div>
+        </div>
+        <div class="card tt-on-time" style="width: 20rem;">
+            <div class="card-header border-bottom border-primary">
+                <div class="d-flex justify-content-between">
+                    <div>
+                        <div>
+                            <div>
+                                <strong>
+                                    <h3 class="mb-0"># R102315</h3>
+                                </strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="d-flex">
+                            <strong>Status:</strong>
+                            <p class="px-1">activo</p>
+                        </div>
+                        <div class="d-flex">
+                            <strong>Tiempo:</strong>
+                            <p class="px-1">30:15</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="d-flex">
+                    <strong class="card-text">Cliente:</strong>
+                    <p class="px-2">Warren González Reyes.</p>
+                </div>
+                <div class="d-flex">
+                    <strong class="card-text">Prioridad:</strong>
+                    <p class="px-2">Alta.</p>
+                </div>
+
+                <div>
+                    <strong>Fecha creación:</strong>
+                    <p>10/04/2024</p>
+                </div>
+                <div>
+                    <strong>Asignado:</strong>
+                    <p class="d-block">Alejandro Castro García</p>
+                </div>
+                <div>
+                    <strong>Grupo asignado:</strong>
+                    <p class="d-block">Limpieza</p>
+                </div>
+                <div>
+                    <strong>Resumen:</strong>
+                    <p class="d-block">El radiador está muy sucio, necesita limpieza.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Repite este bloque de divs para cada tarjeta adicional -->
+    </div>
+    
+
+
+</section>
+
+{% endblock %}

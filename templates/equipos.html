@@ -1,0 +1,123 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between">
+    <h2>Grupos de trabajo</h2>
+    <div>
+        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar</button>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped" style="width:100%">
+        <thead>
+            <tr class="text-center">
+                <th>ID</th>
+                <th>Nombre del grupo</th>
+                <th>Total integrantes</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            <tr>
+                <td>1</td>
+                <td>Grupo 1</td>
+                <td>7</td>
+                <td>
+                    <div class="flex-wrap">
+                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
+                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
+                                Editar</strong></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Grupo 2</td>
+                <td>4</td>
+                <td>
+                    <div class="flex-wrap">
+                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
+                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
+                                Editar</strong></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Grupo 3</td>
+                <td>3</td>
+                <td>
+                    <div class="flex-wrap">
+                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
+                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
+                                Editar</strong></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>4</td>
+                <td>Grupo 4</td>
+                <td>6</td>
+                <td>
+                    <div class="flex-wrap">
+                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
+                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
+                                Editar</strong></button>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>5</td>
+                <td>Grupo 5</td>
+                <td>0</td>
+                <td>
+                    <div class="flex-wrap">
+                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
+                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
+                                Editar</strong></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot class="text-center">
+            <tr>
+                <th>ID</th>
+                <th>Nombre completo</th>
+                <th>Rol</th>
+                <th>Acciones</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Grupos de trabajo</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pb-2">
+                    <label for="nombre">Nombre del grupo<span>*</span></label>
+                    <input type="text" class="form-control" name="nombre" placeholder="Nombre del grupo">
+                </div>
+                <div class="pb-2">
+                    <label for="nombre">Descripción</label>
+                    <textarea class="form-control" rows="3" name="descripcion"
+                    placeholder="Descripción del grupo de trabajo"></textarea>
+                </div>
+                <div class="pb-2">
+                    <label for="nombre">Ingrese el nombre del empleado</label>
+                    <input type="text" class="form-control" name="nombre" placeholder="Agregar empleados">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success btn-md">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

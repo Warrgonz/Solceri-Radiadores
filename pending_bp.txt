@@ -1,0 +1,70 @@
+# Aqui estan todas las rutas que estan pendientes por hacer en la aplicación.
+
+# IniciarSesion
+@app.route('/')
+def iniciarSesion():
+    return render_template('index.html')
+
+# Dashboard
+
+@app.route('/dashboard')
+def dashboard():
+    return render_template('dashboard.html')
+
+# DashboardRtm
+
+@app.route('/dashboardRtm')
+def dashboardRtm():
+    return render_template('dashboardRtm.html')
+
+# Tiquetes
+
+@app.route('/tiquetes')
+def tiquetes():
+    return render_template('tiquetes.html')
+
+@app.route('/tiquetes/tiquete_desc')
+def tiquetes_desc():
+    return render_template('tiquete_desc.html')
+
+@app.route('/tiquetes/tiquete_nuevo')
+def tiquetes_nuevo():
+    return render_template('tiquete_nuevo.html')
+
+# usuarios
+
+@app.route('/usuarios')
+def usuarios():
+    return render_template('usuarios.html')
+
+# vacaciones
+
+@app.route('/vacaciones')
+def vacaciones():
+    return render_template('vacaciones.html')
+
+@app.route('/vacaciones/vacaciones_calendario')
+def vacacionesCalendario():
+    return render_template('vacaciones_calendario.html')
+
+@app.route('/vacaciones/vacaciones_rechazadas')
+def vacacionesRechazadas():
+    return render_template('vacaciones_rechazadas.html')
+
+# catalogo
+
+@app.route('/catalogo')
+def catalogo():
+    return render_template('catalogo.html')
+
+# cotizaciones
+
+@app.route('/cotizaciones')
+def cotizaciones():
+    return render_template('cotizaciones.html')
+
+# reportes
+
+@app.route('/reportes')
+def reportes():
+    return render_template('reportes.html')

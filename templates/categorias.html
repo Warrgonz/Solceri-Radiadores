@@ -1,0 +1,48 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between">
+    <h2>Categorías</h2>
+    <div>
+        <a href="/categorias/nueva"><button class="btn-solceri">Agregar</button></a>
+    </div>
+</div>
+<div class="table-responsive">
+    <table class="table table-striped" style="width:100%">
+        <thead>
+            <tr class="text-center">
+                <th>ID</th>
+                <th>Categorías</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            {% for categoria in categorias %}
+            <tr>
+                <td>{{ categoria.id_categoria }}</td>
+                <td>{{ categoria.categoria }}</td>
+                <td>{{ categoria.descripcion }}</td>
+                <td>
+                    <div class="flex-wrap">
+                        <a href="{{ url_for('categorias.editar_categoria', id_categoria=categoria.id_categoria) }}"
+                            class="btn btn-primary btn-md">Editar</a>
+                        <a href="#" data-id="{{ categoria.id_categoria }}"
+                            class="btn btn-danger delete-btn btn-md">Eliminar</a>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>        
+        <tfoot class="text-center">
+            <tr>
+                <th>ID</th>
+                <th>Categorías</th>
+                <th>Descripción</th>
+                <th>Acciones</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+{% endblock %}

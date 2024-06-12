@@ -1,0 +1,98 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<h2>Vacaciones</h2>
+<div class="d-flex justify-content-between">
+
+    <div>
+        <label for="nombre">Buscar:</label>
+        <input type="text" placeholder="Datos del usuario">
+    </div>
+    <div>
+        <a href="/vacaciones/vacaciones_calendario"><button class="btn-solceri">Calendario</button></a>
+        <a href="/vacaciones/vacaciones_rechazadas"><button class="btn btn-danger btn-md">Rechazadas</button></a>
+
+    </div>
+
+</div>
+<div class="table-responsive">
+    <table class="table table-striped" style="width:100%">
+        <thead>
+            <tr class="text-center">
+                <th>Nombre completo</th>
+                <th>Fecha de inicio</th>
+                <th>Fecha de finalización</th>
+                <th>Días disponibles</th>
+                <th>Comentario</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            <tr>
+                <td>David Solórzano Cerdas</td>
+                <td>11/04/2024</td>
+                <td>17/04/2024</td>
+                <td>17</td>
+                <td><a style="color: darkblue;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Ver detalles</a>
+                </td>
+                <td>
+                    <div class="flex-wrap">
+                        <button class="btn btn-success btn-sm"> <strong>Aceptar</strong></button>
+                        <button class="btn btn-danger btn-sm" style="color: white;"><strong>
+                                Rechazar</strong></button>
+                    </div>
+                </td>
+            </tr>
+        </tbody>
+        <tfoot class="text-center">
+            <tr>
+                <th>Nombre completo</th>
+                <th>Fecha de inicio</th>
+                <th>Fecha de finalización</th>
+                <th>Días disponibles</th>
+                <th>Comentario</th>
+                <th>Acciones</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<!-- Button trigger modal -->
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Solicitud de vacaciones</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row profile-tt">
+                    <div class="col-sm-12 col-md-1 col-lg-2 profile-img-tt">
+                        <img src="/static/images/NPC_2.jpg" alt="Usuario Administrador">
+                    </div>
+                    <div class="col-sm-12 col-md-10 col-lg-10">
+                        <h5>David Gutierrez Ledezma</h5>
+                        <div>
+                            <span><strong> De: 2024-03-07</strong></span>
+                            <span class="px-4"> <strong>A: 2024-03-10</strong></span>
+                        </div>
+
+
+                        <div class="py-3">
+                            <p>Estoy cansado Jefe.</p>
+                        </div>
+                        <span style="color: #3e3e3f;">Fecha solicitud: 2024-03-07 4:24 PM (UTC-06:00)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Listo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

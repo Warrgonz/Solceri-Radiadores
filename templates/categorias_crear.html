@@ -1,0 +1,24 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex flex-column">
+    <h2>Agregar nueva categoría</h2>
+    <form id="categoriaAgregarForm" method="POST" action="{{ url_for('categorias.categorias_crear') }}">
+        <div>
+            <div class="pb-2">
+                <label for="nombre">Nombre de la categoría<span>*</span></label>
+                <input type="text" class="form-control" name="categoria" required placeholder="Nombre de categoria">
+            </div>
+            <div class="pb-2">
+                <label for="descripcion">Descripción</label>
+                <textarea class="form-control" rows="3" name="descripcion" required placeholder="Descripción"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="{{ url_for('categorias.categorias') }}" class="btn btn-danger btn-md mx-2">Cancelar</a>
+            <button type="submit" class="btn btn-success btn-md">Confirmar</button>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

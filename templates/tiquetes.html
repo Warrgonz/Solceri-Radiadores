@@ -1,0 +1,147 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between">
+    <div>
+        <h2>Tiquetes</h2>
+    </div>
+    <div>
+        <a href="/tiquetes/tiquete_nuevo"> <button class="btn-solceri-new">
+                Nuevo tiquete
+            </button></a>
+    </div>
+</div>
+
+<div class="table-responsive">
+    <table id="example" class="table table-striped" style="width:100%">
+        <thead>
+            <tr class="text-center">
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Grupo</th>
+                <th>Fecha</th>
+                <th>Trabajador</th>
+                <th>Categoria</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            <tr>
+                <td><a href="/tiquetes/tiquete_desc">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>10/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>5</td>
+                <td>En progreso</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>15/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>3</td>
+                <td>En espera</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>21/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>2</td>
+                <td>En progreso</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>16/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>1</td>
+                <td>En espera</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>09/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>4</td>
+                <td>En progreso</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>01/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>5</td>
+                <td>En espera</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>01/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>4</td>
+                <td>En espera</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>01/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>3</td>
+                <td>En espera</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>01/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>1</td>
+                <td>En espera</td>
+            </tr>
+            <tr>
+                <td><a href="">R12345</a></td>
+                <td>Tiger Nixon</td>
+                <td>Soldadura</td>
+                <td>01/04/2024</td>
+                <td>David Solorzano Cerdas</td>
+                <td>Tipo 1</td>
+                <td>5</td>
+                <td>En espera</td>
+            </tr>
+
+        </tbody>
+        <tfoot class="text-center">
+            <tr>
+                <th>ID</th>
+                <th>Cliente</th>
+                <th>Grupo</th>
+                <th>Fecha</th>
+                <th>Trabajador</th>
+                <th>Categoria</th>
+                <th>Prioridad</th>
+                <th>Estado</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+{% endblock %}

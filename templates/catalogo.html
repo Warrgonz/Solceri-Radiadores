@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex justify-content-between">
+
+    <div>
+        <label for="nombre">Buscar:</label>
+        <input type="text" placeholder="Datos del usuario">
+    </div>
+    <div>
+        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar</button>
+    </div>
+
+</div>
+<div class="table-responsive">
+    <table class="table table-striped" style="width:100%">
+        <thead>
+            <tr class="text-center">
+                <th>ID</th>
+                <th>Producto</th>
+                <th>Foto</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody class="text-center">
+            <tr>
+                <td>15326</td>
+                <td>Tornillos</td>
+                <td><img src="/static/images/system.png" width="50px" alt="Persona 1"></td>
+                <td><a style="color: darkblue;" data-bs-toggle="modal" data-bs-target="#detalles">Ver detalles</a>
+                    <td>1500</td>
+                    <td>
+                    <div class="flex-wrap">
+                        <button class="btn-solceri"> <strong>Modificar</strong></button>
+                        <button class="btn btn-danger btn-md" style="color: white;"><strong>
+                                Eliminar</strong></button>
+                    </div>
+                </td>
+            </tr>
+
+        </tbody>
+        <tfoot class="text-center">
+            <tr>
+                <th>ID</th>
+                <th>Producto</th>
+                <th>Foto</th>
+                <th>Descripción</th>
+                <th>Precio</th>
+                <th>Acciones</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<!-- Agregar Usuario modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar catálogo</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pt-2">
+                    <label for="archivos">ID del producto</label>
+                    <input type="text" name="archivos">
+                </div>
+
+                <div class="pt-2">
+                    <label for="archivos">Producto</label>
+                    <input type="text" name="archivos">
+                </div>
+                <div>
+                    <label for="descripcion">Descripción<span>*</span></label>
+                    <textarea class="form-control" rows="3" name="descripcion"
+                        placeholder="Descripción"></textarea>
+                </div>
+                <div class="pt-2">
+                    <label for="archivos">Precio</label>
+                    <input type="text" name="archivos">
+                </div>
+                <div class="pt-2">
+                    <label for="archivos">Foto del articulo</label>
+                    <input type="file" id="archivo" name="archivos" accept=".pdf, .doc, .docx, .png, .jpg, .webp">
+                </div>
+                <div class="pt-2">
+                    <label for="archivos">Precio</label>
+                    <input type="text" name="archivos">
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success btn-md">Agregar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--Ver detalles-->
+<div class="modal fade" id="detalles" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Descripción de producto</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Lorem ipsum dolor, sit amet consectetur adipisicing elit. Dolorum, maxime consequuntur? Accusamus
+                    saepe perferendis maiores accusantium iure aliquam temporibus assumenda fuga reiciendis vitae
+                    mollitia quis, nesciunt doloremque sapiente architecto eius!</p>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn btn-primary">Listo</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
