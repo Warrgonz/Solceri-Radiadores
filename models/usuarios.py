@@ -1,6 +1,10 @@
+# models.usuarios.py
+
 from utils.db import db
+from models.roles import Roles  # Importar el modelo Roles para la relación
 
 class Usuarios(db.Model):
+    __tablename__ = 'usuarios'
     id_usuario = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cedula = db.Column(db.String(255), unique=True, nullable=False)
     correo = db.Column(db.String(255))
@@ -27,3 +31,6 @@ class Usuarios(db.Model):
         self.estado = estado
         self.ultima_actividad = ultima_actividad
         self.Fecha_Contratacion = Fecha_Contratacion
+
+    def __repr__(self):
+        return f'<Usuario {self.nombre} {self.primer_apellido}>'
