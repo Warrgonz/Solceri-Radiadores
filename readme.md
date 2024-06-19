@@ -77,6 +77,32 @@ After activating your virtual environment, you need to install the necessary pac
 ```sh
 pip install -r requirements.txt
 ```
+> [!NOTE]
+> To install additional dependencies, you can use the following prompts
+
+- Install the package and update requirements.txt, change `<Monofino>` to the package required.
+
+```sh
+pip install <Monofino> && pip freeze > requirements.txt
+```
+- Verify that the package is installed
+
+```sh
+pip show <Monofino>
+```
+
+- Uninstall the package (If required)
+
+```sh
+pip uninstall <Monofino>
+```
+
+- Update requirements.txt
+
+```sh
+pip freeze > requirements.txt
+```
+
 ### Running project
 
 To server start, you can use `./app` in your terminal where the proyect will initialize in your localhost.
