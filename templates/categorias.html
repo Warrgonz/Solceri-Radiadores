@@ -7,6 +7,8 @@
         <a href="/categorias/nueva"><button class="btn-solceri">Agregar</button></a>
     </div>
 </div>
+
+{% if categorias %}
 <div class="table-responsive">
     <table class="table table-striped" style="width:100%">
         <thead>
@@ -33,7 +35,7 @@
                 </td>
             </tr>
             {% endfor %}
-        </tbody>        
+        </tbody>
         <tfoot class="text-center">
             <tr>
                 <th>ID</th>
@@ -44,5 +46,11 @@
         </tfoot>
     </table>
 </div>
+{% else %}
+<div class="d-flex justify-content-center align-items-center flex-column" style="height: 50vh;">
+    <img src="{{ url_for('static', filename='images/empty.png') }}" alt="Not found" class="img-empty">
+    <p class="mt-3">No se han encontrado categorías</p>
+</div>
+{% endif %}
 
 {% endblock %}

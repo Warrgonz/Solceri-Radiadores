@@ -162,3 +162,7 @@ form span{
     background-color: #111 !important;
     border: none !important;
 }
+
+.img-empty{
+    width: 5%;
+}

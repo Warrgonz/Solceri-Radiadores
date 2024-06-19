@@ -1,0 +1,51 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="d-flex flex-column">
+    <h2>Agregar nuevo usuario</h2>
+    <form id="usuarioAgregarForm" method="POST" action="{{ url_for('usuarios.agregar_usuario') }}">
+        <div>
+            <div class="pb-2">
+                <label for="id_empleado">Cédula empleado<span>*</span></label>
+                <input type="text" class="form-control" name="id_empleado" required placeholder="Cédula del usuario">
+            </div>
+            <div class="pb-2">
+                <label for="nombre">Nombre<span>*</span></label>
+                <input type="text" class="form-control" name="nombre" required placeholder="Nombre del usuario">
+            </div>
+            <div class="pb-2">
+                <label for="primer_apellido">Primer Apellido<span>*</span></label>
+                <input type="text" class="form-control" name="primer_apellido" required placeholder="Primer apellido del usuario">
+            </div>
+            <div class="pb-2">
+                <label for="segundo_apellido">Segundo Apellido<span>*</span></label>
+                <input type="text" class="form-control" name="segundo_apellido" required placeholder="Segundo apellido del usuario">
+            </div>
+            <div class="pt-2">
+                <label for="foto">Foto personal</label>
+                <input type="file" id="foto" name="foto" accept=".pdf, .doc, .docx, .png, .jpg, .webp">
+            </div>
+            <div class="pb-2">
+                <label for="rol">Seleccione un rol<span>*</span></label>
+                <select class="form-select mb-3" name="rol" required>
+                    <option selected disabled>Seleccionar Rol</option>
+                    <option value="Administrador">Administrador</option>
+                    <option value="Colaborador">Colaborador</option>
+                    <option value="Cliente">Cliente</option>
+                </select>
+            </div>
+            <!-- Mostrar estas opciones si el rol seleccionado no es Cliente, style="display: none;" -->
+            <div class="pb-2">
+                <label for="fecha_contratacion">Fecha de contratación<span>*</span></label>
+                <input type="date" class="form-control" name="fecha_contratacion">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="#" class="btn btn-danger btn-md mx-2" data-bs-dismiss="modal">Cancelar</a>
+            <button type="submit" class="btn btn-success btn-md">Agregar</button>
+        </div>
+    </form>
+</div>
+
+
+{% endblock %}
