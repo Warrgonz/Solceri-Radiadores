@@ -78,9 +78,9 @@ After activating your virtual environment, you need to install the necessary pac
 pip install -r requirements.txt
 ```
 > [!NOTE]
-> To install additional dependencies, you can use the following prompts
+> To manage dependencies, you can use the following prompts
 
-- Install the package and update requirements.txt, change `<Monofino>` to the package required.
+- Install the package and update requirements.txt, change `<Monofino>` to the package required instead.
 
 ```sh
 pip install <Monofino> && pip freeze > requirements.txt
