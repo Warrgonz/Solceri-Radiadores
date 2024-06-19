@@ -1,8 +1,6 @@
 
 ![Logo](https://solceri.s3.amazonaws.com/logoSolceri.png)
 
-# Project Title
-
 Solceri Forge is a website created for the company Solceri Radiadores, specifically designed for managing radiator repair and maintenance requests. This platform allows these requests to be managed through a ticketing system, facilitating the organization and tracking of each case.
 
 The ticketing system of Solceri Forge allows customers to create requests for radiator repairs or maintenance quickly and easily. Once the request is created, customers can know the current status of their request in real-time, providing transparency and trust in the process.
@@ -36,9 +34,8 @@ To create a virtual environment in Python, follow these steps:
 1. Open your terminal (or command prompt).
 2. Navigate to your project directory.
 
-[!TIP]
-
-You must have to install Python in your computer and be sure that you added Python to PATH. You can check if you have Python and Pip using the following command in your terminal (PowerShell, Git Bash, etc.)
+> [!IMPORTANT]
+> You must have to install Python in your computer and be sure that you added Python to PATH. You can check if you have Python and Pip using the following command in your terminal (PowerShell, Git Bash, etc.)
 
 ```sh
 python3 --version
