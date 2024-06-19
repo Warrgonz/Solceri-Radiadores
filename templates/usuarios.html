@@ -2,104 +2,58 @@
 {% block content %}
 
 <div class="d-flex justify-content-between">
-
     <div>
         <label for="nombre">Buscar:</label>
         <input type="text" placeholder="Datos del usuario">
     </div>
     <div>
-        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar</button>
+        <a href="{{ url_for('usuarios.usuarios_crear') }}"><button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar</button></a>
     </div>
-
 </div>
+
 <div class="table-responsive">
     <table class="table table-striped" style="width:100%">
         <thead>
             <tr class="text-center">
-                <th>ID</th>
+                <th>Cédula</th>
                 <th>Nombre completo</th>
-                <th>Foto personal</th>
+                <th>Correo</th>
+                <th>Foto</th>
                 <th>Rol</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody class="text-center">
+            {% for usuario in usuarios %}
             <tr>
-                <td>78069846</td>
-                <td>Marvin Angulo Soto</td>
-                <td><img src="/static/images/system.png" width="50px" alt="Persona 1"></td>
-                <td>Administrador</td>
+                <td>{{ usuario.cedula }}</td>
+                <td>{{ usuario.nombre }} {{ usuario.primer_apellido }} {{ usuario.segundo_apellido }}</td>
+                <td>{{ usuario.correo }}</td>
+                <td><img src="{{ usuario.ruta_imagen }}" width="50px" alt="Foto de perfil"></td>
+                <td>{{ usuario.rol.rol }}</td>
+                <td>{% if usuario.estado %} Activo {% else %} Inactivo {% endif %}</td>
                 <td>
                     <div class="flex-wrap">
                         <button class="btn-solceri"> <strong>Modificar</strong></button>
-                        <button class="btn btn-warning btn-md" style="color: white;"><strong>
-                                Inactivar</strong></button>
+                        <button class="btn btn-warning btn-md" style="color: white;"><strong>Inactivar</strong></button>
                     </div>
                 </td>
             </tr>
+            {% endfor %}
         </tbody>
         <tfoot class="text-center">
             <tr>
-                <th>ID</th>
+                <th>Cédula</th>
                 <th>Nombre completo</th>
+                <th>Correo</th>
+                <th>Foto</th>
                 <th>Rol</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </tfoot>
     </table>
-</div>
-
-<!-- Agregar Usuario modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar usuario</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="pb-2">
-                    <label for="id_empleado">Cédula empleado<span>*</span></label>
-                    <input type="text" class="form-control" name="id_tiquete" placeholder="Cédula del usuario">
-                </div>
-                <div class="pb-2">
-                    <label for="nombre">Nombre<span>*</span></label>
-                    <input type="text" class="form-control" name="nombre" placeholder="Nombre del usuario">
-                </div>
-                <div class="pb-2">
-                    <label for="nombre">Primer Apellido<span>*</span></label>
-                    <input type="text" class="form-control" name="nombre" placeholder="Primer apellido del usuario">
-                </div>
-                <div class="pb-2">
-                    <label for="nombre">Segundo Apellido<span>*</span></label>
-                    <input type="text" class="form-control" name="nombre" placeholder="Segundo apellido del usuario">
-                </div>
-                <div class="pt-2">
-                    <label for="archivos">Foto personal</label>
-                    <input type="file" id="archivo" name="archivos" accept=".pdf, .doc, .docx, .png, .jpg, .webp">
-                </div>
-                <div class="pb-2">
-                    <label for="rol">Seleccione un rol<span>*</span></label>
-                    <select class="form-select mb-3" name="rol">
-                        <option selected disabled>Rol</option>
-                        <option>Administrador</option>
-                        <option>Colaborador</option>
-                        <option>Cliente</option>
-                    </select>
-                </div>
-                <!--Si elige otro diferente a cliente, muestra estas opciones-->
-                <div class="pb-2">
-                    <label for="nombre">Fecha de contratación<span>*</span></label>
-                    <input type="date" class="form-control" name="nombre">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success btn-md">Agregar</button>
-            </div>
-        </div>
-    </div>
 </div>
 
 {% endblock %}

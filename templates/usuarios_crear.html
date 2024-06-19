@@ -1,13 +1,16 @@
 {% extends "layout.html" %}
 {% block content %}
-
 <div class="d-flex flex-column">
     <h2>Agregar nuevo usuario</h2>
-    <form id="usuarioAgregarForm" method="POST" action="{{ url_for('usuarios.agregar_usuario') }}">
-        <div>
+    <form id="usuarioAgregarForm" method="POST" action="{{ url_for('usuarios.usuarios_crear') }}" enctype="multipart/form-data">
+        <div class="pt-3">
             <div class="pb-2">
                 <label for="id_empleado">Cédula empleado<span>*</span></label>
                 <input type="text" class="form-control" name="id_empleado" required placeholder="Cédula del usuario">
+            </div>
+            <div class="pb-2">
+                <label for="nombre">Correo electronico<span>*</span></label>
+                <input type="text" class="form-control" name="correo" required placeholder="Correo del usuario">
             </div>
             <div class="pb-2">
                 <label for="nombre">Nombre<span>*</span></label>
@@ -21,31 +24,28 @@
                 <label for="segundo_apellido">Segundo Apellido<span>*</span></label>
                 <input type="text" class="form-control" name="segundo_apellido" required placeholder="Segundo apellido del usuario">
             </div>
-            <div class="pt-2">
-                <label for="foto">Foto personal</label>
-                <input type="file" id="foto" name="foto" accept=".pdf, .doc, .docx, .png, .jpg, .webp">
+            <div class="pt-3 pb-3">
+                <label for="ruta_imagen">Foto de perfil</label>
+                <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp">
             </div>
             <div class="pb-2">
                 <label for="rol">Seleccione un rol<span>*</span></label>
                 <select class="form-select mb-3" name="rol" required>
                     <option selected disabled>Seleccionar Rol</option>
-                    <option value="Administrador">Administrador</option>
-                    <option value="Colaborador">Colaborador</option>
-                    <option value="Cliente">Cliente</option>
+                    {% for rol in roles %}
+                        <option value="{{ rol.id_rol }}">{{ rol.rol }}</option>
+                    {% endfor %}
                 </select>
             </div>
-            <!-- Mostrar estas opciones si el rol seleccionado no es Cliente, style="display: none;" -->
             <div class="pb-2">
                 <label for="fecha_contratacion">Fecha de contratación<span>*</span></label>
                 <input type="date" class="form-control" name="fecha_contratacion">
             </div>
         </div>
         <div class="modal-footer">
-            <a href="#" class="btn btn-danger btn-md mx-2" data-bs-dismiss="modal">Cancelar</a>
-            <button type="submit" class="btn btn-success btn-md">Agregar</button>
+            <a href="{{ url_for('usuarios.usuarios') }}" class="btn btn-danger btn-md mx-2">Cancelar</a>
+            <button type="submit" class="btn btn-success btn-md">Confirmar</button>
         </div>
     </form>
 </div>
-
-
 {% endblock %}

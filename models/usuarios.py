@@ -15,12 +15,12 @@ class Usuarios(db.Model):
     estado = db.Column(db.Boolean, default=False)
     ultima_actividad = db.Column(db.DateTime)
     Fecha_Contratacion = db.Column(db.Date)
-    ruta_imagen = db.Column(db.String(255))
-    id_rol = db.Column(db.Integer, db.ForeignKey('roles.id_rol'))  # ForeignKey hacia roles.id_rol
+    ruta_imagen = db.Column(db.String(255))  # Añade el campo ruta_imagen si es necesario
+    id_rol = db.Column(db.Integer, db.ForeignKey('roles.id_rol'))
 
     rol = db.relationship('Roles', backref=db.backref('usuarios', lazy=True))
 
-    def __init__(self, cedula, correo, nombre=None, primer_apellido=None, segundo_apellido=None, id_rol=None, contraseña=None, estado=False, ultima_actividad=None, Fecha_Contratacion=None):
+    def __init__(self, cedula, correo, nombre=None, primer_apellido=None, segundo_apellido=None, id_rol=None, contraseña=None, estado=False, ultima_actividad=None, Fecha_Contratacion=None, ruta_imagen=None):
         self.cedula = cedula
         self.correo = correo
         self.nombre = nombre
@@ -31,6 +31,8 @@ class Usuarios(db.Model):
         self.estado = estado
         self.ultima_actividad = ultima_actividad
         self.Fecha_Contratacion = Fecha_Contratacion
+        self.ruta_imagen = ruta_imagen 
 
     def __repr__(self):
         return f'<Usuario {self.nombre} {self.primer_apellido}>'
+

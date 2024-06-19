@@ -151,3 +151,11 @@ ADD COLUMN fecha_solicitud DATETIME;
 #Se jodio la empanada
 ALTER TABLE tbl_solcitudes_vacaciones RENAME tbl_solicitudes_vacaciones;
 
+# Insertar roles
+
+INSERT INTO tbl_Roles (rol, descripcion) VALUES
+('Administrador', 'Rol con privilegios administrativos'),
+('Colaborador', 'Rol para usuarios colaboradores'),
+('Cliente', 'Rol para usuarios clientes');
+
+
