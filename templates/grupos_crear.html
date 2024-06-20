@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Grupos de trabajo</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="pb-2">
+                    <label for="nombre">Nombre del grupo<span>*</span></label>
+                    <input type="text" class="form-control" name="nombre" placeholder="Nombre del grupo">
+                </div>
+                <div class="pb-2">
+                    <label for="nombre">Descripción</label>
+                    <textarea class="form-control" rows="3" name="descripcion"
+                    placeholder="Descripción del grupo de trabajo"></textarea>
+                </div>
+                <div class="pb-2">
+                    <label for="busqueda">Ingrese el nombre del empleado:</label>
+                    <input type="text" class="form-control" id="busqueda" name="busqueda" placeholder="Buscar usuario...">
+                    <div id="resultados" class="dropdown"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-success btn-md">Confirmar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
