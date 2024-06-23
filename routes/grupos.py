@@ -10,11 +10,11 @@ def grupos():
     return render_template('grupos.html')
 
 @grupos_bp.route('/grupos/create')
-def grupos():
+def grupos_create():
     return render_template('grupos_crear.html')
 
 @grupos_bp.route('/grupos/editar')
-def grupos():
+def grupos_edit():
     return render_template('grupos_editar.html')
 
 @grupos_bp.route('/grupos/buscar_usuarios', methods=['POST'])

@@ -1,7 +1,7 @@
-# models.usuarios.py
+# models/usuarios.py
 
 from utils.db import db
-from models.roles import Roles  # Importar el modelo Roles para la relación
+from werkzeug.security import generate_password_hash
 
 class Usuarios(db.Model):
     __tablename__ = 'usuarios'
@@ -12,6 +12,7 @@ class Usuarios(db.Model):
     primer_apellido = db.Column(db.String(255))
     segundo_apellido = db.Column(db.String(255))
     contraseña = db.Column(db.String(255))
+    contraseña_temp = db.Column(db.String(255))  # Añadir el campo para la contraseña temporal
     estado = db.Column(db.Boolean, default=False)
     ultima_actividad = db.Column(db.DateTime)
     Fecha_Contratacion = db.Column(db.Date)
@@ -20,14 +21,15 @@ class Usuarios(db.Model):
 
     rol = db.relationship('Roles', backref=db.backref('usuarios', lazy=True))
 
-    def __init__(self, cedula, correo, nombre=None, primer_apellido=None, segundo_apellido=None, id_rol=None, contraseña=None, estado=False, ultima_actividad=None, Fecha_Contratacion=None, ruta_imagen=None):
+    def __init__(self, cedula, correo, nombre=None, primer_apellido=None, segundo_apellido=None, id_rol=None, contraseña=None, contraseña_temp=None, estado=False, ultima_actividad=None, Fecha_Contratacion=None, ruta_imagen=None):
         self.cedula = cedula
         self.correo = correo
         self.nombre = nombre
         self.primer_apellido = primer_apellido
         self.segundo_apellido = segundo_apellido
         self.id_rol = id_rol
-        self.contraseña = contraseña
+        self.contraseña = generate_password_hash(contraseña) if contraseña else None
+        self.contraseña_temp = contraseña_temp  # No necesitas generar la hash aquí para la temporal
         self.estado = estado
         self.ultima_actividad = ultima_actividad
         self.Fecha_Contratacion = Fecha_Contratacion
@@ -35,4 +37,3 @@ class Usuarios(db.Model):
 
     def __repr__(self):
         return f'<Usuario {self.nombre} {self.primer_apellido}>'
-
