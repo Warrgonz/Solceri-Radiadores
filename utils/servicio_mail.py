@@ -1,16 +1,35 @@
-from flask import Flask
-from flask_mail import Mail
+# utils/servicio_mail.py
 
-app = Flask(__name__)
+import os
+import smtplib
+from email.message import EmailMessage
+from dotenv import load_dotenv
+import string
+import secrets
 
-# Configuración del servidor de correo
-app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-app.config['MAIL_PORT'] = 587
-app.config['MAIL_USE_TLS'] = True
-app.config['MAIL_USE_SSL'] = False
-app.config['MAIL_USERNAME'] = 'warreno0419s@gmail.com'  # Reemplaza con tu dirección de correo Gmail
-app.config['MAIL_PASSWORD'] = 'qtzt mirj gnzd jiwr'  # Reemplaza con la contraseña de tu cuenta Gmail
-app.config['MAIL_DEFAULT_SENDER'] = 'warreno0419s@gmail.com'  # Opcional: dirección predeterminada para enviar correos
+# Cargar variables de entorno desde el archivo .env
+load_dotenv()
 
-# Inicialización de la extensión Flask-Mail
-mail = Mail(app)
+# Configurar los datos necesarios para el correo electrónico
+sender_email = "solceriforge@gmail.com"
+password = os.getenv("PASSWORD_MAIL")
+
+def send_email(receiver_email, subject, body):
+    msg = EmailMessage()
+    msg.set_content(body, subtype='html')  # Establecer el cuerpo del mensaje como HTML
+    msg['Subject'] = subject
+    msg['From'] = sender_email
+    msg['To'] = receiver_email
+
+    try:
+        with smtplib.SMTP('smtp.gmail.com', 587) as smtp:
+            smtp.starttls()  # Habilitar el modo seguro (TLS)
+            smtp.login(sender_email, password)
+            smtp.send_message(msg)
+            print(f"Correo electrónico enviado correctamente a {receiver_email}!")
+    except Exception as e:
+        print(f"No se pudo enviar el correo electrónico a {receiver_email}. Error: {e}")
+        
+def generate_temp_password():
+    """Genera una contraseña temporal aleatoria."""
+    return ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(8))

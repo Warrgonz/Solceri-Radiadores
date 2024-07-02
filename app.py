@@ -1,6 +1,10 @@
 from flask import Flask
 from routes import blueprints
 from utils.db import init_db
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 app = Flask(__name__)
 
@@ -8,9 +12,7 @@ app = Flask(__name__)
 init_db(app)
 
 # Configura una clave secreta personalizada
-app.secret_key = '12345'
-
-
+app.secret_key = os.getenv("PASSWORD_APP")
 
 # Registrar blueprints
 

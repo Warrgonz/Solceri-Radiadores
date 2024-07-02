@@ -4,9 +4,9 @@ from flask import Blueprint, render_template, request, url_for, redirect, flash
 from models.usuarios import Usuarios
 from models.roles import Roles
 from .firebase import FirebaseUtils
-from werkzeug.security import generate_password_hash
 from utils.db import db
-from utils.mail import generate_temp_password, send_temp_password_email
+from utils.servicio_mail import generate_temp_password
+from utils.servicio_mail import send_email 
 
 
 usuarios_bp = Blueprint('usuarios', __name__)
@@ -59,8 +59,19 @@ def usuarios_crear():
             db.session.add(nuevo_usuario)
             db.session.commit()
             
-            # Envía correo electrónico con la contraseña temporal
-            send_temp_password_email(nuevo_usuario.correo, temp_password)
+            # Envía correo electrónico con la contraseña temporal al nuevo usuario
+            subject = "Contraseña Temporal"
+            body = f"""
+            <html>
+            <head></head>
+            <body>
+                <h1 style="color:SlateGray;">¡Hola!</h1>
+                <p>Tu contraseña temporal es: <strong>{temp_password}</strong></p>
+                <p>Por favor, accede utilizando esta contraseña y cámbiala lo antes posible.</p>
+            </body>
+            </html>
+            """
+            send_email(correo, subject, body)
             
             flash('Usuario creado exitosamente', 'success')
             return redirect(url_for('usuarios.usuarios'))
@@ -77,3 +88,4 @@ def usuarios_crear():
     # Si es GET, simplemente renderiza el formulario para crear usuarios
     roles = Roles.query.all()
     return render_template('usuarios_crear.html', roles=roles)
+
