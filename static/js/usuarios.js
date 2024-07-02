@@ -25,3 +25,23 @@ function readURL(input) {
         reader.readAsDataURL(input.files[0]);
     }
 }
+
+// Buscar Usuarios
+
+function buscarUsuarios() {
+    var query = document.getElementById('buscar').value.toLowerCase();
+    var usuarios = document.getElementsByClassName('usuario');
+
+    for (var i = 0; i < usuarios.length; i++) {
+        var usuario = usuarios[i];
+        var cedula = usuario.getElementsByClassName('cedula')[0].textContent.toLowerCase();
+        var nombreCompleto = usuario.getElementsByClassName('nombre-completo')[0].textContent.toLowerCase();
+        var correo = usuario.getElementsByClassName('correo')[0].textContent.toLowerCase();
+
+        if (cedula.includes(query) || nombreCompleto.includes(query) || correo.includes(query)) {
+            usuario.style.display = '';
+        } else {
+            usuario.style.display = 'none';
+        }
+    }
+}

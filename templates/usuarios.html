@@ -2,10 +2,12 @@
 {% block content %}
 
 <div class="d-flex justify-content-between">
-    <div>
-        <label for="nombre">Buscar:</label>
-        <input type="text" placeholder="Datos del usuario">
-    </div>
+    <form method="GET">
+        <div>
+            <label for="buscar">Buscar:</label>
+            <input type="text" name="query" id="buscar" placeholder="Datos del usuario" onkeyup="buscarUsuarios()">
+        </div>
+    </form>
     <div>
         <a href="{{ url_for('usuarios.usuarios_crear') }}"><button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar</button></a>
     </div>
@@ -26,22 +28,22 @@
         </thead>
         <tbody class="text-center">
             {% for usuario in usuarios %}
-            <tr>
-                <td>{{ usuario.cedula }}</td>
-                <td>{{ usuario.nombre }} {{ usuario.primer_apellido }} {{ usuario.segundo_apellido }}</td>
-                <td>{{ usuario.correo }}</td>
+            <tr class="usuario">
+                <td class="cedula">{{ usuario.cedula }}</td>
+                <td class="nombre-completo">{{ usuario.nombre }} {{ usuario.primer_apellido }} {{ usuario.segundo_apellido }}</td>
+                <td class="correo">{{ usuario.correo }}</td>
                 <td><img src="{{ usuario.ruta_imagen }}" width="50px" alt="Foto de perfil"></td>
                 <td>{{ usuario.rol.rol }}</td>
                 <td>{% if usuario.estado %} Activo {% else %} Inactivo {% endif %}</td>
                 <td>
                     <div class="flex-wrap">
-                        <button class="btn-solceri"> <strong>Modificar</strong></button>
+                        <a href="{{ url_for('usuarios.usuarios_editar', id=usuario.id_usuario) }}" style="text-decoration: none;" class="btn-solceri"> <strong>Modificar</strong></a>
                         <button class="btn btn-warning btn-md" style="color: white;"><strong>Inactivar</strong></button>
                     </div>
                 </td>
             </tr>
             {% endfor %}
-        </tbody>
+        </tbody>        
         <tfoot class="text-center">
             <tr>
                 <th>Cédula</th>

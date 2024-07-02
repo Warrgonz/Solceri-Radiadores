@@ -1,35 +1,33 @@
 {% extends "layout.html" %}
 {% block content %}
 <div class="d-flex flex-column">
-    <h2>Agregar nuevo usuario</h2>
-    <form id="usuarioAgregarForm" method="POST" action="{{ url_for('usuarios.usuarios_crear') }}"
-        enctype="multipart/form-data">
+    <h2>Editar usuario</h2>
+    <form id="usuarioAgregarForm" method="POST" action="{{ url_for('usuarios.usuarios_editar', id=usuario.id_usuario) }}" enctype="multipart/form-data">
         <div class="pt-3">
             <div class="pb-2">
                 <label for="id_empleado">Cédula empleado<span>*</span></label>
-                <input type="text" class="form-control" name="id_empleado" required minlength="8"
+                <input type="text" class="form-control" name="id_empleado" value="{{ usuario.cedula }}" required minlength="8"
                     placeholder="Cédula del usuario">
-                <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
             <div class="pb-2">
                 <label for="nombre">Correo electronico<span>*</span></label>
-                <input type="text" class="form-control" name="correo" required placeholder="Correo del usuario">
+                <input type="text" class="form-control" name="correo" value="{{ usuario.correo }}" required placeholder="Correo del usuario">
                 <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
             <div class="pb-2">
                 <label for="nombre">Nombre<span>*</span></label>
-                <input type="text" class="form-control" name="nombre" required placeholder="Nombre del usuario">
+                <input type="text" class="form-control" name="nombre" value="{{ usuario.nombre }}" required placeholder="Nombre del usuario">
                 <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
             <div class="pb-2">
                 <label for="primer_apellido">Primer Apellido<span>*</span></label>
-                <input type="text" class="form-control" name="primer_apellido" required
+                <input type="text" class="form-control" name="primer_apellido" value="{{ usuario.primer_apellido }}" required
                     placeholder="Primer apellido del usuario">
                 <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
             <div class="pb-2">
                 <label for="segundo_apellido">Segundo Apellido<span>*</span></label>
-                <input type="text" class="form-control" name="segundo_apellido" required
+                <input type="text" class="form-control" name="segundo_apellido" value="{{ usuario.segundo_apellido }}" required
                     placeholder="Segundo apellido del usuario">
                 <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
@@ -38,21 +36,20 @@
                 <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp" onchange="readURL(this);">
             </div>
             <div class="pt-3 pb-3" id="imagePreview">
-                <img id="blah" src="#" alt="Tu imagen" style="display: none; height: 200px;">
+                <img id="blah" src="{{ usuario.ruta_imagen }}" alt="Tu imagen" style="height: 200px;">
             </div>
             <div class="pb-2">
                 <label for="rol">Seleccione un rol<span>*</span></label>
                 <select id="rolSelect" class="form-select mb-3" name="rol" required>
-                    <option selected disabled>Seleccionar Rol</option>
                     {% for rol in roles %}
-                    <option value="{{ rol.id_rol }}">{{ rol.rol }}</option>
+                    <option value="{{ rol.id_rol }}" {% if rol.id_rol == usuario.id_rol %} selected {% endif %}>{{ rol.rol }}</option>
                     {% endfor %}
                 </select>
                 <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
-            <div class="pb-2" id="fechaContratacionDiv" style="display: none;">
+            <div class="pb-2" id="fechaContratacionDiv">
                 <label for="fecha_contratacion">Fecha de contratación</label>
-                <input type="date" class="form-control" name="fecha_contratacion">
+                <input type="date" class="form-control" name="fecha_contratacion" value="{{ usuario.fecha_contratacion }}">
             </div>
         </div>
         <div class="modal-footer">

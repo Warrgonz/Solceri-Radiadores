@@ -6,6 +6,7 @@ from email.message import EmailMessage
 from dotenv import load_dotenv
 import string
 import secrets
+import threading
 
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
@@ -29,6 +30,10 @@ def send_email(receiver_email, subject, body):
             print(f"Correo electrónico enviado correctamente a {receiver_email}!")
     except Exception as e:
         print(f"No se pudo enviar el correo electrónico a {receiver_email}. Error: {e}")
+        
+def send_email_async(receiver_email, subject, body):
+    email_thread = threading.Thread(target=send_email, args=(receiver_email, subject, body))
+    email_thread.start()
         
 def generate_temp_password():
     """Genera una contraseña temporal aleatoria."""

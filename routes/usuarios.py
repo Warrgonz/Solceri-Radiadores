@@ -1,13 +1,11 @@
 # routes/usuarios.py
 
-from flask import Blueprint, render_template, request, url_for, redirect, flash
+from flask import Blueprint, render_template, request, url_for, redirect, flash, jsonify
 from models.usuarios import Usuarios
 from models.roles import Roles
 from .firebase import FirebaseUtils
 from utils.db import db
-from utils.servicio_mail import generate_temp_password
-from utils.servicio_mail import send_email 
-
+from utils.servicio_mail import generate_temp_password, send_email_async
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
@@ -39,6 +37,9 @@ def usuarios_crear():
             # Genera contraseña temporal
             temp_password = generate_temp_password()
             
+            if Usuarios.query.filter_by(cedula=cedula).first():
+                return jsonify({'existe': True})
+            
             # Crea instancia del modelo de usuario
             nuevo_usuario = Usuarios(
                 cedula=cedula,
@@ -59,7 +60,7 @@ def usuarios_crear():
             db.session.add(nuevo_usuario)
             db.session.commit()
             
-            # Envía correo electrónico con la contraseña temporal al nuevo usuario
+            # Envía correo electrónico con la contraseña temporal al nuevo usuario de forma asíncrona
             subject = "Contraseña Temporal"
             body = f"""
             <html>
@@ -71,7 +72,7 @@ def usuarios_crear():
             </body>
             </html>
             """
-            send_email(correo, subject, body)
+            send_email_async(correo, subject, body)
             
             flash('Usuario creado exitosamente', 'success')
             return redirect(url_for('usuarios.usuarios'))
@@ -89,3 +90,29 @@ def usuarios_crear():
     roles = Roles.query.all()
     return render_template('usuarios_crear.html', roles=roles)
 
+@usuarios_bp.route('/usuarios/editar/<int:id>', methods=['GET', 'POST'])
+def usuarios_editar(id):
+    if request.method == 'POST':
+        # Obtener el usuario existente desde la base de datos
+        usuario = Usuarios.query.get_or_404(id)
+
+        # Actualizar los campos del usuario con los datos del formulario
+        usuario.id_empleado = request.form['id_empleado']
+        usuario.nombre = request.form['nombre']
+        usuario.primer_apellido = request.form['primer_apellido']
+        usuario.segundo_apellido = request.form['segundo_apellido']
+        usuario.correo = request.form['correo']
+        usuario.rol_id = request.form['rol']
+        usuario.fecha_contratacion = request.form.get('fecha_contratacion')
+
+        # Guardar los cambios en la base de datos
+        db.session.commit()
+
+        # Redirigir a la página de usuarios o a donde corresponda
+        return redirect(url_for('usuarios.usuarios'))
+
+    # Obtener el usuario para mostrar en el formulario de edición
+    usuario = Usuarios.query.get_or_404(id)
+    roles = Roles.query.all()
+
+    return render_template('usuarios_editar.html', usuario=usuario, roles=roles)
