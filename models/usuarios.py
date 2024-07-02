@@ -1,7 +1,7 @@
 # models/usuarios.py
 
 from utils.db import db
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class Usuarios(db.Model):
     __tablename__ = 'usuarios'
@@ -29,11 +29,31 @@ class Usuarios(db.Model):
         self.segundo_apellido = segundo_apellido
         self.id_rol = id_rol
         self.contraseña = generate_password_hash(contraseña) if contraseña else None
-        self.contraseña_temp = contraseña_temp  # No necesitas generar la hash aquí para la temporal
+        self.contraseña_temp = generate_password_hash(contraseña_temp) if contraseña_temp else None
         self.estado = estado
-        self.ultima_actividad = ultima_actividad
-        self.Fecha_Contratacion = Fecha_Contratacion
+        self.ultima_actividad = ultima_actividad 
+        self.Fecha_Contratacion = Fecha_Contratacion if Fecha_Contratacion else None
         self.ruta_imagen = ruta_imagen 
+        
+        # Configura la contraseña principal si se proporcionó una contraseña temporal
+        if contraseña_temp:
+            self.set_password(contraseña_temp)
 
     def __repr__(self):
         return f'<Usuario {self.nombre} {self.primer_apellido}>'
+    
+    def set_password(self, password):
+        """Establece la contraseña principal."""
+        if password:
+            self.contraseña = generate_password_hash(password)
+
+    def set_temp_password(self, temp_password):
+        """Establece la contraseña temporal."""
+        if temp_password:
+            self.contraseña_temp = generate_password_hash(temp_password)
+            # Configura la contraseña principal también
+            self.set_password(temp_password)
+
+    def check_password(self, password):
+        """Verifica la contraseña principal."""
+        return check_password_hash(self.contraseña, password)

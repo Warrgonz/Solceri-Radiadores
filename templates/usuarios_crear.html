@@ -2,7 +2,8 @@
 {% block content %}
 <div class="d-flex flex-column">
     <h2>Agregar nuevo usuario</h2>
-    <form id="usuarioAgregarForm" method="POST" action="{{ url_for('usuarios.usuarios_crear') }}" enctype="multipart/form-data">
+    <form id="usuarioAgregarForm" method="POST" action="{{ url_for('usuarios.usuarios_crear') }}"
+        enctype="multipart/form-data">
         <div class="pt-3">
             <div class="pb-2">
                 <label for="id_empleado">Cédula empleado<span>*</span></label>
@@ -18,27 +19,32 @@
             </div>
             <div class="pb-2">
                 <label for="primer_apellido">Primer Apellido<span>*</span></label>
-                <input type="text" class="form-control" name="primer_apellido" required placeholder="Primer apellido del usuario">
+                <input type="text" class="form-control" name="primer_apellido" required
+                    placeholder="Primer apellido del usuario">
             </div>
             <div class="pb-2">
                 <label for="segundo_apellido">Segundo Apellido<span>*</span></label>
-                <input type="text" class="form-control" name="segundo_apellido" required placeholder="Segundo apellido del usuario">
+                <input type="text" class="form-control" name="segundo_apellido" required
+                    placeholder="Segundo apellido del usuario">
             </div>
             <div class="pt-3 pb-3">
                 <label for="ruta_imagen">Foto de perfil</label>
-                <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp">
+                <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp" onchange="readURL(this);">
+            </div>
+            <div class="pt-3 pb-3" id="imagePreview">
+                <img id="blah" src="#" alt="Tu imagen" style="display: none; height: 200px;">
             </div>
             <div class="pb-2">
                 <label for="rol">Seleccione un rol<span>*</span></label>
-                <select class="form-select mb-3" name="rol" required>
+                <select id="rolSelect" class="form-select mb-3" name="rol" required>
                     <option selected disabled>Seleccionar Rol</option>
                     {% for rol in roles %}
-                        <option value="{{ rol.id_rol }}">{{ rol.rol }}</option>
+                    <option value="{{ rol.id_rol }}">{{ rol.rol }}</option>
                     {% endfor %}
                 </select>
             </div>
-            <div class="pb-2">
-                <label for="fecha_contratacion">Fecha de contratación<span>*</span></label>
+            <div class="pb-2" id="fechaContratacionDiv" style="display: none;">
+                <label for="fecha_contratacion">Fecha de contratación</label>
                 <input type="date" class="form-control" name="fecha_contratacion">
             </div>
         </div>

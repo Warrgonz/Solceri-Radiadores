@@ -1,15 +1,16 @@
 from flask import Flask
 from routes import blueprints
 from utils.db import init_db
-from utils.servicio_mail import MailConexion
 
 app = Flask(__name__)
 
 # Conexión a la base de datos
 init_db(app)
 
-# Configuración de Flask-Mail
-mail = MailConexion(app)
+# Configura una clave secreta personalizada
+app.secret_key = '12345'
+
+
 
 # Registrar blueprints
 

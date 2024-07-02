@@ -1,38 +1,27 @@
 'use strict';
 
-// Alerta de satisfaccion cuando se crea un usuario y se envia el correo
+// Muestro el campo sobre la contratación
 
-    // Escuchar el envío del formulario
-    $('form').submit(function(event) {
-        event.preventDefault();  // Evitar que se envíe el formulario normalmente
+document.getElementById('rolSelect').addEventListener('change', function() {
+    var selectedRole = this.options[this.selectedIndex].text;
+    var fechaContratacionDiv = document.getElementById('fechaContratacionDiv');
+    if (selectedRole === 'Administrador' || selectedRole === 'Colaborador') {
+        fechaContratacionDiv.style.display = 'block';
+    } else {
+        fechaContratacionDiv.style.display = 'none';
+    }
+});
 
-        // Realizar la petición AJAX
-        $.ajax({
-            type: 'POST',
-            url: "{{ url_for('usuarios.usuarios_crear') }}",
-            data: new FormData(this),
-            contentType: false,
-            cache: false,
-            processData: false,
-            success: function(response) {
-                // Mostrar Sweet Alert si la creación fue exitosa
-                Swal.fire({
-                    icon: 'success',
-                    title: '¡Usuario creado exitosamente!',
-                    text: 'Acceso a la aplicación generado.',
-                    showConfirmButton: false,
-                    timer: 3000  // Cerrar automáticamente después de 3 segundos
-                }).then(function() {
-                    window.location.href = "{{ url_for('usuarios.usuarios') }}";  // Redirigir al listado de usuarios
-                });
-            },
-            error: function(error) {
-                // Mostrar alerta de error si ocurrió algún problema
-                Swal.fire({
-                    icon: 'error',
-                    title: 'Error',
-                    text: error.responseJSON.error  // Mostrar el mensaje de error del servidor
-                });
-            }
-        });
-    });
+// Mostrar imagen seleccionada.
+
+function readURL(input) {
+    if (input.files && input.files[0]) {
+        var reader = new FileReader();
+        reader.onload = function (e) {
+            var imgElement = document.getElementById('blah');
+            imgElement.src = e.target.result;
+            imgElement.style.display = 'block';
+        };
+        reader.readAsDataURL(input.files[0]);
+    }
+}

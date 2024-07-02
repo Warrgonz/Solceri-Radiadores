@@ -1,26 +1,16 @@
-# utils/mail.py
-
+from flask import Flask
 from flask_mail import Mail
 
-mail = None  # Inicializado como None, se inicializará en MailConexion
+app = Flask(__name__)
 
-def MailConexion(app):
-    global mail
-    try:
-        app.config['MAIL_SERVER'] = 'smtp.gmail.com'
-        app.config['MAIL_PORT'] = 587
-        app.config['MAIL_USERNAME'] = 'your_email@gmail.com'  # Debes establecer tu dirección de correo aquí
-        app.config['MAIL_PASSWORD'] = 'your_password'  # Debes establecer tu contraseña de correo aquí
-        app.config['MAIL_USE_TLS'] = True
-        app.config['MAIL_USE_SSL'] = False
+# Configuración del servidor de correo
+app.config['MAIL_SERVER'] = 'smtp.gmail.com'
+app.config['MAIL_PORT'] = 587
+app.config['MAIL_USE_TLS'] = True
+app.config['MAIL_USE_SSL'] = False
+app.config['MAIL_USERNAME'] = 'warreno0419s@gmail.com'  # Reemplaza con tu dirección de correo Gmail
+app.config['MAIL_PASSWORD'] = 'qtzt mirj gnzd jiwr'  # Reemplaza con la contraseña de tu cuenta Gmail
+app.config['MAIL_DEFAULT_SENDER'] = 'warreno0419s@gmail.com'  # Opcional: dirección predeterminada para enviar correos
 
-        mail = Mail(app)
-        print("Mail connected successfully!")
-        return mail
-
-    except Exception as e:
-        print(f"Error connecting to the mail server: {str(e)}")
-        return None
-
-# Exportar la instancia de Mail para que sea accesible desde otros módulos
-__all__ = ['mail']
+# Inicialización de la extensión Flask-Mail
+mail = Mail(app)

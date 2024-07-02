@@ -1,8 +1,13 @@
-from flask import Blueprint, render_template, request, url_for, redirect
+# routes/usuarios.py
+
+from flask import Blueprint, render_template, request, url_for, redirect, flash
 from models.usuarios import Usuarios
 from models.roles import Roles
 from .firebase import FirebaseUtils
+from werkzeug.security import generate_password_hash
 from utils.db import db
+from utils.mail import generate_temp_password, send_temp_password_email
+
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
@@ -21,19 +26,24 @@ def usuarios_crear():
             nombre = request.form['nombre']
             primer_apellido = request.form['primer_apellido']
             segundo_apellido = request.form['segundo_apellido']
-            ruta_imagen = request.files['ruta_imagen'] if 'ruta_imagen' in request.files else None
+            ruta_imagen = None
+            if 'ruta_imagen' in request.files:
+                ruta_imagen = request.files['ruta_imagen']
+                if ruta_imagen.filename != '':
+                    ruta_imagen = FirebaseUtils.PostImagen(ruta_imagen)
+                else:
+                    ruta_imagen = None
             id_rol = request.form['rol']
-            fecha_contratacion = request.form['fecha_contratacion']
+            fecha_contratacion = request.form.get('fecha_contratacion')
             
-            # Procesa la imagen si está presente
-            if ruta_imagen:
-                ruta_imagen = FirebaseUtils.PostImagen(ruta_imagen)
+            # Genera contraseña temporal
+            temp_password = generate_temp_password()
             
-            # Crear instancia del modelo de usuario
+            # Crea instancia del modelo de usuario
             nuevo_usuario = Usuarios(
                 cedula=cedula,
-                nombre=nombre,
                 correo=correo,
+                nombre=nombre,
                 primer_apellido=primer_apellido,
                 segundo_apellido=segundo_apellido,
                 id_rol=id_rol,
@@ -42,10 +52,17 @@ def usuarios_crear():
                 ruta_imagen=ruta_imagen  # Asegúrate de que ruta_imagen esté definido en Usuarios
             )
             
-            # Añadir el nuevo usuario a la sesión y guardar en la base de datos
+            # Configura la contraseña temporal en el modelo de usuario
+            nuevo_usuario.set_temp_password(temp_password)
+            
+            # Guarda el nuevo usuario en la base de datos
             db.session.add(nuevo_usuario)
             db.session.commit()
             
+            # Envía correo electrónico con la contraseña temporal
+            send_temp_password_email(nuevo_usuario.correo, temp_password)
+            
+            flash('Usuario creado exitosamente', 'success')
             return redirect(url_for('usuarios.usuarios'))
         
         except Exception as e:
