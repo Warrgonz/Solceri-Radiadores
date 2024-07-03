@@ -1,4 +1,88 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playwrite+NL:wght@100..400&display=swap');
+
+/*Index*/
+.video-container {
+    position: relative;
+    width: 100%;
+    padding-top: 56.25%; /* Proporción 16:9 (Dividir 9 entre 16 para obtener el porcentaje) */
+    overflow: hidden;
+}
+.video-container video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Ajusta el video para cubrir el contenedor */
+}
+.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5); /* Fondo negro semi-transparente */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: white;
+    font-size: 3vw; /* Tamaño de fuente responsive basado en el ancho de la ventana */
+    font-weight: bold;
+    font-family: Arial, sans-serif;
+    padding: 2vw; /* Espaciado responsive basado en el ancho de la ventana */
+    box-sizing: border-box;
+}
+.title-banner{
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-size: 3rem;
+}
+
+.p-banner{
+    font-family: "Montserrat", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-size: 20px;
+}
+
+.solceri-media{
+    padding-top: 30px;
+    width: 100%;
+    height: 50%;
+}
+
+/**/
+
+
+
+/**/
+
+
+@media (min-width: 768px) and (max-width: 1024px) {
+    .overlay {
+        font-size: 5vw;
+        padding: 4vw;
+    }
+    .p-banner {
+        font-size: 3vw;
+    }
+}
+
+@media (min-width: 320px) and (max-width: 480px) {
+    .title-banner{
+        font-size: 1.2rem;
+    }
+    .p-banner{
+        display: none;
+    }
+    
+}
+
 
 /*Dashboard*/
 
