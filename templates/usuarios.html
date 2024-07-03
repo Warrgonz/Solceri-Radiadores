@@ -2,11 +2,11 @@
 
 {% block content %}
 {% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
 {% endwith %}
 
 <div>
@@ -21,7 +21,8 @@
         </div>
     </form>
     <div>
-        <a href="{{ url_for('usuarios.usuarios_crear') }}"><button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar</button></a>
+        <a href="{{ url_for('usuarios.usuarios_crear') }}"><button class="btn-solceri" data-bs-toggle="modal"
+                data-bs-target="#staticBackdrop">Agregar</button></a>
     </div>
 </div>
 
@@ -43,20 +44,31 @@
             {% for usuario in usuarios %}
             <tr class="usuario">
                 <td class="cedula">{{ usuario.cedula }}</td>
-                <td class="nombre-completo">{{ usuario.nombre }} {{ usuario.primer_apellido }} {{ usuario.segundo_apellido }}</td>
+                <td class="nombre-completo">{{ usuario.nombre }} {{ usuario.primer_apellido }} {{
+                    usuario.segundo_apellido }}</td>
                 <td class="correo">{{ usuario.correo }}</td>
                 <td><img src="{{ usuario.ruta_imagen }}" width="50px" alt="Foto de perfil"></td>
                 <td>{{ usuario.rol.rol }}</td>
                 <td>{% if usuario.estado %} Activo {% else %} Inactivo {% endif %}</td>
                 <td>
                     <div class="flex-wrap">
-                        <a href="{{ url_for('usuarios.usuarios_editar', id=usuario.id_usuario) }}" style="text-decoration: none;" class="btn-solceri"><strong>Modificar</strong></a>
-                        
+                        <a href="{{ url_for('usuarios.usuarios_editar', id=usuario.id_usuario) }}"
+                            style="text-decoration: none;" class="btn-solceri"><strong>Modificar</strong></a>
+
                         {% if usuario.estado %}
-                            <button class="btn btn-warning btn-md" style="color: white;" onclick="desactivarUsuario('{{ usuario.cedula }}', '{{ usuario.id_usuario }}')"><strong>Desactivar</strong></button>
+                        <button class="btn btn-dark btn-md" style="color: white;"
+                            onclick="desactivarUsuario('{{ usuario.cedula }}', '{{ usuario.id_usuario }}')"><strong>Inactivar</strong></button>
                         {% else %}
-                            <button class="btn btn-success btn-md" style="color: white;" onclick="activarUsuario('{{ usuario.cedula }}', '{{ usuario.id_usuario }}')"><strong>Activar</strong></button>
+                        <button class="btn btn-success btn-md" style="color: white;"
+                            onclick="activarUsuario('{{ usuario.cedula }}', '{{ usuario.id_usuario }}')"><strong>Activar</strong></button>
                         {% endif %}
+
+                        <a href="#" style="text-decoration: none;" class="btn-solceri-eliminar"
+                            data-cedula="{{ usuario.cedula }}"
+                            data-url="{{ url_for('usuarios.eliminar_usuario', id_usuario=usuario.id_usuario) }}"
+                            onclick="confirmDelete(this)">
+                            <strong>Eliminar</strong>
+                        </a>
                     </div>
                 </td>
             </tr>

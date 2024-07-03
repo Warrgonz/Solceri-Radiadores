@@ -33,13 +33,16 @@ def usuarios_crear():
             primer_apellido = request.form['primer_apellido']
             segundo_apellido = request.form['segundo_apellido']
             ruta_imagen = None
+            imagen_default = "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/system.png?alt=media&token=c6dd24e5-c288-4223-bbf9-152e4c007b51"
             if 'ruta_imagen' in request.files:
                 ruta_imagen = request.files['ruta_imagen']
                 if ruta_imagen.filename != '':
                     # Subir la nueva imagen a Firebase con un nombre único
                     ruta_imagen = FirebaseUtils.post_image(ruta_imagen)
                 else:
-                    ruta_imagen = None
+                    ruta_imagen = imagen_default  # Usar imagen por defecto si no se selecciona ninguna imagen
+            else:
+                ruta_imagen = imagen_default  # Usar imagen por defecto si no se sube ninguna imagen
 
             id_rol = request.form['rol']
             fecha_contratacion = request.form.get('fecha_contratacion')
@@ -180,6 +183,33 @@ def activar_usuario(id):
         return jsonify({'success': True}), 200
     else:
         return jsonify({'success': False, 'error': 'Usuario no encontrado'}), 404
+    
+@usuarios_bp.route('/usuarios/eliminar/<int:id_usuario>', methods=['GET', 'POST'])
+def eliminar_usuario(id_usuario):
+    try:
+        # Obtener el usuario de la base de datos
+        usuario = Usuarios.query.get(id_usuario)
+        
+        if not usuario:
+            flash('Usuario no encontrado', 'danger')
+            return redirect(url_for('usuarios.usuarios'))
+
+        # Eliminar la imagen del usuario de Firebase si existe
+        if usuario.ruta_imagen and usuario.ruta_imagen != "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/system.png?alt=media&token=c6dd24e5-c288-4223-bbf9-152e4c007b51":
+            FirebaseUtils.delete_image(usuario.ruta_imagen)
+
+        # Eliminar el usuario de la base de datos
+        db.session.delete(usuario)
+        db.session.commit()
+
+        flash('Usuario eliminado exitosamente', 'success')
+    except Exception as e:
+        # Manejo de excepciones
+        print(f"Error al eliminar usuario: {str(e)}")
+        db.session.rollback()
+        flash('Error al eliminar el usuario', 'danger')
+    
+    return redirect(url_for('usuarios.usuarios'))
 
 
 

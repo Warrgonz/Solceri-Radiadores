@@ -160,3 +160,25 @@ function activarUsuario(cedula, id) {
         }
     });
 }
+
+// Eliminar usuario
+
+function confirmDelete(element) {
+    const cedula = element.getAttribute('data-cedula');
+    const deleteUrl = element.getAttribute('data-url');
+
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: `¿Está seguro que desea borrar el usuario con cédula ${cedula}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, eliminar',
+        cancelButtonText: 'Cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = deleteUrl;
+        }
+    });
+}

@@ -40,8 +40,11 @@ class FirebaseUtils:
             return None
 
     @staticmethod
-    def delete_from_firebase(filename):
+    def delete_image(image_url):
         try:
+            # Obtener el nombre del archivo de la URL
+            filename = os.path.basename(image_url.split("?")[0])
+            # Eliminar el archivo del bucket de Firebase
             blob = bucket.blob(filename)
             blob.delete()
             print(f"Archivo {filename} eliminado correctamente de Firebase Storage.")
