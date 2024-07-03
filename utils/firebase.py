@@ -50,9 +50,19 @@ class FirebaseUtils:
             print(f"Archivo {filename} eliminado correctamente de Firebase Storage.")
         except Exception as e:
             print(f"Error al eliminar archivo de Firebase Storage: {str(e)}")
-
+                        
     @staticmethod
     def update_image(file, old_filename=None):
-        if old_filename:
-            FirebaseUtils.delete_from_firebase(old_filename)
-        return FirebaseUtils.post_image(file)
+        try:
+        # Subir la nueva imagen
+            new_image_url = FirebaseUtils.post_image(file)
+
+        # Eliminar la imagen antigua si hay un nombre de archivo anterior proporcionado
+            if old_filename:
+                FirebaseUtils.delete_image(old_filename)
+
+            return new_image_url
+        except Exception as e:
+            print(f"Error al actualizar la imagen en Firebase: {str(e)}")
+            return None
+

@@ -1,10 +1,14 @@
-from flask import Blueprint, render_template, request, url_for, redirect, jsonify
+from flask import Blueprint, render_template, request, url_for, redirect, jsonify, session, flash
 from models.categorias import Categorias
 from utils.db import db
+from functools import wraps
+from utils.auth import login_required, role_required
 
 categorias_bp = Blueprint('categorias', __name__)
 
 @categorias_bp.route('/categorias')
+@login_required
+@role_required([1])
 def categorias():
     categorias = Categorias.query.all() #Select * from categorias
     return render_template('categorias.html', categorias=categorias)

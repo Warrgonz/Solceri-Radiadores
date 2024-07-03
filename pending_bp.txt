@@ -53,9 +53,7 @@ def vacacionesRechazadas():
 
 # catalogo
 
-@app.route('/catalogo')
-def catalogo():
-    return render_template('catalogo.html')
+
 
 # cotizaciones
 

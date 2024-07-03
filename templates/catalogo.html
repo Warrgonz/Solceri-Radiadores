@@ -1,22 +1,35 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<div class="d-flex justify-content-between">
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 
+
+<div>
+    <h1 class="pb-3 section-title">Catálogo</h1>
+</div>
+
+<div class="d-flex justify-content-between">
     <div>
         <label for="nombre">Buscar:</label>
-        <input type="text" placeholder="Datos del usuario">
+        <input type="text" id="inputBusqueda" placeholder="Datos del usuario">
     </div>
     <div>
-        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar</button>
+        <a href="/catalogo/create"><button class="btn-solceri">Agregar</button></a>
     </div>
 
 </div>
+{% if catalogo %}
 <div class="table-responsive">
     <table class="table table-striped" style="width:100%">
         <thead>
             <tr class="text-center">
-                <th>ID</th>
+                <th>SKU</th>
                 <th>Producto</th>
                 <th>Foto</th>
                 <th>Descripción</th>
@@ -24,81 +37,35 @@
                 <th>Acciones</th>
             </tr>
         </thead>
-        <tbody class="text-center">
-            <tr>
-                <td>15326</td>
-                <td>Tornillos</td>
-                <td><img src="/static/images/system.png" width="50px" alt="Persona 1"></td>
-                <td><a style="color: darkblue;" data-bs-toggle="modal" data-bs-target="#detalles">Ver detalles</a>
-                    <td>1500</td>
+        <tbody id="tablaCatalogo" class="text-center">
+            {% for producto in catalogo %}
+                <tr id="fila{{ producto.id_catalogo }}">
+                    <td>{{ producto.sku }}</td>
+                    <td>{{ producto.nombre_producto }}</td>
+                    <td><img src="{{ producto.ruta_imagen }}" alt="Foto de {{ producto.nombre_producto }}" style="width: 50px; height: 50px;"></td>
+                    <td>{{ producto.descripcion }}</td>
+                    <td>{{ producto.precio }}</td>
                     <td>
-                    <div class="flex-wrap">
-                        <button class="btn-solceri"> <strong>Modificar</strong></button>
-                        <button class="btn btn-danger btn-md" style="color: white;"><strong>
-                                Eliminar</strong></button>
-                    </div>
-                </td>
-            </tr>
-
+                        <a href="{{ url_for('catalogo.catalogo_editar', id=producto.id_catalogo) }}" style="text-decoration: none;" class="btn-solceri"><strong>Modificar</strong></a>
+                        <a href="#" style="text-decoration: none;" class="btn-solceri-eliminar"
+                           data-cedula=""
+                           data-url=""
+                           onclick="confirmDelete(this)">
+                            <strong>Eliminar</strong>
+                        </a>
+                    </td>
+                </tr>
+            {% endfor %}
         </tbody>
-        <tfoot class="text-center">
-            <tr>
-                <th>ID</th>
-                <th>Producto</th>
-                <th>Foto</th>
-                <th>Descripción</th>
-                <th>Precio</th>
-                <th>Acciones</th>
-            </tr>
-        </tfoot>
     </table>
 </div>
-
-<!-- Agregar Usuario modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Agregar catálogo</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="pt-2">
-                    <label for="archivos">ID del producto</label>
-                    <input type="text" name="archivos">
-                </div>
-
-                <div class="pt-2">
-                    <label for="archivos">Producto</label>
-                    <input type="text" name="archivos">
-                </div>
-                <div>
-                    <label for="descripcion">Descripción<span>*</span></label>
-                    <textarea class="form-control" rows="3" name="descripcion"
-                        placeholder="Descripción"></textarea>
-                </div>
-                <div class="pt-2">
-                    <label for="archivos">Precio</label>
-                    <input type="text" name="archivos">
-                </div>
-                <div class="pt-2">
-                    <label for="archivos">Foto del articulo</label>
-                    <input type="file" id="archivo" name="archivos" accept=".pdf, .doc, .docx, .png, .jpg, .webp">
-                </div>
-                <div class="pt-2">
-                    <label for="archivos">Precio</label>
-                    <input type="text" name="archivos">
-                </div>
-
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger btn-md" data-bs-dismiss="modal">Cancelar</button>
-                <button type="button" class="btn btn-success btn-md">Agregar</button>
-            </div>
-        </div>
-    </div>
+{% else %}
+<div class="d-flex justify-content-center align-items-center flex-column" style="height: 50vh;">
+    <img src="{{ url_for('static', filename='images/empty.png') }}" alt="Not found" class="img-empty">
+    <p class="mt-3">No se han encontrado artículos</p>
 </div>
+{% endif %}
+
 
 <!--Ver detalles-->
 <div class="modal fade" id="detalles" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"

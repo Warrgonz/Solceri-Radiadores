@@ -1,23 +1,20 @@
 # routes/usuarios.py
 
-from flask import Blueprint, render_template, render_template_string, request, url_for, redirect, flash, jsonify
+from flask import Blueprint, render_template, request, url_for, redirect, flash, jsonify, session
 from models.usuarios import Usuarios
 from models.roles import Roles
 from utils.firebase import FirebaseUtils
 from utils.db import db
 from utils.servicio_mail import generate_temp_password, send_email_async
 import datetime
+from utils.auth import login_required, role_required
+from werkzeug.security import generate_password_hash, check_password_hash
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
 @usuarios_bp.route('/usuarios')
-def usuarios():
-    usuarios = Usuarios.query.all()
-    return render_template('usuarios.html', usuarios=usuarios)
-
-usuarios_bp = Blueprint('usuarios', __name__)
-
-@usuarios_bp.route('/usuarios')
+@login_required
+@role_required([1])
 def usuarios():
     usuarios = Usuarios.query.all()
     return render_template('usuarios.html', usuarios=usuarios)
@@ -210,6 +207,27 @@ def eliminar_usuario(id_usuario):
         flash('Error al eliminar el usuario', 'danger')
     
     return redirect(url_for('usuarios.usuarios'))
+
+@usuarios_bp.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        email = request.form['email']
+        password = request.form['password']
+
+        user = Usuarios.query.filter_by(correo=email).first()
+
+        if user and check_password_hash(user.contraseña, password):
+            session['user_id'] = user.id_usuario
+            flash('Inicio de sesión exitoso', 'success')
+            return redirect(url_for('usuarios.usuarios'))  # Cambiar 'dashboard' por la ruta correcta
+        else:
+            flash('Correo electrónico o contraseña incorrectos', 'danger')
+
+    return render_template('login.html')
+
+@usuarios_bp.route('/403')
+def acceso_denegado():
+    return render_template('403.html'), 403
 
 
 
