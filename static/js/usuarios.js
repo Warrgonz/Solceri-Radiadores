@@ -1,5 +1,18 @@
 'use strict';
 
+// Alertas
+
+document.addEventListener('DOMContentLoaded', (event) => {
+    setTimeout(() => {
+        let alerts = document.querySelectorAll('.alert');
+        alerts.forEach(alert => {
+            alert.classList.remove('show');
+            alert.classList.add('fade');
+            setTimeout(() => alert.remove(), 500); // Remove the alert from the DOM after it fades out
+        });
+    }, 5000); // Time in milliseconds (4000ms = 4 seconds)
+});
+
 // Muestro el campo sobre la contratación
 
 document.getElementById('rolSelect').addEventListener('change', function() {
@@ -44,4 +57,106 @@ function buscarUsuarios() {
             usuario.style.display = 'none';
         }
     }
+}
+
+// Desactivar usuarios.
+
+function desactivarUsuario(cedula, id) {
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: `¿Está seguro que desea desactivar al usuario con cédula ${cedula}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, desactivar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Llamar a la ruta de Flask para desactivar el usuario
+            fetch(`/usuarios/desactivar/${id}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'  // Asegúrate de que csrf_token() esté definido correctamente en tu template
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Desactivado!',
+                        'El usuario ha sido desactivado.',
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo desactivar el usuario.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire(
+                    'Error!',
+                    'Ocurrió un error al intentar desactivar el usuario.',
+                    'error'
+                );
+            });
+        }
+    });
+}
+
+
+// Activar usuario
+
+function activarUsuario(cedula, id) {
+    Swal.fire({
+        title: '¿Está seguro?',
+        text: `¿Está seguro que desea activar al usuario con cédula ${cedula}?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, activar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            fetch(`/usuarios/activar/${id}`, {  // Asegúrate de tener la ruta correcta para activar el usuario
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    Swal.fire(
+                        'Activado!',
+                        'El usuario ha sido activado.',
+                        'success'
+                    ).then(() => {
+                        location.reload();
+                    });
+                } else {
+                    Swal.fire(
+                        'Error!',
+                        'No se pudo activar el usuario.',
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                Swal.fire(
+                    'Error!',
+                    'Ocurrió un error al intentar activar el usuario.',
+                    'error'
+                );
+            });
+        }
+    });
 }
