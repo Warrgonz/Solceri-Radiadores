@@ -1,20 +1,21 @@
 # routes/usuarios.py
 
-from flask import Blueprint, render_template, request, url_for, redirect, flash, jsonify, session
+from flask import Blueprint, render_template, request, url_for, redirect, flash, jsonify, session, current_app
 from models.usuarios import Usuarios
 from models.roles import Roles
 from utils.firebase import FirebaseUtils
 from utils.db import db
-from utils.servicio_mail import generate_temp_password, send_email_async
+from utils.servicio_mail import generate_temp_password, send_email_async, generate_reset_token, send_reset_email
 import datetime
 from utils.auth import login_required, role_required
 from werkzeug.security import generate_password_hash, check_password_hash
+from itsdangerous import URLSafeTimedSerializer
 
 usuarios_bp = Blueprint('usuarios', __name__)
 
 @usuarios_bp.route('/usuarios')
 @login_required
-@role_required([1])
+@role_required([1,2,3])
 def usuarios():
     usuarios = Usuarios.query.all()
     return render_template('usuarios.html', usuarios=usuarios)
@@ -217,6 +218,12 @@ def login():
         user = Usuarios.query.filter_by(correo=email).first()
 
         if user and check_password_hash(user.contraseña, password):
+            # Verificar si la contraseña temporal y la principal son iguales
+            if user.contraseña_temp and check_password_hash(user.contraseña_temp, password):
+                session['user_id'] = user.id_usuario
+                flash('Por favor, cambia tu contraseña temporal.', 'warning')
+                return redirect(url_for('usuarios.password_reset'))  # Ruta a la que redirigir para el cambio de contraseña
+
             session['user_id'] = user.id_usuario
             flash('Inicio de sesión exitoso', 'success')
             return redirect(url_for('usuarios.usuarios'))  # Cambiar 'dashboard' por la ruta correcta
@@ -225,9 +232,79 @@ def login():
 
     return render_template('login.html')
 
+#Reset while logged
+
+@usuarios_bp.route('/password_reset', methods=['GET', 'POST'])
+@login_required
+def password_reset():
+    if request.method == 'POST':
+        user_id = session.get('user_id')
+        user = Usuarios.query.get(user_id)
+        if user:
+            new_password = request.form['new_password']
+            confirm_password = request.form['confirm_password']
+            
+            if new_password != confirm_password:
+                flash('Las contraseñas no coinciden.', 'danger')
+                return redirect(url_for('usuarios.password_reset'))
+            
+            # Agregar validaciones adicionales de la contraseña aquí
+            if len(new_password) < 8:
+                flash('La contraseña debe tener al menos 8 caracteres.', 'danger')
+                return redirect(url_for('usuarios.password_reset'))
+
+            user.set_password(new_password)
+            user.contraseña_temp = None  # Limpiar la contraseña temporal
+            db.session.commit()
+            flash('Contraseña cambiada exitosamente.', 'success')
+            return redirect(url_for('usuarios.usuarios'))
+    return render_template('password_reset.html')
+
+#Ruta para acceso denegado
 @usuarios_bp.route('/403')
 def acceso_denegado():
     return render_template('403.html'), 403
 
+#Forgot password abajo 
 
+# @usuarios_bp.route('/forgot_password', methods=['GET', 'POST'])
+# def forgot_password():
+#     if request.method == 'POST':
+#         email = request.form['email']
+#         user = Usuarios.query.filter_by(correo=email).first()
+#         if user:
+#             token = generate_reset_token(user)  # Generar un token de restablecimiento
+#             send_reset_email(user, token)  # Enviar el correo electrónico de restablecimiento
+#             flash('Se ha enviado un enlace de restablecimiento a tu correo electrónico.', 'info')
+#         else:
+#             flash('No se encontró una cuenta con ese correo electrónico.', 'danger')
+#     return render_template('forgot_password.html')
 
+# @usuarios_bp.route('/reset/<token>', methods=['GET', 'POST'])
+# def reset_with_token(token):
+#     try:
+#         email = s.loads(token, salt='password-reset-salt', max_age=3600)
+#     except:
+#         flash('El enlace de restablecimiento es inválido o ha expirado.', 'danger')
+#         return redirect(url_for('usuarios.login'))
+    
+#     user = Usuarios.query.filter_by(correo=email).first_or_404()
+    
+#     if request.method == 'POST':
+#         new_password = request.form['new_password']
+#         confirm_password = request.form['confirm_password']
+#         if new_password != confirm_password:
+#             flash('Las contraseñas no coinciden.', 'danger')
+#             return redirect(url_for('usuarios.reset_with_token', token=token))
+        
+#         if len(new_password) < 8:
+#             flash('La contraseña debe tener al menos 8 caracteres.', 'danger')
+#             return redirect(url_for('usuarios.reset_with_token', token=token))
+
+#         user.set_password(new_password)
+#         user.contraseña_temp = None
+#         db.session.commit()
+#         flash('Contraseña cambiada exitosamente.', 'success')
+#         return redirect(url_for('usuarios.login'))
+    
+#     return render_template('password_reset.html', token=token)
