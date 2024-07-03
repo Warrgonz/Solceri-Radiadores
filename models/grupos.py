@@ -1,3 +1,4 @@
+# models/grupos.py
 from utils.db import db
 
 class Grupos(db.Model):
@@ -6,7 +7,6 @@ class Grupos(db.Model):
     nombre = db.Column(db.String(255))
     descripcion = db.Column(db.String(255))
 
-    # Constructor
     def __init__(self, nombre, descripcion):
         self.nombre = nombre
         self.descripcion = descripcion

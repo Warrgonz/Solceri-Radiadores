@@ -265,46 +265,52 @@ def password_reset():
 def acceso_denegado():
     return render_template('403.html'), 403
 
-#Forgot password abajo 
 
-# @usuarios_bp.route('/forgot_password', methods=['GET', 'POST'])
-# def forgot_password():
-#     if request.method == 'POST':
-#         email = request.form['email']
-#         user = Usuarios.query.filter_by(correo=email).first()
-#         if user:
-#             token = generate_reset_token(user)  # Generar un token de restablecimiento
-#             send_reset_email(user, token)  # Enviar el correo electrónico de restablecimiento
-#             flash('Se ha enviado un enlace de restablecimiento a tu correo electrónico.', 'info')
-#         else:
-#             flash('No se encontró una cuenta con ese correo electrónico.', 'danger')
-#     return render_template('forgot_password.html')
+@usuarios_bp.route('/forgot_password', methods=['GET', 'POST'])
+def forgot_password():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = Usuarios.query.filter_by(correo=email).first()
+        if user:
+            token = generate_reset_token(user)  # Generar un token de restablecimiento
+            send_reset_email(user, token)  # Enviar el correo electrónico de restablecimiento
+            flash('Se ha enviado un enlace de restablecimiento a tu correo electrónico.', 'info')
+        else:
+            flash('No se encontró una cuenta con ese correo electrónico.', 'danger')
+    return render_template('forgot_password.html')
 
-# @usuarios_bp.route('/reset/<token>', methods=['GET', 'POST'])
-# def reset_with_token(token):
-#     try:
-#         email = s.loads(token, salt='password-reset-salt', max_age=3600)
-#     except:
-#         flash('El enlace de restablecimiento es inválido o ha expirado.', 'danger')
-#         return redirect(url_for('usuarios.login'))
+@usuarios_bp.route('/reset/<token>', methods=['GET', 'POST'])
+def reset_with_token(token):
+    try:
+        email = s.loads(token, salt='password-reset-salt', max_age=3600)
+    except:
+        flash('El enlace de restablecimiento es inválido o ha expirado.', 'danger')
+        return redirect(url_for('usuarios.login'))
     
-#     user = Usuarios.query.filter_by(correo=email).first_or_404()
+    user = Usuarios.query.filter_by(correo=email).first_or_404()
     
-#     if request.method == 'POST':
-#         new_password = request.form['new_password']
-#         confirm_password = request.form['confirm_password']
-#         if new_password != confirm_password:
-#             flash('Las contraseñas no coinciden.', 'danger')
-#             return redirect(url_for('usuarios.reset_with_token', token=token))
+    if request.method == 'POST':
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+        if new_password != confirm_password:
+            flash('Las contraseñas no coinciden.', 'danger')
+            return redirect(url_for('usuarios.reset_with_token', token=token))
         
-#         if len(new_password) < 8:
-#             flash('La contraseña debe tener al menos 8 caracteres.', 'danger')
-#             return redirect(url_for('usuarios.reset_with_token', token=token))
+        if len(new_password) < 8:
+            flash('La contraseña debe tener al menos 8 caracteres.', 'danger')
+            return redirect(url_for('usuarios.reset_with_token', token=token))
 
-#         user.set_password(new_password)
-#         user.contraseña_temp = None
-#         db.session.commit()
-#         flash('Contraseña cambiada exitosamente.', 'success')
-#         return redirect(url_for('usuarios.login'))
+        user.set_password(new_password)
+        user.contraseña_temp = None
+        db.session.commit()
+        flash('Contraseña cambiada exitosamente.', 'success')
+        return redirect(url_for('usuarios.login'))
     
-#     return render_template('password_reset.html', token=token)
+    return render_template('password_reset.html', token=token)
+
+@usuarios_bp.route('/logout')
+@login_required
+def logout():
+    session.clear()  # Elimina todas las variables de sesión, incluido 'user_id'
+    flash('Has cerrado sesión correctamente.', 'info')
+    return redirect(url_for('usuarios.login'))

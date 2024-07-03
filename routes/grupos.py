@@ -1,27 +1,54 @@
-from flask import Blueprint, render_template, request, jsonify
-from models.usuarios import Usuarios
+# routes/grupos.py
+
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from models.grupos import Grupos
+from utils.db import db
 
 grupos_bp = Blueprint('grupos', __name__)
 
-#Aqui todas las rutas para /grupos
-
+# Ruta para mostrar todos los equipos
 @grupos_bp.route('/grupos')
 def grupos():
-    return render_template('grupos.html')
+    grupos = Grupos.query.all()
+    return render_template('grupos.html', grupos=grupos)
 
-@grupos_bp.route('/grupos/create')
-def grupos_create():
+# Ruta para crear un nuevo equipo
+@grupos_bp.route('/grupos/crear', methods=['GET', 'POST'])
+def grupos_crear():
+    if request.method == 'POST':
+        nombre = request.form['nombre']
+        descripcion = request.form['descripcion']
+
+        nuevo_grupo = Grupos(nombre=nombre, descripcion=descripcion)
+        db.session.add(nuevo_grupo)
+        db.session.commit()
+
+        return redirect(url_for('grupos.grupos'))  # Redirige a la lista de equipos
+
     return render_template('grupos_crear.html')
 
-@grupos_bp.route('/grupos/editar')
-def grupos_edit():
-    return render_template('grupos_editar.html')
+# Ruta para editar un equipo específico
+@grupos_bp.route('/grupos/editar/<int:id_grupo>', methods=['GET', 'POST'])
+def grupos_editar(id_grupo):
+    grupo = Grupos.query.get(id_grupo)
+    if request.method == 'POST':
+        if grupo:
+            grupo.nombre = request.form['nombre']
+            grupo.descripcion = request.form['descripcion']
+            db.session.commit()
+            return jsonify({'message': 'El grupo ha sido actualizado exitosamente'})
+        else:
+            return jsonify({'error': 'El grupo no existe'}), 404
 
-@grupos_bp.route('/grupos/buscar_usuarios', methods=['POST'])
-def buscar_usuarios():
-    query = request.form.get('query', '')
-    usuarios = Usuarios.query.filter(Usuarios.nombre.like(f'%{query}%')).all()
-    # Filtrar los usuarios cuyo rol sea Colaborador o Administrador
-    usuarios = [usuario for usuario in usuarios if usuario.rol.nombre in ['Colaborador', 'Administrador']]
-    resultados = [{'id_usuario': usuario.id_usuario, 'nombre': usuario.nombre} for usuario in usuarios]
-    return jsonify(resultados)
+    return render_template('grupos_editar.html', grupo=grupo)
+
+# Ruta para eliminar un equipo específico
+@grupos_bp.route('/grupos/eliminar/<int:id_grupo>', methods=['POST'])
+def grupos_eliminar(id_grupo):
+    grupo = Grupos.query.get(id_grupo)
+    if grupo:
+        db.session.delete(grupo)
+        db.session.commit()
+        return jsonify({'message': 'El grupo ha sido eliminado exitosamente'})
+    else:
+        return jsonify({'error': 'El grupo no existe'}), 404

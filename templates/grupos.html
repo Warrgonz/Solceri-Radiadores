@@ -3,7 +3,7 @@
 <div class="d-flex justify-content-between">
     <h2>Grupos de trabajo</h2>
     <div>
-        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Agregar</button>
+        <a href="{{ url_for('grupos.grupos_crear') }}" class="btn-solceri">Agregar</a>
     </div>
 </div>
 <div class="table-responsive">
@@ -12,82 +12,27 @@
             <tr class="text-center">
                 <th>ID</th>
                 <th>Nombre del grupo</th>
-                <th>Total integrantes</th>
+                <th>Descripción</th>
                 <th>Acciones</th>
             </tr>
         </thead>
         <tbody class="text-center">
+            {% for grupo in grupos %}
             <tr>
-                <td>1</td>
-                <td>Grupo 1</td>
-                <td>7</td>
+                <td>{{ grupo.id_grupo }}</td>
+                <td>{{ grupo.nombre }}</td>
+                <td>{{ grupo.descripcion }}</td>
                 <td>
                     <div class="flex-wrap">
-                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
-                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
-                                Editar</strong></button>
+                        <form action="{{ url_for('grupos.grupos_eliminar', id_grupo=grupo.id_grupo) }}" method="post">
+                            <button type="submit" class="btn btn-danger btn-md" onclick="return confirm('¿Estás seguro de eliminar este grupo?')">Eliminar</button>
+                        </form>
+                        <a href="{{ url_for('grupos.grupos_editar', id_grupo=grupo.id_grupo) }}" class="btn-solceri">Editar</a>
                     </div>
                 </td>
             </tr>
-            <tr>
-                <td>2</td>
-                <td>Grupo 2</td>
-                <td>4</td>
-                <td>
-                    <div class="flex-wrap">
-                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
-                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
-                                Editar</strong></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>3</td>
-                <td>Grupo 3</td>
-                <td>3</td>
-                <td>
-                    <div class="flex-wrap">
-                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
-                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
-                                Editar</strong></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>4</td>
-                <td>Grupo 4</td>
-                <td>6</td>
-                <td>
-                    <div class="flex-wrap">
-                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
-                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
-                                Editar</strong></button>
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>5</td>
-                <td>Grupo 5</td>
-                <td>0</td>
-                <td>
-                    <div class="flex-wrap">
-                        <button class="btn btn-danger btn-md"> <strong>Eliminar</strong></button>
-                        <button class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop"data-bs-toggle="modal" data-bs-target="#staticBackdrop" style="color: white;"><strong>
-                                Editar</strong></button>
-                    </div>
-                </td>
-            </tr>
+            {% endfor %}
         </tbody>
-        <tfoot class="text-center">
-            <tr>
-                <th>ID</th>
-                <th>Nombre completo</th>
-                <th>Rol</th>
-                <th>Acciones</th>
-            </tr>
-        </tfoot>
     </table>
 </div>
-
-
 {% endblock %}
