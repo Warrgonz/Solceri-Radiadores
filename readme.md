@@ -13,10 +13,6 @@ Warren González Reyes
 Alejandro Castro García
 - [@acastrog38](https://github.com/acastrog38)
 
-Royner Badilla 
-- [@Royner26](https://github.com/Royner26)
-
-
 ## Table of Contents
 - [Setup](#setup)
   - [Creating a Virtual Environment](#creating-a-virtual-environment)
@@ -115,4 +111,4 @@ To view the user stories contained in our application, please check the backlog 
 
 ## Support
 
-For support, you can contact us to `wgonzalez90631@ufide.ac.cr`, `acastro40720@ufide.ac.cr` , `rbadilla30943@ufide.ac.cr`.
+For support, you can contact us to `wgonzalez90631@ufide.ac.cr`, `acastro40720@ufide.ac.cr`.
