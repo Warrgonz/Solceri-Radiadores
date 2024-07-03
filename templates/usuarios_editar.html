@@ -1,6 +1,6 @@
 {% extends "layout.html" %}
-
 {% block content %}
+
 {% with messages = get_flashed_messages(with_categories=true) %}
     {% if messages %}
         {% for category, message in messages %}
@@ -20,7 +20,7 @@
             </div>
             <div class="pb-2">
                 <label for="nombre">Correo electronico<span>*</span></label>
-                <input type="text" class="form-control" name="correo" value="{{ usuario.correo }}" required placeholder="Correo del usuario">
+                <input type="text" class="form-control" name="correo" value="{{ usuario.correo }}" disabled placeholder="Correo del usuario">
                 <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
             <div class="pb-2">
