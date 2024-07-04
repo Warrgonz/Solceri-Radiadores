@@ -265,7 +265,6 @@ def password_reset():
 def acceso_denegado():
     return render_template('403.html'), 403
 
-#Forgot password abajo 
 
 @usuarios_bp.route('/forgot_password', methods=['GET', 'POST'])
 def forgot_password():
@@ -308,3 +307,10 @@ def reset_with_token(token):
         return redirect(url_for('usuarios.login'))
     
     return render_template('password_reset.html', token=token)
+
+@usuarios_bp.route('/logout')
+@login_required
+def logout():
+    session.clear()  # Elimina todas las variables de sesión, incluido 'user_id'
+    flash('Has cerrado sesión correctamente.', 'info')
+    return redirect(url_for('usuarios.login'))

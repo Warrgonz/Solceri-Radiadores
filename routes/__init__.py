@@ -1,3 +1,5 @@
+#__init__.py
+
 from .grupos import grupos_bp
 from .categorias import categorias_bp
 from .usuarios import usuarios_bp

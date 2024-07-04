@@ -50,7 +50,25 @@ def generate_reset_token(user):
 
 def send_reset_email(user, token):
     from flask import current_app  # Importar aquí para evitar importación circular
+def send_reset_email(user, token):
+    from flask import current_app  # Importar aquí para evitar importación circular
 
+    with current_app.app_context():
+        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
+        reset_url = url_for('usuarios.reset_with_token', token=token, _external=True)
+        subject = "Restablecer Contraseña"
+        body = f"""
+        <html>
+        <head></head>
+        <body>
+            <h1 style="color:SlateGray;">¡Hola!</h1>
+            <p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
+            <p><a href="{reset_url}">Restablecer Contraseña</a></p>
+            <p>Si no solicitaste este cambio, por favor ignora este correo.</p>
+        </body>
+        </html>
+        """
+        send_email_async(user.correo, subject, body)
     with current_app.app_context():
         s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
         reset_url = url_for('usuarios.reset_with_token', token=token, _external=True)
