@@ -2,10 +2,13 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from models.catalogo import Catalogo
 from utils.db import db
 from utils.firebase import FirebaseUtils
+from utils.auth import login_required, role_required
 
 catalogo_bp = Blueprint('catalogo', __name__)
 
 @catalogo_bp.route('/catalogo')
+@login_required
+@role_required([1])
 def catalogo():
     catalogo = Catalogo.query.all()  # Select * from catalogo
     print(catalogo)  # Imprime el contenido de catalogo en la consola de Flask
