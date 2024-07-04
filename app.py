@@ -1,4 +1,5 @@
-from flask import Flask
+from flask import Flask, session, g
+from models.usuarios import Usuarios
 from routes import blueprints
 from utils.db import init_db
 import os
@@ -10,6 +11,15 @@ app = Flask(__name__)
 
 # Conexión a la base de datos
 init_db(app)
+
+@app.before_request
+def before_request():
+    user_id = session.get('user_id')
+    if user_id:
+        user = Usuarios.query.get(user_id)
+        g.user = user
+    else:
+        g.user = None
 
 # Configura una clave secreta personalizada
 app.secret_key = os.getenv("PASSWORD_APP")

@@ -163,7 +163,7 @@ function activarUsuario(cedula, id) {
 
 // Eliminar usuario
 
-function confirmDelete(element) {
+function confirmDeleteUsuario(element) {
     const cedula = element.getAttribute('data-cedula');
     const deleteUrl = element.getAttribute('data-url');
 

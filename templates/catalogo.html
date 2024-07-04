@@ -39,22 +39,23 @@
         </thead>
         <tbody id="tablaCatalogo" class="text-center">
             {% for producto in catalogo %}
-                <tr id="fila{{ producto.id_catalogo }}">
-                    <td>{{ producto.sku }}</td>
-                    <td>{{ producto.nombre_producto }}</td>
-                    <td><img src="{{ producto.ruta_imagen }}" alt="Foto de {{ producto.nombre_producto }}" style="width: 50px; height: 50px;"></td>
-                    <td>{{ producto.descripcion }}</td>
-                    <td>{{ producto.precio }}</td>
-                    <td>
-                        <a href="{{ url_for('catalogo.catalogo_editar', id=producto.id_catalogo) }}" style="text-decoration: none;" class="btn-solceri"><strong>Modificar</strong></a>
-                        <a href="#" style="text-decoration: none;" class="btn-solceri-eliminar"
-                           data-cedula=""
-                           data-url=""
-                           onclick="confirmDelete(this)">
-                            <strong>Eliminar</strong>
-                        </a>
-                    </td>
-                </tr>
+            <tr id="fila{{ producto.id_catalogo }}">
+                <td>{{ producto.sku }}</td>
+                <td>{{ producto.nombre_producto }}</td>
+                <td><img src="{{ producto.ruta_imagen }}" alt="Foto de {{ producto.nombre_producto }}"
+                        style="width: 50px; height: 50px;"></td>
+                <td>{{ producto.descripcion }}</td>
+                <td>{{ producto.precio }}</td>
+                <td>
+                    <a href="{{ url_for('catalogo.catalogo_editar', id=producto.id_catalogo) }}"
+                        style="text-decoration: none;" class="btn-solceri"><strong>Modificar</strong></a>
+                    <a href="#" style="text-decoration: none;" class="btn-solceri-eliminar"
+                        data-id="{{ producto.id_catalogo }}" data-producto="{{ producto.nombre_producto }}"
+                        onclick="confirmDelete(this)">
+                        <strong>Eliminar</strong>
+                    </a>
+                </td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>

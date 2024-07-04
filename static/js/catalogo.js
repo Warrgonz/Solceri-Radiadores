@@ -5,15 +5,16 @@ function confirmDelete(button) {
     const id_producto = button.getAttribute('data-id');
     const nombre_producto = button.getAttribute('data-producto');
 
-    swal({
+    Swal.fire({
         title: `¿Estás seguro que deseas eliminar el producto "${nombre_producto}" del catálogo?`,
         text: "Esta acción no se puede deshacer.",
         icon: "warning",
-        buttons: ["Cancelar", "Eliminar"],
+        showCancelButton: true,
+        confirmButtonText: 'Eliminar',
+        cancelButtonText: 'Cancelar',
         dangerMode: true,
-    })
-    .then((willDelete) => {
-        if (willDelete) {
+    }).then((result) => {
+        if (result.isConfirmed) {
             deleteProducto(id_producto);
         }
     });
@@ -31,7 +32,7 @@ function deleteProducto(id) {
         return response.json();
     })
     .then(data => {
-        swal(data.message, {
+        Swal.fire(data.message, {
             icon: "success",
         }).then(() => {
             // Opcional: recargar la página o actualizar la lista de productos después de eliminar
@@ -40,7 +41,7 @@ function deleteProducto(id) {
     })
     .catch(error => {
         console.error('Error al eliminar el producto:', error);
-        swal("Error al eliminar el producto", {
+        Swal.fire("Error al eliminar el producto", {
             icon: "error",
         });
     });
