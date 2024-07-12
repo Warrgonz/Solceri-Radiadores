@@ -4,8 +4,8 @@ from flask_sqlalchemy import SQLAlchemy
 db = SQLAlchemy()
 
 def init_db(app: Flask):
-    try:
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/solceri'
+    try: # Cambiar contraseña de la db
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345@localhost/solceri'
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         
         db.init_app(app)

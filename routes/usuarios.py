@@ -14,8 +14,8 @@ from itsdangerous import URLSafeTimedSerializer
 usuarios_bp = Blueprint('usuarios', __name__)
 
 @usuarios_bp.route('/usuarios')
-@login_required
-@role_required([1,2,3])
+#@login_required
+#@role_required([1,2,3])
 def usuarios():
     usuarios = Usuarios.query.all()
     return render_template('usuarios.html', usuarios=usuarios)

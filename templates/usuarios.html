@@ -28,7 +28,7 @@
 
 {% if usuarios %}
 <div class="table-responsive">
-    <table class="table table-striped" style="width:100%">
+    <table class="table table-striped table-bordered table-hover" style="width:100%">
         <thead>
             <tr class="text-center">
                 <th>Cédula</th>
@@ -53,17 +53,17 @@
                 <td>
                     <div class="flex-wrap">
                         <a href="{{ url_for('usuarios.usuarios_editar', id=usuario.id_usuario) }}"
-                            style="text-decoration: none;" class="btn-solceri"><strong>Modificar</strong></a>
+                            style="text-decoration: none;" class="btn-solceri mb-1"><strong>Modificar</strong></a>
 
                         {% if usuario.estado %}
-                        <button class="btn btn-dark btn-md" style="color: white;"
+                        <button class="btn btn-dark btn-md mb-1" style="color: white;"
                             onclick="desactivarUsuario('{{ usuario.cedula }}', '{{ usuario.id_usuario }}')"><strong>Inactivar</strong></button>
                         {% else %}
-                        <button class="btn btn-success btn-md" style="color: white;"
+                        <button class="btn btn-success btn-md mb-1" style="color: white;"
                             onclick="activarUsuario('{{ usuario.cedula }}', '{{ usuario.id_usuario }}')"><strong>Activar</strong></button>
                         {% endif %}
 
-                        <a href="#" style="text-decoration: none;" class="btn-solceri-eliminar"
+                        <a href="#" style="text-decoration: none;" class="btn-solceri-eliminar mb-1"
                             data-cedula="{{ usuario.cedula }}"
                             data-url="{{ url_for('usuarios.eliminar_usuario', id_usuario=usuario.id_usuario) }}"
                             onclick="confirmDeleteUsuario(this)">

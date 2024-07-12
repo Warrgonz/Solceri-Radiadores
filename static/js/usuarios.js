@@ -44,7 +44,10 @@ function readURL(input) {
 function buscarUsuarios() {
     var query = document.getElementById('buscar').value.toLowerCase();
     var usuarios = document.getElementsByClassName('usuario');
-
+    var noResults = document.getElementById('no-results');
+    
+    var found = false; // Flag to check if any user matches the query
+    
     for (var i = 0; i < usuarios.length; i++) {
         var usuario = usuarios[i];
         var cedula = usuario.getElementsByClassName('cedula')[0].textContent.toLowerCase();
@@ -53,8 +56,24 @@ function buscarUsuarios() {
 
         if (cedula.includes(query) || nombreCompleto.includes(query) || correo.includes(query)) {
             usuario.style.display = '';
+            found = true;
         } else {
             usuario.style.display = 'none';
+        }
+    }
+
+    // Show "No hay resultados" if no matches found
+    if (!found) {
+        if (!noResults) {
+            var tBody = document.querySelector('tbody');
+            var tr = document.createElement('tr');
+            tr.id = 'no-results';
+            tr.innerHTML = '<td colspan="7" class="text-center">No hay resultados</td>';
+            tBody.appendChild(tr);
+        }
+    } else {
+        if (noResults) {
+            noResults.remove(); // Remove the "No hay resultados" row if matches are found
         }
     }
 }
