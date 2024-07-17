@@ -15,7 +15,8 @@ class Usuarios(db.Model):
     contraseña_temp = db.Column(db.String(255))  # Añadir el campo para la contraseña temporal
     estado = db.Column(db.Boolean, default=False)
     ultima_actividad = db.Column(db.DateTime)
-    Fecha_Contratacion = db.Column(db.Date)
+    Fecha_Contratacion = db.Column(db.Date, nullable=True)
+#    vacaciones_disponibles = db.Column(db.Integer, nullable=True)
     ruta_imagen = db.Column(db.String(255))  # Añade el campo ruta_imagen si es necesario
     id_rol = db.Column(db.Integer, db.ForeignKey('roles.id_rol'))
 

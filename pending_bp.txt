@@ -39,10 +39,6 @@ def usuarios():
 
 # vacaciones
 
-@app.route('/vacaciones')
-def vacaciones():
-    return render_template('vacaciones.html')
-
 @app.route('/vacaciones/vacaciones_calendario')
 def vacacionesCalendario():
     return render_template('vacaciones_calendario.html')
