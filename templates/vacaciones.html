@@ -9,53 +9,21 @@
         <input type="text" placeholder="Datos del usuario">
     </div>
     <div>
-        <a href="/vacaciones/vacaciones_calendario"><button class="btn-solceri">Calendario</button></a>
-        <a href="/vacaciones/vacaciones_rechazadas"><button class="btn btn-danger btn-md">Rechazadas</button></a>
-
+        <a href="/vacaciones/nueva"><button class="btn-solceri">Nueva solicitud</button></a>
+        <!--Filtrar por rol-->
+        <a href="/vacaciones/vacaciones_rechazadas"><button class="btn btn-danger btn-md">Archivadas</button></a>
     </div>
+</div>
 
-</div>
-<div class="table-responsive">
-    <table class="table table-striped" style="width:100%">
-        <thead>
-            <tr class="text-center">
-                <th>Nombre completo</th>
-                <th>Fecha de inicio</th>
-                <th>Fecha de finalización</th>
-                <th>Días disponibles</th>
-                <th>Comentario</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody class="text-center">
-            <tr>
-                <td>David Solórzano Cerdas</td>
-                <td>11/04/2024</td>
-                <td>17/04/2024</td>
-                <td>17</td>
-                <td><a style="color: darkblue;" data-bs-toggle="modal" data-bs-target="#staticBackdrop">Ver detalles</a>
-                </td>
-                <td>
-                    <div class="flex-wrap">
-                        <button class="btn btn-success btn-sm"> <strong>Aceptar</strong></button>
-                        <button class="btn btn-danger btn-sm" style="color: white;"><strong>
-                                Rechazar</strong></button>
-                    </div>
-                </td>
-            </tr>
-        </tbody>
-        <tfoot class="text-center">
-            <tr>
-                <th>Nombre completo</th>
-                <th>Fecha de inicio</th>
-                <th>Fecha de finalización</th>
-                <th>Días disponibles</th>
-                <th>Comentario</th>
-                <th>Acciones</th>
-            </tr>
-        </tfoot>
-    </table>
-</div>
+<!-- Calendario es para todos -->
+
+<!-- Mis solicitudes: Por rol -->
+
+<!--select * from vacaciones where userid = session.-->
+
+<!-- Pendientes: Por rol -->
+
+<!--select * fromm vacaciones where estado = "Pendiente" -->
 
 <!-- Button trigger modal -->
 <!-- Modal -->

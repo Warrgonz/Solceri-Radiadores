@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<div class="d-flex flex-column">
+    <h2>Solicitud de vacaciones</h2>
+    <form id="vacacionesForm" method="POST" action="{{ url_for('vacaciones.nueva_vacacion') }}"
+        enctype="multipart/form-data">
+        <div class="pt-3">
+            <div class="pb-2">
+                <label for="solicitante">Solicitante<span>*</span></label>
+                <input type="text" class="form-control" name="solicitante" value="{{ user_name }}" disabled required>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="pb-2">
+                        <label for="dia_inicio">Fecha de Inicio<span>*</span></label>
+                        <input type="date" id="dia_inicio" class="form-control" name="dia_inicio" required>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="pb-2">
+                        <label for="dia_final">Fecha de Finalización<span>*</span></label>
+                        <input type="date" id="dia_final" class="form-control" name="dia_final" required>
+                    </div>
+                </div>
+            </div>
+            <div class="pb-2">
+                <label for="detalles">Detalles de la solicitud<span>*</span></label>
+                <textarea class="form-control" name="detalles" required
+                    placeholder="Ingrese los detalles de la solicitud" rows="4" cols="50"></textarea>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <a href="{{ url_for('vacaciones.listar_vacaciones') }}" class="btn btn-danger btn-md mx-2">Cancelar</a>
+            <button type="submit" class="btn btn-success btn-md">Confirmar</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
