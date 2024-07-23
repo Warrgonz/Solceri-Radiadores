@@ -67,9 +67,11 @@
                     <a href="{{ url_for('vacaciones.detalle_vacacion', id=solicitud.id_vacacion) }}"
                         class="btn btn-primary btn-sm">Ver detalle</a>
 
-                    <a href="{{ url_for('vacaciones.nueva_vacacion', id=solicitud.id_vacacion) }}"
+                    <a href="{{ url_for('vacaciones.modificar_vacacion', id=solicitud.id_vacacion) }}"
                         class="btn btn-warning btn-sm">Modificar</a>
-                    <a href="" class="btn btn-danger btn-sm">Cancelar</a>
+                    <a href="#" class="btn btn-danger btn-sm"
+                        onclick="cancelarSolicitud('{{ solicitud.id_vacacion }}')">Cancelar</a>
+
                 </td>
             </tr>
             {% endfor %}

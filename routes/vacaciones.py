@@ -1,12 +1,12 @@
 # routes/vacaciones.py
 
-from flask import Blueprint, render_template, request, redirect, url_for, session, flash
+from flask import Blueprint, render_template, request, redirect, url_for, session, flash, jsonify
 from models.vacaciones import Vacaciones
 from utils.db import db
 from models.usuarios import Usuarios
 from models.roles import Roles
 from utils.servicio_mail import send_email_async
-from datetime import datetime
+from datetime import datetime, date
 from utils.auth import login_required, role_required
 from math import ceil
 
@@ -134,4 +134,117 @@ def detalle_vacacion(id):
     aprobador = Usuarios.query.get(solicitud.id_aprobador) if solicitud.id_aprobador else None
 
     return render_template("vacaciones_detalle.html", solicitud=solicitud, solicitante=solicitante, aprobador=aprobador)
+
+@vacaciones_bp.route('/vacaciones/modificar/<int:id>', methods=['GET', 'POST'])
+@login_required
+@role_required(allowed_roles=[1, 2]) 
+def modificar_vacacion(id):
+    solicitud = Vacaciones.query.get_or_404(id)
+    solicitante = Usuarios.query.get(solicitud.id_solicitante)
+    aprobador = Usuarios.query.get(solicitud.id_aprobador) if solicitud.id_aprobador else None
+
+    if request.method == 'POST':
+        dia_inicio = request.form.get('dia_inicio')
+        dia_final = request.form.get('dia_final')
+        detalles = request.form.get('detalles')
+
+        # Validar campos requeridos
+        if not (dia_inicio and dia_final and detalles):
+            flash('Todos los campos son requeridos.', 'danger')
+            return redirect(url_for('vacaciones.modificar_vacacion', id=id))
+
+        # Validar fechas
+        today = datetime.today().date()
+        try:
+            fecha_inicio = datetime.strptime(dia_inicio, '%Y-%m-%d').date()
+            fecha_final = datetime.strptime(dia_final, '%Y-%m-%d').date()
+        except ValueError:
+            flash('Formato de fecha inválido.', 'danger')
+            return redirect(url_for('vacaciones.modificar_vacacion', id=id))
+
+        if fecha_inicio < today:
+            flash('La fecha de inicio debe ser de hoy en adelante.', 'danger')
+            return redirect(url_for('vacaciones.modificar_vacacion', id=id))
+
+        if fecha_final < fecha_inicio:
+            flash('La fecha de finalización debe ser posterior a la fecha de inicio.', 'danger')
+            return redirect(url_for('vacaciones.modificar_vacacion', id=id))
+
+        solicitud.dia_inicio = dia_inicio
+        solicitud.dia_final = dia_final
+        solicitud.detalles = detalles
+
+        db.session.commit()
+        
+        # Enviar correo a todos los administradores
+        admins = Usuarios.query.join(Roles).filter(Roles.rol == 'Administrador').all()
+        for admin in admins:
+            subject = "Modificación de Solicitud de Vacaciones"
+            body = f"""
+            <html>
+            <head></head>
+            <body>
+                <h1 style="color:SlateGray;">Modificación de Solicitud de Vacaciones</h1>
+                <p>El usuario {solicitante.nombre} {solicitante.primer_apellido} {solicitante.segundo_apellido} ha modificado su solicitud de vacaciones.</p>
+                <p><strong>Fecha de Inicio:</strong> {dia_inicio}</p>
+                <p><strong>Fecha de Finalización:</strong> {dia_final}</p>
+                <p><strong>Detalles:</strong> {detalles}</p>
+            </body>
+            </html>
+            """
+            send_email_async(admin.correo, subject, body)
+
+        flash('Solicitud de vacaciones modificada con éxito', 'success')
+        return redirect(url_for('vacaciones.listar_vacaciones', VacacionModificada_alert='success'))
+
+    return render_template("vacaciones_modificar.html", solicitud=solicitud, solicitante=solicitante, aprobador=aprobador)
+
+@vacaciones_bp.route('/cancelar_solicitud', methods=['POST'])
+def cancelar_solicitud():
+    try:
+        solicitud_id = request.form['solicitud_id']
+        print(f"Solicitud ID: {solicitud_id}")
+
+        solicitud = Vacaciones.query.get(solicitud_id)
+        if solicitud:
+            solicitante = Usuarios.query.get(solicitud.id_solicitante)
+            if solicitante:
+                # Eliminar la solicitud de la base de datos
+                db.session.delete(solicitud)
+                db.session.commit()
+                print(f"Solicitud {solicitud_id} eliminada.")
+
+                # Enviar correos a los administradores
+                admins = Usuarios.query.join(Roles).filter(Roles.rol == 'Administrador').all()
+                for admin in admins:
+                    subject = "Cancelación de Solicitud de Vacaciones"
+                    body = f"""
+                    <html>
+                    <head></head>
+                    <body>
+                        <h1 style="color:SlateGray;">Cancelación de Solicitud de Vacaciones</h1>
+                        <p>El usuario {solicitante.nombre} {solicitante.primer_apellido} {solicitante.segundo_apellido} ha cancelado su solicitud de vacaciones.</p>
+                        <p><strong>Fecha de Inicio:</strong> {solicitud.dia_inicio}</p>
+                        <p><strong>Fecha de Finalización:</strong> {solicitud.dia_final}</p>
+                        <p><strong>Detalles:</strong> {solicitud.detalles}</p>
+                    </body>
+                    </html>
+                    """
+                    send_email_async(admin.correo, subject, body)
+                    print(f"Correo enviado a: {admin.correo}")
+
+                return jsonify({'success': True, 'message': 'La solicitud ha sido eliminada.'})
+            else:
+                print(f"No se encontró el solicitante con ID: {solicitud.id_solicitante}")
+                return jsonify({'success': False, 'message': 'No se encontró el solicitante.'})
+        else:
+            print(f"No se encontró la solicitud con ID: {solicitud_id}")
+            return jsonify({'success': False, 'message': 'No se encontró la solicitud.'})
+    except Exception as e:
+        print(f"Error al eliminar la solicitud: {str(e)}")
+        return jsonify({'success': False, 'message': 'Error al eliminar la solicitud.'})
+
+
+
+
 

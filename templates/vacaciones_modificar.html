@@ -1,0 +1,59 @@
+{% extends "layout.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<div class="d-flex flex-column">
+    <h2>Modificar solicitud</h2>
+    <form method="POST" action="{{ url_for('vacaciones.modificar_vacacion', id=solicitud.id_vacacion) }}">
+        <section>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="pb-2">
+                        <label for="solicitante">Solicitante:</label>
+                        <input type="text" class="form-control" name="solicitante" value="{{ solicitante.nombre }} {{ solicitante.primer_apellido }} {{ solicitante.segundo_apellido }}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="pb-2">
+                        <label for="estado">Estado:</label>
+                        <input type="text" class="form-control" name="estado" value="{{ solicitud.estado }}" disabled>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="pb-2">
+                        <label for="aprobador">Aprobado por:</label>
+                        <input type="text" class="form-control" name="aprobador" value="{{ aprobador.nombre }} {{ aprobador.primer_apellido }} {{ aprobador.segundo_apellido }}" disabled>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="pb-2">
+                        <label for="dia_inicio">Fecha de Inicio:</label>
+                        <input type="date" class="form-control" name="dia_inicio" value="{{ solicitud.dia_inicio }}">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="pb-2">
+                        <label for="dia_final">Fecha de Finalización:</label>
+                        <input type="date" class="form-control" name="dia_final" value="{{ solicitud.dia_final }}">
+                    </div>
+                </div>
+            </div>
+            <div class="pb-2">
+                <label for="detalles">Detalles de la solicitud<span>*</span></label>
+                <textarea class="form-control" name="detalles" required placeholder="Ingrese los detalles de la solicitud" rows="4" cols="50">{{ solicitud.detalles }}</textarea>
+            </div>
+
+            <button type="submit" class="btn btn-success btn-md">Guardar</button>
+            <a href="{{ url_for('vacaciones.listar_vacaciones') }}" class="btn btn-danger btn-md">Regresar</a>
+        </section>
+    </form>
+</div>
+{% endblock %}
