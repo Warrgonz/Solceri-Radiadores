@@ -8,6 +8,8 @@
 <h1 class="pb-3 section-title">Solicitudes de vacaciones</h1>
 {% endif %}
 
+<input value="{{ user_role }}" id="user_role" hidden />
+
 <div class="d-flex centered-container">
     <div class=" d-flex flex-row pb-3">
         <div class="dropdown">
@@ -41,6 +43,109 @@
 
 <!-- Calendario es para todos -->
 
+<div class="container" id="page-container">
+    <div id='calendar'></div>
+</div>
+
+<!-- Button trigger modal -->
+<button type="button" id="btnDetalleVacacion" style="display: none;" class="btn btn-primary" data-bs-toggle="modal"
+    data-bs-target="#detalleVacacion">
+    Launch static backdrop modal
+</button>
+
+<!-- Modal -->
+<div class="modal fade " id="detalleVacacion" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="detalleVacacion" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="detalleVacacion">Modal title</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <section>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="pb-2">
+                                <label for="solicitante">Solicitante:</label>
+                                <input type="text" class="form-control" name="solicitante" id="solicitanteVacacion" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="pb-2">
+                                <label for="estado">Estado:</label>
+                                <input type="text" class="form-control" name="estado" id="estadoVacacion" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="pb-2">
+                                <label for="aprobador">Aprobado por:</label>
+                                <input type="text" class="form-control" name="aprobador" id="aprobadorVacacion" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="pb-2">
+                                <label for="dia_inicio">Fecha de Inicio:</label>
+                                <input type="date" class="form-control" name="dia_inicio" id="inicioVacacion" disabled>
+                            </div>
+                        </div>
+                        <div class="col-md-12">
+                            <div class="pb-2">
+                                <label for="dia_final">Fecha de Finalización:</label>
+                                <input type="date" class="form-control" name="dia_final" id="finalVacacion" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pb-2">
+                        <label for="detalles">Detalles de la solicitud<span>*</span></label>
+                        <textarea class="form-control" name="detalles" required id="detalleVacacion" rows="4" cols="50"
+                            disabled></textarea>
+                    </div>
+                </section>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Event Details Modal -->
+<div class="modal fade" tabindex="-1" data-bs-backdrop="static" id="event-details-modal">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content rounded-0">
+            <div class="modal-header rounded-0">
+                <h5 class="modal-title">Detalles de evento</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body rounded-0">
+                <div class="container-fluid">
+                    <dl>
+                        <dt class="text-muted">Nombre</dt>
+                        <dd id="title" class="fw-bold fs-4"></dd>
+                        <dt class="text-muted">Descripción</dt>
+                        <dd id="description" class=""></dd>
+                        <dt class="text-muted">Inicio</dt>
+                        <dd id="start" class=""></dd>
+                        <dt class="text-muted">Fin</dt>
+                        <dd id="end" class=""></dd>
+                    </dl>
+                </div>
+            </div>
+            <div class="modal-footer rounded-0">
+                <div class="text-end">
+                    <button type="button" class="btn btn-primary btn-sm rounded-0" id="edit" data-id="">Editar</button>
+                    <button type="button" class="btn btn-danger btn-sm rounded-0" id="delete"
+                        data-id="">Eliminar</button>
+                    <button type="button" class="btn btn-secondary btn-sm rounded-0"
+                        data-bs-dismiss="modal">Cerrar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Mis solicitudes: Por rol  -->
 
 {% if user_role == 2 %} <!--Colaborador-->

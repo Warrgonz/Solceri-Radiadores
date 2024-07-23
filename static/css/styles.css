@@ -295,6 +295,7 @@ form span{
 
 }
 
-.calendar{
-    margin-top: 20px;
+
+.fc-button{
+    background-color: #265071 !important;
 }

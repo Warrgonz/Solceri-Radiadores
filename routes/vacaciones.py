@@ -47,6 +47,92 @@ def listar_vacaciones():
 
     return render_template('vacaciones.html', solicitudes=solicitudes.items, user_role=user.rol.id_rol, entries=entries, page=page, total_pages=solicitudes.pages)
 
+@vacaciones_bp.route('/vacaciones/calendarizacion', methods=['GET'])
+def obtener_vacacion():
+
+    # Access the query parameters
+    start = request.args.get('start')
+    end = request.args.get('end')
+
+    # Print the received parameters
+    print(f"Start: {start}, End: {end}")
+
+    # Convert start and end to date objects if they are not already in the correct format
+    try:
+        start_date = datetime.strptime(start, '%Y-%m-%dT%H:%M:%S%z')
+        end_date = datetime.strptime(end, '%Y-%m-%dT%H:%M:%S%z')
+    except ValueError:
+        return jsonify({"error": "Invalid date format"}), 400
+
+    # Query the database to get vacations within the specified range
+    vacations = db.session.query(Vacaciones, Usuarios).join(Usuarios, Vacaciones.id_solicitante == Usuarios.id_usuario).filter(
+        Vacaciones.estado == "Aprobado",
+        Vacaciones.dia_inicio >= start_date,
+        Vacaciones.dia_final <= end_date
+    ).all()
+
+    # Convert the query results to a list of dictionaries
+    vacations_list = [{
+        'id': vac.id_vacacion,
+        'title': f"{user.nombre} {user.primer_apellido} {user.segundo_apellido}",
+        'start': vac.dia_inicio.isoformat(),
+        'end': vac.dia_final.isoformat()
+    } for vac, user in vacations]
+
+    return jsonify(vacations_list)
+
+
+@vacaciones_bp.route('/vacaciones/info', methods=['GET'])
+def info_vacacion():
+    # Get the ID from the request arguments
+    id = request.args.get('id')
+    
+    # Ensure ID is provided and is a valid integer
+    if not id or not id.isdigit():
+        return jsonify({'error': 'Invalid or missing ID'}), 400
+
+    id = int(id)
+    
+    # Use aliases to distinguish between the two joins on the Usuarios table
+    solicitante_alias = db.aliased(Usuarios)
+    aprobador_alias = db.aliased(Usuarios)
+    
+    # Query the database to get vacation information along with requester and approver
+    solicitud = db.session.query(Vacaciones, solicitante_alias, aprobador_alias).join(
+        solicitante_alias, Vacaciones.id_solicitante == solicitante_alias.id_usuario
+    ).join(
+        aprobador_alias, Vacaciones.id_aprobador == aprobador_alias.id_usuario, isouter=True
+    ).filter(
+        Vacaciones.id_vacacion == id
+    ).first_or_404()
+    
+    vac, solicitante, aprobador = solicitud
+
+    # Create a dictionary from the solicitud object
+    vacation_info = {
+        'id_vacacion': vac.id_vacacion,
+        'solicitante': {
+            'nombre': solicitante.nombre,
+            'primer_apellido': solicitante.primer_apellido,
+            'segundo_apellido': solicitante.segundo_apellido
+        },
+        'aprobador': {
+            'nombre': aprobador.nombre if aprobador else None,
+            'primer_apellido': aprobador.primer_apellido if aprobador else None,
+            'segundo_apellido': aprobador.segundo_apellido if aprobador else None
+        },
+        'estado': vac.estado,
+        'detalles': vac.detalles,
+        'dia_inicio': vac.dia_inicio.isoformat(),
+        'dia_final': vac.dia_final.isoformat(),
+        'fecha_solicitud': vac.fecha_solicitud.isoformat(),
+        'dia_aprobacion': vac.dia_aprobacion.isoformat() if vac.dia_aprobacion else None
+    }
+
+    return jsonify(vacation_info)
+
+
+
 
 @vacaciones_bp.route('/vacaciones/nueva', methods=['GET', 'POST'])
 @login_required

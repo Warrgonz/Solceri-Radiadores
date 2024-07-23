@@ -12,4 +12,4 @@ class Vacaciones(db.Model):
     dia_inicio = db.Column(db.Date, nullable=False)
     dia_final = db.Column(db.Date, nullable=False)
     fecha_solicitud = db.Column(db.DateTime, default=db.func.current_timestamp())
-    dia_aprobacion = db.Column(db.DateTime, nullable=True) #
+    dia_aprobacion = db.Column(db.DateTime, nullable=True) 

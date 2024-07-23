@@ -34,6 +34,8 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="https://cdn.datatables.net/2.0.3/css/dataTables.bootstrap5.css">
 
+  </head>
+
     <!--Title-->
     <title>Solceri Radiadores</title>
 
@@ -136,8 +138,10 @@
                             </a>
                             <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#"
                                 data-bs-toggle="dropdown">
-                                <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#" data-bs-toggle="dropdown">
-                                    <img src="{{ g.user.ruta_imagen if g.user else '/static/images/NPC_3.jpg' }}" width="40px" style="border-radius: 10px;" alt="usuario">
+                                <a class="nav-link dropdown-toggle d-none d-sm-inline-block" href="#"
+                                    data-bs-toggle="dropdown">
+                                    <img src="{{ g.user.ruta_imagen if g.user else '/static/images/NPC_3.jpg' }}"
+                                        width="40px" style="border-radius: 10px;" alt="usuario">
                                     <span class="text-dark">{{ g.user.nombre if g.user else 'No User' }}</span>
                                 </a>
                             </a>
@@ -192,8 +196,6 @@
     <script src="/static/js/app.js"></script>
     <script src="/static/src/js/dataTable.js"></script>
     <script src="/static/src/js/utils.js"></script>
-    <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.9/index.global.min.js'></script>
-    <script src="/static/src/js/calendar.js"></script>
     <!--Utils-->
     <script src="{{ url_for('static', filename='js/utils.js') }}"></script>
     <!--Categorias-->
@@ -204,6 +206,10 @@
     <script src="{{ url_for('static', filename='js/catalogo.js') }}"></script>
     <!--Vacaciones-->
     <script src="{{ url_for('static', filename='js/vacaciones.js') }}"></script>
+    <script src='https://cdn.jsdelivr.net/npm/jquery@3.6.4/dist/jquery.min.js'></script>
+    <script src="{{ url_for('static', filename='js/fullcalendar/dist/index.global.min.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fullcalendar/dist/locale/es.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/fullcalendar/calendario.js') }}"></script>
 
 </body>
 
