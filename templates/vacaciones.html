@@ -1,66 +1,172 @@
 {% extends "layout.html" %}
 {% block content %}
 
-<h2>Vacaciones</h2>
-<div class="d-flex justify-content-between">
+{% if user_role == 2 %}
+<h1 class="pb-3 section-title">Mis solicitudes</h1>
+
+{% else %}
+<h1 class="pb-3 section-title">Solicitudes de vacaciones</h1>
+{% endif %}
+
+<div class="d-flex centered-container">
+    <div class=" d-flex flex-row pb-3">
+        <div class="dropdown">
+            <label for="entries">Cantidad de entradas:</label>
+            <select class="form-select" id="entries" name="entries" onchange="updateEntries(this.value)">
+                <option value="5">5</option>
+                <option value="10" selected>10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+            </select>
+        </div>
+        <button type="button" class="btn btn-primary btn-md mx-4" data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop">
+            Filtrar
+        </button>
+    </div>
 
     <div>
-        <label for="nombre">Buscar:</label>
-        <input type="text" placeholder="Datos del usuario">
-    </div>
-    <div>
-        <a href="/vacaciones/nueva"><button class="btn-solceri">Nueva solicitud</button></a>
+        <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" fill="currentColor" class="bi bi-calendar3"
+            viewBox="0 0 16 16">
+            <path
+                d="M14 0H2a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2M1 3.857C1 3.384 1.448 3 2 3h12c.552 0 1 .384 1 .857v10.286c0 .473-.448.857-1 .857H2c-.552 0-1-.384-1-.857z" />
+            <path
+                d="M6.5 7a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m-9 3a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2m3 0a1 1 0 1 0 0-2 1 1 0 0 0 0 2" />
+        </svg>
+        <a href="/vacaciones/nueva"><button class="btn-solceri mx-1">Nueva solicitud</button></a>
         <!--Filtrar por rol-->
-        <a href="/vacaciones/vacaciones_rechazadas"><button class="btn btn-danger btn-md">Archivadas</button></a>
+        <a href="/vacaciones/vacaciones_rechazadas"><button class="btn btn-danger btn-md mx-1">Archivadas</button></a>
     </div>
 </div>
 
 <!-- Calendario es para todos -->
 
-<!-- Mis solicitudes: Por rol -->
+<!-- Mis solicitudes: Por rol  -->
+
+{% if user_role == 2 %} <!--Colaborador-->
+
+<div class="table-responsive">
+    <table class="table table-striped table-bordered table-hover" style="width:100%">
+        <thead>
+            <tr class="text-center">
+                <th>Fecha de Inicio</th>
+                <th>Fecha de Finalización</th>
+                <th>Fecha de Solicitud</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for solicitud in solicitudes %}
+            <tr class="text-center">
+                <td>{{ solicitud.dia_inicio.strftime('%d-%m-%Y') }}</td>
+                <td>{{ solicitud.dia_final.strftime('%d-%m-%Y') }}</td>
+                <td>{{ solicitud.fecha_solicitud.strftime('%d-%m-%Y %H:%M:%S') }}</td>
+                <td>{{ solicitud.estado }}</td>
+                <td>
+                    <a href="{{ url_for('vacaciones.detalle_vacacion', id=solicitud.id_vacacion) }}"
+                        class="btn btn-primary btn-sm">Ver detalle</a>
+
+                    <a href="{{ url_for('vacaciones.nueva_vacacion', id=solicitud.id_vacacion) }}"
+                        class="btn btn-warning btn-sm">Modificar</a>
+                    <a href="" class="btn btn-danger btn-sm">Cancelar</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+        <tfoot class="text-center">
+            <tr>
+                <th>Fecha de Inicio</th>
+                <th>Fecha de Finalización</th>
+                <th>Fecha de Solicitud</th>
+                <th>Estado</th>
+                <th>Acciones</th>
+            </tr>
+        </tfoot>
+    </table>
+</div>
+
+<nav aria-label="Page navigation example">
+    <ul class="pagination">
+        {% if page > 1 %}
+        <li class="page-item"><a class="page-link"
+                href="{{ url_for('vacaciones.listar_vacaciones', page=page-1, entries=entries) }}">Previous</a></li>
+        {% endif %}
+        {% for p in range(1, total_pages + 1) %}
+        <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link"
+                href="{{ url_for('vacaciones.listar_vacaciones', page=p, entries=entries) }}">{{ p }}</a></li>
+        {% endfor %}
+        {% if page < total_pages %} <li class="page-item"><a class="page-link"
+                href="{{ url_for('vacaciones.listar_vacaciones', page=page+1, entries=entries) }}">Next</a></li>
+            {% endif %}
+    </ul>
+</nav>
+
+<!-- Modal -->
+<!-- Modal -->
+<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+    aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h1 class="modal-title fs-5" id="staticBackdropLabel">Filtrar datos</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="filter-form" method="get" action="{{ url_for('vacaciones.listar_vacaciones') }}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="pb-2">
+                                <label for="dia_inicio">Fecha de Inicio<span>*</span></label>
+                                <input type="date" id="dia_inicio" class="form-control" name="dia_inicio">
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="pb-2">
+                                <label for="dia_final">Fecha de Finalización<span>*</span></label>
+                                <input type="date" id="dia_final" class="form-control" name="dia_final">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row pt-3">
+                        <div class="col-md-6">
+                            <label for="estado">Filtrar por estado:</label>
+                            <select class="form-select" id="estado" name="estado">
+                                <option value="" selected disabled>Filtrar por estado</option>
+                                <option value="Aprobada">Aprobadas</option>
+                                <option value="Pendiente">Pendientes</option>
+                                <option value="Rechazada">Rechazadas</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                <button type="submit" form="filter-form" class="btn btn-primary">Filtrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% else %}
+
+<h1>Rol de usuario: {{ user_role }}</h1>
+<h1>No tienes acceso a este contenido</h1>
+{% endif %}
+
 
 <!--select * from vacaciones where userid = session.-->
 
-<!-- Pendientes: Por rol -->
+<!-- Pendientes: Va mostrar todas las solicitudes, incluyendo las del admin -->
 
 <!--select * fromm vacaciones where estado = "Pendiente" -->
 
 <!-- Button trigger modal -->
 <!-- Modal -->
-<div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-    aria-labelledby="staticBackdropLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h1 class="modal-title fs-5" id="staticBackdropLabel">Solicitud de vacaciones</h1>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="row profile-tt">
-                    <div class="col-sm-12 col-md-1 col-lg-2 profile-img-tt">
-                        <img src="/static/images/NPC_2.jpg" alt="Usuario Administrador">
-                    </div>
-                    <div class="col-sm-12 col-md-10 col-lg-10">
-                        <h5>David Gutierrez Ledezma</h5>
-                        <div>
-                            <span><strong> De: 2024-03-07</strong></span>
-                            <span class="px-4"> <strong>A: 2024-03-10</strong></span>
-                        </div>
 
-
-                        <div class="py-3">
-                            <p>Estoy cansado Jefe.</p>
-                        </div>
-                        <span style="color: #3e3e3f;">Fecha solicitud: 2024-03-07 4:24 PM (UTC-06:00)</span>
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Cerrar</button>
-                <button type="button" class="btn btn-primary">Listo</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 {% endblock %}

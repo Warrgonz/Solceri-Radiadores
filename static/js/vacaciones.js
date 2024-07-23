@@ -32,11 +32,35 @@
         }
     }
 
+    function updateEntries(value) {
+        // Crear una URL con los parámetros de la página actual y la cantidad de entradas
+        const url = new URL(window.location.href);
+        url.searchParams.set('entries', value);
+    
+        // Redirigir a la nueva URL
+        window.location.href = url.toString();
+    }
+    
+    document.addEventListener('DOMContentLoaded', function() {
+        // Obtener el valor actual de 'entries' desde los parámetros de la URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const entries = urlParams.get('entries');
+    
+        // Si hay un valor de 'entries' en los parámetros, seleccionarlo en el <select>
+        if (entries) {
+            const entriesSelect = document.getElementById('entries');
+            if (entriesSelect) {
+                entriesSelect.value = entries;
+            }
+        }
+    });
+
+
     // Llama a la función cuando el documento esté listo
     document.addEventListener('DOMContentLoaded', VacacionSolicitada);
 
     // Establecer la fecha actual en el campo de fecha de inicio
-    document.getElementById('dia_inicio').value = FechaFormularios(0); // Hoy
+    document.getElementById('inicio_dia').value = FechaFormularios(0); // Hoy
 
     // Establecer la fecha de mañana en el campo de fecha de finalización
-    document.getElementById('dia_final').value = FechaFormularios(1); // Mañana
+    document.getElementById('final_dia').value = FechaFormularios(1); // Mañana
