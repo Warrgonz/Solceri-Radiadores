@@ -287,3 +287,14 @@ form span{
     font-weight: 500;
     font-style: normal;
 }
+
+.centered-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center; 
+
+}
+
+.calendar{
+    margin-top: 20px;
+}

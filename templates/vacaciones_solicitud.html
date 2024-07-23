@@ -21,13 +21,13 @@
                 <div class="col-md-6">
                     <div class="pb-2">
                         <label for="dia_inicio">Fecha de Inicio<span>*</span></label>
-                        <input type="date" id="dia_inicio" class="form-control" name="dia_inicio" required>
+                        <input type="date" id="inicio_dia" class="form-control" name="dia_inicio" required>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="pb-2">
                         <label for="dia_final">Fecha de Finalización<span>*</span></label>
-                        <input type="date" id="dia_final" class="form-control" name="dia_final" required>
+                        <input type="date" id="final_dia" class="form-control" name="dia_final" required>
                     </div>
                 </div>
             </div>
@@ -35,7 +35,7 @@
                 <label for="detalles">Detalles de la solicitud<span>*</span></label>
                 <textarea class="form-control" name="detalles" required
                     placeholder="Ingrese los detalles de la solicitud" rows="4" cols="50"></textarea>
-            </div>
+            </div>       
         </div>
         <div class="modal-footer">
             <a href="{{ url_for('vacaciones.listar_vacaciones') }}" class="btn btn-danger btn-md mx-2">Cancelar</a>
