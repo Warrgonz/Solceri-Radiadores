@@ -5,7 +5,7 @@ from models.usuarios import Usuarios
 from models.roles import Roles
 from utils.firebase import FirebaseUtils
 from utils.db import db
-from utils.servicio_mail import generate_temp_password, send_email_async, generate_reset_token, send_reset_email
+from utils.servicio_mail import generate_temp_password, send_email_async, generate_reset_token, verify_reset_token
 import datetime
 from utils.auth import login_required, role_required
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -218,19 +218,19 @@ def login():
         user = Usuarios.query.filter_by(correo=email).first()
 
         if user and check_password_hash(user.contraseña, password):
-            # Verificar si la contraseña temporal y la principal son iguales
             if user.contraseña_temp and check_password_hash(user.contraseña_temp, password):
                 session['user_id'] = user.id_usuario
-                flash('Por favor, cambia tu contraseña temporal.', 'warning')
-                return redirect(url_for('usuarios.password_reset'))  # Ruta a la que redirigir para el cambio de contraseña
+                return jsonify({'redirect_url': url_for('usuarios.password_reset'), 'alert_type': 'warning', 'alert_message': 'Por favor, cambia tu contraseña temporal.'})
 
             session['user_id'] = user.id_usuario
-            flash('Inicio de sesión exitoso', 'success')
-            return redirect(url_for('usuarios.usuarios'))  # Cambiar 'dashboard' por la ruta correcta
+            return jsonify({'redirect_url': url_for('usuarios.usuarios')})
         else:
-            flash('Correo electrónico o contraseña incorrectos', 'danger')
+            return jsonify({'alert_type': 'error', 'alert_message': 'Correo electrónico o contraseña incorrectos.'}), 401
 
     return render_template('login.html')
+
+
+
 
 #Reset while logged
 
@@ -239,25 +239,44 @@ def login():
 def password_reset():
     if request.method == 'POST':
         user_id = session.get('user_id')
+        print(f"User ID from session: {user_id}")  # Debugging
         user = Usuarios.query.get(user_id)
+        
         if user:
+            current_password = request.form['current_password']
             new_password = request.form['new_password']
             confirm_password = request.form['confirm_password']
+            
+            if not user.check_password(current_password):
+                flash('La contraseña actual es incorrecta.', 'danger')
+                return redirect(url_for('usuarios.password_reset'))
             
             if new_password != confirm_password:
                 flash('Las contraseñas no coinciden.', 'danger')
                 return redirect(url_for('usuarios.password_reset'))
             
-            # Agregar validaciones adicionales de la contraseña aquí
             if len(new_password) < 8:
                 flash('La contraseña debe tener al menos 8 caracteres.', 'danger')
                 return redirect(url_for('usuarios.password_reset'))
 
-            user.set_password(new_password)
-            user.contraseña_temp = None  # Limpiar la contraseña temporal
-            db.session.commit()
-            flash('Contraseña cambiada exitosamente.', 'success')
+            try:
+                user.set_password(new_password)
+                user.contraseña_temp = None  # Clear the temp pasword
+                db.session.commit()
+                flash('Contraseña cambiada exitosamente.', 'success')
+                return redirect(url_for('usuarios.logout'))
+
+            except Exception as e:
+                db.session.rollback()
+                
+                flash(f'Error al cambiar la contraseña: {str(e)}', 'danger')
+                return redirect(url_for('usuarios.password_reset'))
+
             return redirect(url_for('usuarios.usuarios'))
+        else:
+            flash('Usuario no encontrado.', 'danger')
+            return redirect(url_for('usuarios.password_reset'))
+            
     return render_template('password_reset.html')
 
 #Ruta para acceso denegado
@@ -266,51 +285,74 @@ def acceso_denegado():
     return render_template('403.html'), 403
 
 
-@usuarios_bp.route('/forgot_password', methods=['GET', 'POST'])
-def forgot_password():
-    if request.method == 'POST':
-        email = request.form['email']
-        user = Usuarios.query.filter_by(correo=email).first()
-        if user:
-            token = generate_reset_token(user)  # Generar un token de restablecimiento
-            send_reset_email(user, token)  # Enviar el correo electrónico de restablecimiento
-            flash('Se ha enviado un enlace de restablecimiento a tu correo electrónico.', 'info')
-        else:
-            flash('No se encontró una cuenta con ese correo electrónico.', 'danger')
-    return render_template('forgot_password.html')
-
-@usuarios_bp.route('/reset/<token>', methods=['GET', 'POST'])
-def reset_with_token(token):
-    try:
-        email = s.loads(token, salt='password-reset-salt', max_age=3600)
-    except:
-        flash('El enlace de restablecimiento es inválido o ha expirado.', 'danger')
-        return redirect(url_for('usuarios.login'))
-    
-    user = Usuarios.query.filter_by(correo=email).first_or_404()
-    
-    if request.method == 'POST':
-        new_password = request.form['new_password']
-        confirm_password = request.form['confirm_password']
-        if new_password != confirm_password:
-            flash('Las contraseñas no coinciden.', 'danger')
-            return redirect(url_for('usuarios.reset_with_token', token=token))
-        
-        if len(new_password) < 8:
-            flash('La contraseña debe tener al menos 8 caracteres.', 'danger')
-            return redirect(url_for('usuarios.reset_with_token', token=token))
-
-        user.set_password(new_password)
-        user.contraseña_temp = None
-        db.session.commit()
-        flash('Contraseña cambiada exitosamente.', 'success')
-        return redirect(url_for('usuarios.login'))
-    
-    return render_template('password_reset.html', token=token)
+#Logout
 
 @usuarios_bp.route('/logout')
 @login_required
 def logout():
     session.clear()  # Elimina todas las variables de sesión, incluido 'user_id'
-    flash('Has cerrado sesión correctamente.', 'info')
+    #flash('Has cerrado sesión correctamente.', 'info')
     return redirect(url_for('usuarios.login'))
+
+#Metodos de recovery
+
+#Reset request
+@usuarios_bp.route('/password_recovery_request', methods=['GET', 'POST'])
+def password_recovery_request():
+    if request.method == 'POST':
+        email = request.form['email']
+        user = Usuarios.query.filter_by(correo=email).first()
+        
+        if user:
+            token = generate_reset_token(email)
+            reset_url = url_for('usuarios.password_recovery', token=token, _external=True)
+            subject = "Solicitud de Restablecimiento de Contraseña"
+            body = f"""
+            <html>
+            <head></head>
+            <body>
+                <h1>Recuperación de Contraseña</h1>
+                <p>Haga clic en el siguiente enlace para restablecer su contraseña:</p>
+                <a href="{reset_url}">Restablecer Contraseña</a>
+            </body>
+            </html>
+            """
+            send_email_async(email, subject, body)
+            flash('Correo de recuperación enviado si el correo está registrado.', 'info')
+            return redirect(url_for('usuarios.login'))
+    
+    return render_template('password_recovery_request.html')
+
+#Reset ya con token
+@usuarios_bp.route('/password_recovery/<token>', methods=['GET', 'POST'])
+def password_recovery(token):
+    email = verify_reset_token(token)
+    
+    if not email:
+        flash('El enlace de recuperación ha expirado o no es válido.', 'danger')
+        return redirect(url_for('usuarios.login'))
+    
+    user = Usuarios.query.filter_by(correo=email).first()
+    
+    if request.method == 'POST':
+        new_password = request.form['new_password']
+        confirm_password = request.form['confirm_password']
+        
+        if new_password != confirm_password:
+            flash('Las contraseñas no coinciden.', 'danger')
+            return redirect(request.url)
+        
+        if len(new_password) < 8:
+            flash('La contraseña debe tener al menos 8 caracteres.', 'danger')
+            return redirect(request.url)
+
+        try:
+            user.set_password(new_password)
+            db.session.commit()
+            flash('Contraseña cambiada exitosamente.', 'success')
+            return redirect(url_for('usuarios.login'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error al cambiar la contraseña: {str(e)}', 'danger')
+    
+    return render_template('password_recovery.html')

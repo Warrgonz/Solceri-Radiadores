@@ -8,7 +8,8 @@ import string
 import secrets
 import threading
 from itsdangerous import URLSafeTimedSerializer
-from flask import current_app, url_for
+from flask import current_app as app, url_for
+
 
 # Cargar variables de entorno desde el archivo .env
 load_dotenv()
@@ -44,44 +45,14 @@ def generate_temp_password():
 
 #Funciones de forgot password
 
-def generate_reset_token(user):
-    s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-    return s.dumps(user.correo, salt='password-reset-salt')
+def generate_reset_token(email):
+    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return s.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
 
-def send_reset_email(user, token):
-    from flask import current_app  # Importar aquí para evitar importación circular
-def send_reset_email(user, token):
-    from flask import current_app  # Importar aquí para evitar importación circular
-
-    with current_app.app_context():
-        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-        reset_url = url_for('usuarios.reset_with_token', token=token, _external=True)
-        subject = "Restablecer Contraseña"
-        body = f"""
-        <html>
-        <head></head>
-        <body>
-            <h1 style="color:SlateGray;">¡Hola!</h1>
-            <p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
-            <p><a href="{reset_url}">Restablecer Contraseña</a></p>
-            <p>Si no solicitaste este cambio, por favor ignora este correo.</p>
-        </body>
-        </html>
-        """
-        send_email_async(user.correo, subject, body)
-    with current_app.app_context():
-        s = URLSafeTimedSerializer(current_app.config['SECRET_KEY'])
-        reset_url = url_for('usuarios.reset_with_token', token=token, _external=True)
-        subject = "Restablecer Contraseña"
-        body = f"""
-        <html>
-        <head></head>
-        <body>
-            <h1 style="color:SlateGray;">¡Hola!</h1>
-            <p>Para restablecer tu contraseña, haz clic en el siguiente enlace:</p>
-            <p><a href="{reset_url}">Restablecer Contraseña</a></p>
-            <p>Si no solicitaste este cambio, por favor ignora este correo.</p>
-        </body>
-        </html>
-        """
-        send_email_async(user.correo, subject, body)
+def verify_reset_token(token, expiration=3600):
+    s = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = s.loads(token, salt=app.config['SECURITY_PASSWORD_SALT'], max_age=expiration)
+    except Exception as e:
+        return None
+    return email
