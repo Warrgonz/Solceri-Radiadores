@@ -5,7 +5,7 @@ db = SQLAlchemy()
 
 def init_db(app: Flask):
     try: # Cambiar contraseña de la db
-        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:12345@localhost/solceri'
+        app.config['SQLALCHEMY_DATABASE_URI'] = 'mysql+pymysql://root:1234@localhost/solceri'
         app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
         
         db.init_app(app)
@@ -16,3 +16,4 @@ def init_db(app: Flask):
     
     except Exception as e:
         print(f"Error connecting to the database: {str(e)}")
+
