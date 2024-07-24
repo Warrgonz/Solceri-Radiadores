@@ -6,6 +6,7 @@ from .usuarios import usuarios_bp
 from .catalogo import catalogo_bp
 from .index import inicio_bp
 from .vacaciones import vacaciones_bp
+from .tiquetes import tiquetes_bp
 
 blueprints = [
     grupos_bp,
@@ -13,5 +14,6 @@ blueprints = [
     usuarios_bp,
     catalogo_bp,
     inicio_bp,
-    vacaciones_bp
+    vacaciones_bp,
+    tiquetes_bp
 ]
