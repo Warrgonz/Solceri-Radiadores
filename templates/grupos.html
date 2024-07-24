@@ -1,38 +1,35 @@
+<!-- templates/grupos.html -->
 {% extends "layout.html" %}
 {% block content %}
 <div class="d-flex justify-content-between">
-    <h2>Grupos de trabajo</h2>
-    <div>
-        <a href="{{ url_for('grupos.grupos_crear') }}" class="btn-solceri">Agregar</a>
-    </div>
+    <h2>Lista de Grupos de Trabajo</h2>
+    <a href="{{ url_for('grupos.grupos_crear') }}" class="btn btn-primary">Crear Nuevo Grupo</a>
 </div>
-<div class="table-responsive">
-    <table class="table table-striped" style="width:100%">
-        <thead>
-            <tr class="text-center">
-                <th>ID</th>
-                <th>Nombre del grupo</th>
-                <th>Descripción</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody class="text-center">
-            {% for grupo in grupos %}
-            <tr>
-                <td>{{ grupo.id_grupo }}</td>
-                <td>{{ grupo.nombre }}</td>
-                <td>{{ grupo.descripcion }}</td>
-                <td>
-                    <div class="flex-wrap">
-                        <form action="{{ url_for('grupos.grupos_eliminar', id_grupo=grupo.id_grupo) }}" method="post">
-                            <button type="submit" class="btn btn-danger btn-md" onclick="return confirm('¿Estás seguro de eliminar este grupo?')">Eliminar</button>
-                        </form>
-                        <a href="{{ url_for('grupos.grupos_editar', id_grupo=grupo.id_grupo) }}" class="btn-solceri">Editar</a>
-                    </div>
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Descripción</th>
+            <th>Usuarios Asignados</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for grupo in grupos %}
+        <tr>
+            <td>{{ grupo.nombre }}</td>
+            <td>{{ grupo.descripcion }}</td>
+            <td>
+                <a href="{{ url_for('grupos.grupos_detalles', id_grupo=grupo.id_grupo) }}">Ver Usuarios</a>
+            </td>
+            <td>
+                <a href="{{ url_for('grupos.grupos_editar', id_grupo=grupo.id_grupo) }}" class="btn btn-warning btn-sm">Editar</a>
+                <form action="{{ url_for('grupos.grupos_eliminar', id_grupo=grupo.id_grupo) }}" method="POST" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                </form>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 {% endblock %}

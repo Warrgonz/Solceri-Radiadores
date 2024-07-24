@@ -1,3 +1,4 @@
+<!-- templates/grupos_crear.html -->
 {% extends "layout.html" %}
 {% block content %}
 <div class="d-flex justify-content-between">
@@ -11,6 +12,14 @@
     <div class="mb-3">
         <label for="descripcion" class="form-label">Descripción</label>
         <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
+    </div>
+    <div class="mb-3">
+        <label for="usuarios" class="form-label">Seleccionar Usuarios</label>
+        <select multiple class="form-control" id="usuarios" name="usuarios">
+            {% for usuario in usuarios %}
+            <option value="{{ usuario.id_usuario }}">{{ usuario.nombre }} {{ usuario.primer_apellido }}</option>
+            {% endfor %}
+        </select>
     </div>
     <button type="submit" class="btn btn-primary">Guardar</button>
 </form>

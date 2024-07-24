@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between">
+    <h2>Asignar Usuarios al Grupo: {{ grupo.nombre }}</h2>
+</div>
+<form id="asignar-form" method="POST" action="{{ url_for('grupos.asignar_usuarios', id_grupo=grupo.id_grupo) }}">
+    <div class="mb-3">
+        <label for="usuarios" class="form-label">Selecciona los usuarios</label>
+        <select multiple class="form-control" id="usuarios" name="usuario_ids[]">
+            {% for usuario in usuarios %}
+            <option value="{{ usuario.id_usuario }}">{{ usuario.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Asignar</button>
+</form>
+<hr>
+<form id="desasignar-form" method="POST" action="{{ url_for('grupos.desasignar_usuarios', id_grupo=grupo.id_grupo) }}">
+    <div class="mb-3">
+        <label for="usuarios" class="form-label">Selecciona los usuarios para desasignar</label>
+        <select multiple class="form-control" id="usuarios" name="usuario_ids[]">
+            {% for usuario in grupo.usuarios %}
+            <option value="{{ usuario.id_usuario }}">{{ usuario.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-danger">Desasignar</button>
+</form>
+{% endblock %}

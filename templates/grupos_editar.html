@@ -1,0 +1,26 @@
+<!-- templates/grupos_editar.html -->
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between">
+    <h2>Editar Grupo de Trabajo</h2>
+</div>
+<form method="POST" action="{{ url_for('grupos.grupos_editar', id_grupo=grupo.id_grupo) }}">
+    <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre del grupo</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ grupo.nombre }}" required>
+    </div>
+    <div class="mb-3">
+        <label for="descripcion" class="form-label">Descripción</label>
+        <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ grupo.descripcion }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label for="usuarios" class="form-label">Seleccionar Usuarios</label>
+        <select multiple class="form-control" id="usuarios" name="usuarios">
+            {% for usuario in usuarios %}
+            <option value="{{ usuario.id_usuario }}" {% if usuario in grupo.usuarios %}selected{% endif %}>{{ usuario.nombre }} {{ usuario.primer_apellido }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Guardar</button>
+</form>
+{% endblock %}
