@@ -122,9 +122,9 @@
 
 {% if user_role == 2 %} <!--Colaborador-->
 
-<button type="button" class="btn btn-primary btn-md mx-4 mb-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+<!--<button type="button" class="btn btn-primary btn-md mx-4 mb-3" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
     Filtrar
-</button>
+</button>-->
 
 <div class="table-responsive">
     <table class="table table-striped table-bordered table-hover" style="width:100%">
@@ -220,20 +220,55 @@
     <div class="col-md-6">
         <div aria-label="Page navigation example">
             <ul class="pagination">
+                <!-- Botón de página anterior -->
                 {% if page > 1 %}
-                <li class="page-item"><a class="page-link"
-                        href="{{ url_for('vacaciones.listar_vacaciones', page=page-1, entries=entries) }}">Previous</a>
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('vacaciones.listar_vacaciones', page=page-1, entries=entries) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                    </a>
                 </li>
                 {% endif %}
-                {% for p in range(1, total_pages + 1) %}
-                <li class="page-item {% if p == page %}active{% endif %}"><a class="page-link"
-                        href="{{ url_for('vacaciones.listar_vacaciones', page=p, entries=entries) }}">{{ p }}</a></li>
+        
+                <!-- Siempre muestra la primera página -->
+                <li class="page-item {% if page == 1 %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('vacaciones.listar_vacaciones', page=1, entries=entries) }}">1</a>
+                </li>
+        
+                <!-- Puntos suspensivos si es necesario -->
+                {% if page > 3 %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+        
+                <!-- Mostrar un rango de páginas alrededor de la página actual -->
+                {% for p in range(page-2, page+3) if p > 1 and p < total_pages %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('vacaciones.listar_vacaciones', page=p, entries=entries) }}">{{ p }}</a>
+                </li>
                 {% endfor %}
-                {% if page < total_pages %} <li class="page-item"><a class="page-link"
-                        href="{{ url_for('vacaciones.listar_vacaciones', page=page+1, entries=entries) }}">Next</a></li>
-                    {% endif %}
+        
+                <!-- Puntos suspensivos si es necesario -->
+                {% if page < total_pages - 2 %}
+                <li class="page-item disabled"><span class="page-link">...</span></li>
+                {% endif %}
+        
+                <!-- Siempre muestra la última página -->
+                {% if total_pages > 1 %}
+                <li class="page-item {% if page == total_pages %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('vacaciones.listar_vacaciones', page=total_pages, entries=entries) }}">{{ total_pages }}</a>
+                </li>
+                {% endif %}
+        
+                <!-- Botón de página siguiente -->
+                {% if page < total_pages %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('vacaciones.listar_vacaciones', page=page+1, entries=entries) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                    </a>
+                </li>
+                {% endif %}
             </ul>
         </div>
+        
     </div>
     <div class="col-md-6">
         <div class="d-flex justify-content-end">
