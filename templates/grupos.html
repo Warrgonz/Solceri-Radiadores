@@ -5,7 +5,8 @@
     <h2>Lista de Grupos de Trabajo</h2>
     <a href="{{ url_for('grupos.grupos_crear') }}" class="btn btn-primary">Crear Nuevo Grupo</a>
 </div>
-<table class="table">
+<div class="table-responsive">
+<table class="table table-striped table-bordered table-hover" style="width:100%">
     <thead>
         <tr>
             <th>Nombre</th>
@@ -32,6 +33,7 @@
         {% endfor %}
     </tbody>
 </table>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script src="{{ url_for('static', filename='js/grupos.js') }}"></script>
