@@ -1,0 +1,25 @@
+<!-- templates/grupos_detalles.html -->
+ 
+{% extends "layout.html" %}
+{% block content %}
+<div class="d-flex justify-content-between">
+    <h2>Detalles del Grupo: {{ grupo.nombre }}</h2>
+    <a href="{{ url_for('grupos.grupos') }}" class="btn btn-secondary">Volver a Grupos</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Primer Apellido</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for usuario in grupo.usuarios %}
+        <tr>
+            <td>{{ usuario.nombre }}</td>
+            <td>{{ usuario.primer_apellido }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}
