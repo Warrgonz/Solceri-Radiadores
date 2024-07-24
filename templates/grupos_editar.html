@@ -1,26 +1,60 @@
-<!-- templates/grupos_editar.html -->
 {% extends "layout.html" %}
 {% block content %}
-<div class="d-flex justify-content-between">
-    <h2>Editar Grupo de Trabajo</h2>
+<div class="container">
+    <div class="d-flex justify-content-between mb-4">
+        <h2>Editar Grupo de Trabajo</h2>
+    </div>
+    
+    <!-- Formulario de edición del grupo -->
+    <form id="grupoEditarForm" method="POST" action="{{ url_for('grupos.grupos_editar', id_grupo=grupo.id_grupo) }}">
+        <div class="mb-3">
+            <label for="nombre" class="form-label">Nombre del grupo</label>
+            <input type="text" class="form-control" id="nombre" name="nombre" value="{{ grupo.nombre }}" required>
+        </div>
+        <div class="mb-3">
+            <label for="descripcion" class="form-label">Descripción</label>
+            <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ grupo.descripcion }}</textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    </form>
+    
+    <!-- Gestión de usuarios -->
+    <div class="mt-4">
+        <h3>Gestión de Usuarios</h3>
+        <div class="row">
+            <div class="col-md-6">
+                <h4>Usuarios Disponibles</h4>
+                <ul id="usuarios_disponibles" class="list-group">
+                    {% for usuario in usuarios %}
+                    {% if usuario not in grupo.usuarios %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ usuario.nombre }} {{ usuario.primer_apellido }}
+                        <form action="{{ url_for('grupos.agregar_usuario', id_grupo=grupo.id_grupo, id_usuario=usuario.id_usuario) }}" method="POST" class="agregar-form ms-2">
+                            <button type="submit" class="btn btn-success btn-sm">Agregar</button>
+                        </form>
+                    </li>
+                    {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="col-md-6">
+                <h4>Usuarios Asignados</h4>
+                <ul id="usuarios_asignados" class="list-group">
+                    {% for usuario in grupo.usuarios %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        {{ usuario.nombre }} {{ usuario.primer_apellido }}
+                        <form action="{{ url_for('grupos.remover_usuario', id_grupo=grupo.id_grupo, id_usuario=usuario.id_usuario) }}" method="POST" class="remover-form ms-2">
+                            <button type="submit" class="btn btn-danger btn-sm">Remover</button>
+                        </form>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+    </div>
 </div>
-<form method="POST" action="{{ url_for('grupos.grupos_editar', id_grupo=grupo.id_grupo) }}">
-    <div class="mb-3">
-        <label for="nombre" class="form-label">Nombre del grupo</label>
-        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ grupo.nombre }}" required>
-    </div>
-    <div class="mb-3">
-        <label for="descripcion" class="form-label">Descripción</label>
-        <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ grupo.descripcion }}</textarea>
-    </div>
-    <div class="mb-3">
-        <label for="usuarios" class="form-label">Seleccionar Usuarios</label>
-        <select multiple class="form-control" id="usuarios" name="usuarios">
-            {% for usuario in usuarios %}
-            <option value="{{ usuario.id_usuario }}" {% if usuario in grupo.usuarios %}selected{% endif %}>{{ usuario.nombre }} {{ usuario.primer_apellido }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Guardar</button>
-</form>
+
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src="{{ url_for('static', filename='js/grupos.js') }}"></script>
+
 {% endblock %}

@@ -25,18 +25,21 @@ def grupos_crear():
         usuarios_ids = request.form.getlist('usuarios')  # Obtén los IDs de los usuarios seleccionados
 
         nuevo_grupo = Grupos(nombre=nombre, descripcion=descripcion)
+        db.session.add(nuevo_grupo)
+        db.session.commit()
+
         for usuario_id in usuarios_ids:
             usuario = Usuarios.query.get(int(usuario_id))
             if usuario:
                 nuevo_grupo.usuarios.append(usuario)
 
-        db.session.add(nuevo_grupo)
         db.session.commit()
 
         return redirect(url_for('grupos.grupos'))  # Redirige a la lista de grupos
 
     usuarios = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
     return render_template('grupos_crear.html', usuarios=usuarios)
+
 
 @grupos_bp.route('/grupos/editar/<int:id_grupo>', methods=['GET', 'POST'])
 def grupos_editar(id_grupo):
@@ -45,19 +48,38 @@ def grupos_editar(id_grupo):
         if grupo:
             grupo.nombre = request.form['nombre']
             grupo.descripcion = request.form['descripcion']
-            grupo.usuarios.clear()  # Limpia usuarios actuales
-            usuarios_ids = request.form.getlist('usuarios')  # Obtén los IDs de los usuarios seleccionados
-            for usuario_id in usuarios_ids:
-                usuario = Usuarios.query.get(int(usuario_id))
-                if usuario:
-                    grupo.usuarios.append(usuario)
             db.session.commit()
-            return jsonify({'message': 'El grupo ha sido actualizado exitosamente'})
+            return jsonify({'message': 'Cambios guardados exitosamente'})
         else:
             return jsonify({'error': 'El grupo no existe'}), 404
 
     usuarios = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
     return render_template('grupos_editar.html', grupo=grupo, usuarios=usuarios)
+
+@grupos_bp.route('/grupos/agregar_usuario/<int:id_grupo>/<int:id_usuario>', methods=['POST'])
+def agregar_usuario(id_grupo, id_usuario):
+    grupo = Grupos.query.get(id_grupo)
+    usuario = Usuarios.query.get(id_usuario)
+    if grupo and usuario:
+        if usuario not in grupo.usuarios:
+            grupo.usuarios.append(usuario)
+            db.session.commit()
+            return jsonify({'message': 'Usuario agregado al grupo'})
+        else:
+            return jsonify({'error': 'El usuario ya está en el grupo'}), 400
+    return jsonify({'error': 'Grupo o usuario no encontrado'}), 404
+
+
+@grupos_bp.route('/grupos/remover_usuario/<int:id_grupo>/<int:id_usuario>', methods=['POST'])
+def remover_usuario(id_grupo, id_usuario):
+    grupo = Grupos.query.get(id_grupo)
+    usuario = Usuarios.query.get(id_usuario)
+    if grupo and usuario:
+        grupo.usuarios.remove(usuario)
+        db.session.commit()
+        return jsonify({'message': 'Usuario removido del grupo'})
+    return jsonify({'error': 'Grupo o usuario no encontrado'}), 404
+
 
 @grupos_bp.route('/grupos/eliminar/<int:id_grupo>', methods=['POST'])
 def grupos_eliminar(id_grupo):
@@ -65,7 +87,7 @@ def grupos_eliminar(id_grupo):
     if grupo:
         db.session.delete(grupo)
         db.session.commit()
-        return redirect(url_for('grupos.grupos'))
+        return jsonify({'message': 'Grupo eliminado con éxito'}), 200
     else:
         return jsonify({'error': 'El grupo no existe'}), 404
     
