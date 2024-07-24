@@ -1,13 +1,17 @@
+# /app.py
+
 from flask import Flask, session, g
 from models.usuarios import Usuarios
 from routes import blueprints
 from utils.db import init_db
 import os
 from dotenv import load_dotenv
+from utils.config import Config
 
 load_dotenv()
 
 app = Flask(__name__)
+app.config.from_object(Config) 
 
 # Conexión a la base de datos
 init_db(app)

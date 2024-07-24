@@ -318,7 +318,7 @@ def password_recovery_request():
             </html>
             """
             send_email_async(email, subject, body)
-            flash('Correo de recuperación enviado si el correo está registrado.', 'info')
+            flash('Correo de recuperación enviado', 'info')
             return redirect(url_for('usuarios.login'))
     
     return render_template('password_recovery_request.html')
