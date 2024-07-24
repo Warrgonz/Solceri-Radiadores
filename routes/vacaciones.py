@@ -32,20 +32,66 @@ def listar_vacaciones():
     dia_final = request.args.get('dia_final')
     estado = request.args.get('estado')
 
-    # Construir la consulta base
-    query = Vacaciones.query.filter_by(id_solicitante=user_id)
+    # Construir la consulta base con la relación al solicitante y el rol
+    query = (Vacaciones.query
+        .join(Usuarios, Vacaciones.id_solicitante == Usuarios.id_usuario)
+        .join(Roles, Usuarios.id_rol == Roles.id_rol)
+        .add_columns(
+            Usuarios.nombre.label('solicitante_nombre'), 
+            Usuarios.primer_apellido.label('solicitante_primer_apellido'), 
+            Usuarios.segundo_apellido.label('solicitante_segundo_apellido'), 
+            Roles.rol.label('solicitante_rol'),
+            Vacaciones.dia_inicio, 
+            Vacaciones.dia_final, 
+            Vacaciones.fecha_solicitud, 
+            Vacaciones.estado, 
+            Vacaciones.id_vacacion, 
+            Vacaciones.detalles
+        )
+    )
 
-    # Aplicar filtros
+    # Aplicar filtros de fechas y estado
     if dia_inicio:
         query = query.filter(Vacaciones.dia_inicio >= dia_inicio)
     if dia_final:
         query = query.filter(Vacaciones.dia_final <= dia_final)
     if estado:
-        query = query.filter_by(estado=estado)
+        query = query.filter(Vacaciones.estado == estado)
+
+    # Ordenar por fecha de inicio
+    query = query.order_by(Vacaciones.dia_inicio.asc())
 
     solicitudes = query.paginate(page=page, per_page=entries, error_out=False)
 
-    return render_template('vacaciones.html', solicitudes=solicitudes.items, user_role=user.rol.id_rol, entries=entries, page=page, total_pages=solicitudes.pages)
+    # Calcular el rango de páginas para mostrar
+    total_pages = solicitudes.pages
+    total_pages_to_show = 10
+    range_start = max(1, page - total_pages_to_show // 2)
+    range_end = min(total_pages, page + total_pages_to_show // 2)
+
+    if range_end - range_start < total_pages_to_show:
+        if range_start > 1:
+            range_start = max(1, range_end - total_pages_to_show + 1)
+        elif range_end < total_pages:
+            range_end = min(total_pages, range_start + total_pages_to_show - 1)
+
+    # Crear la lista de entradas
+    entries_list = [{
+        'id_vacacion': solicitud.id_vacacion,
+        'estado': solicitud.estado,
+        'detalles': solicitud.detalles,
+        'dia_inicio': solicitud.dia_inicio,
+        'dia_final': solicitud.dia_final,
+        'fecha_solicitud': solicitud.fecha_solicitud,
+        'solicitante': {
+            'nombre': solicitud.solicitante_nombre,
+            'primer_apellido': solicitud.solicitante_primer_apellido,
+            'segundo_apellido': solicitud.solicitante_segundo_apellido,
+            'rol': solicitud.solicitante_rol
+        }
+    } for solicitud in solicitudes.items]
+
+    return render_template('vacaciones.html', solicitudes=entries_list, user_role=user.rol.id_rol, entries=entries, page=page, total_pages=total_pages, range_start=range_start, range_end=range_end, dia_inicio=dia_inicio, dia_final=dia_final, estado=estado)
 
 @vacaciones_bp.route('/vacaciones/calendarizacion', methods=['GET'])
 def obtener_vacacion():
@@ -131,9 +177,6 @@ def info_vacacion():
 
     return jsonify(vacation_info)
 
-
-
-
 @vacaciones_bp.route('/vacaciones/nueva', methods=['GET', 'POST'])
 @login_required
 @role_required(allowed_roles=[1, 2]) 
@@ -213,12 +256,27 @@ def nueva_vacacion():
 
 @vacaciones_bp.route('/vacaciones/detalle/<int:id>', methods=['GET', 'POST'])
 @login_required
-@role_required(allowed_roles=[1, 2]) 
+@role_required(allowed_roles=[1, 2])
 def detalle_vacacion(id):
     solicitud = Vacaciones.query.get_or_404(id)
     solicitante = Usuarios.query.get(solicitud.id_solicitante)
     aprobador = Usuarios.query.get(solicitud.id_aprobador) if solicitud.id_aprobador else None
 
+    user_id = session.get('user_id')
+    
+    if request.method == 'POST':
+        if 'aceptar' in request.form:
+            solicitud.estado = 'Aceptada'
+            solicitud.id_aprobador = user_id
+            db.session.commit()
+            flash('Solicitud aceptada con éxito.', 'success')
+        elif 'rechazar' in request.form:
+            solicitud.estado = 'Rechazada'
+            solicitud.id_aprobador = user_id
+            db.session.commit()
+            flash('Solicitud rechazada con éxito.', 'danger')
+        return redirect(url_for('vacaciones.listar_vacaciones'))
+    
     return render_template("vacaciones_detalle.html", solicitud=solicitud, solicitante=solicitante, aprobador=aprobador)
 
 @vacaciones_bp.route('/vacaciones/modificar/<int:id>', methods=['GET', 'POST'])
@@ -331,6 +389,198 @@ def cancelar_solicitud():
         return jsonify({'success': False, 'message': 'Error al eliminar la solicitud.'})
 
 
+# Estados de vacaciones
+
+@vacaciones_bp.route('/vacaciones/aceptar_vacacion', methods=['POST'])
+def aceptar_vacacion():
+    if not request.is_json:
+        return jsonify({'success': False, 'message': 'El tipo de contenido no es JSON'}), 415
+
+    data = request.get_json()
+    id_solicitud = data.get('id_solicitud')
+
+    # Obtener el ID del usuario de la sesión
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'No hay sesión de usuario'}), 403
+
+    try:
+        solicitud = Vacaciones.query.get(id_solicitud)
+        if not solicitud:
+            return jsonify({'success': False, 'message': 'Solicitud no encontrada'})
+
+        solicitud.estado = 'Aprobado'
+        solicitud.id_aprobador = user_id  # Establecer el ID del aprobador
+        solicitud.dia_aprobacion = datetime.now()  # Establecer la fecha de aprobación
+
+        db.session.commit()
+
+        # Envío del correo
+        subject = "Aprobación de Solicitud de Vacaciones"
+        body = f"""
+        <html>
+        <head></head>
+        <body>
+            <h1 style="color:SlateGray;">Aprobación de Solicitud de Vacaciones</h1>
+            <p>Estimado {solicitud.solicitante.nombre} {solicitud.solicitante.primer_apellido} {solicitud.solicitante.segundo_apellido},</p>
+            <p>Su solicitud de vacaciones del {solicitud.dia_inicio} al {solicitud.dia_final} ha sido aprobada.</p>
+        </body>
+        </html>
+        """
+        send_email_async(solicitud.solicitante.correo, subject, body)
+
+        return jsonify({'success': True, 'message': 'Solicitud aprobada correctamente'})
+    except Exception as e:
+        print(f"Error al aprobar la solicitud: {e}")
+        return jsonify({'success': False, 'message': 'Error al procesar la solicitud'})
 
 
+@vacaciones_bp.route('/vacaciones/rechazar_vacacion', methods=['POST'])
+def rechazar_vacacion():
+    if not request.is_json:
+        return jsonify({'success': False, 'message': 'El contenido debe ser tipo JSON'}), 415
+
+    data = request.get_json()
+    id_solicitud = data.get('id_solicitud')
+    user_id = session.get('user_id')
+
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Usuario no autenticado'}), 403
+
+    try:
+        solicitud = Vacaciones.query.get(id_solicitud)
+        if not solicitud:
+            return jsonify({'success': False, 'message': 'Solicitud no encontrada'}), 404
+
+        solicitud.estado = 'Rechazado'
+        solicitud.id_aprobador = user_id
+        solicitud.dia_aprobacion = datetime.now()
+        db.session.commit()
+
+        # Enviar correo al solicitante informando el rechazo
+        subject = "Rechazo de Solicitud de Vacaciones"
+        body = f"""
+        <html>
+        <head></head>
+        <body>
+            <h1>Rechazo de Solicitud de Vacaciones</h1>
+            <p>Estimado/a {solicitud.solicitante.nombre} {solicitud.solicitante.primer_apellido},</p>
+            <p>Lamentablemente, su solicitud de vacaciones del {solicitud.dia_inicio} al {solicitud.dia_final} ha sido rechazada.</p>
+        </body>
+        </html>
+        """
+        send_email_async(solicitud.solicitante.correo, subject, body)
+
+        return jsonify({'success': True, 'message': 'La solicitud ha sido rechazada exitosamente'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al procesar la solicitud: {str(e)}'})
+
+@vacaciones_bp.route('/vacaciones/cancelar_aprobacion', methods=['POST'])
+def cancelar_aprobacion():
+    if not request.is_json:
+        return jsonify({'success': False, 'message': 'El tipo de contenido no es JSON'}), 415
+
+    data = request.get_json()
+    id_solicitud = data.get('id_solicitud')
+    user_id = session.get('user_id')
+
+    try:
+        solicitud = Vacaciones.query.get(id_solicitud)
+        if not solicitud:
+            return jsonify({'success': False, 'message': 'Solicitud no encontrada'})
+
+        solicitud.estado = 'Rechazado'
+        solicitud.id_aprobador = user_id
+        solicitud.dia_aprobacion = datetime.now()
+        db.session.commit()
+
+        # Enviar correo al solicitante informando el rechazo
+        subject = "Cancelación de Aprobación de Vacaciones"
+        body = f"""
+        <html>
+        <head></head>
+        <body>
+            <h1>Cancelación de Aprobación de Vacaciones</h1>
+            <p>Estimado/a {solicitud.solicitante.nombre} {solicitud.solicitante.primer_apellido} {solicitud.solicitante.segundo_apellido},</p>
+            <p>Su solicitud de vacaciones del {solicitud.dia_inicio.strftime('%d/%m/%Y')} al {solicitud.dia_final.strftime('%d/%m/%Y')} ha sido cancelada. Por favor, comuníquese con el administrador para más detalles.</p>
+        </body>
+        </html>
+        """
+        send_email_async(solicitud.solicitante.correo, subject, body)
+
+        return jsonify({'success': True, 'message': 'La aprobación ha sido cancelada correctamente'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al procesar la solicitud: {str(e)}'})
+
+
+# Para colaboradores 
+
+@vacaciones_bp.route('/vacaciones/cancelar_vacacion', methods=['POST'])
+def cancelar_vacacion():
+    if not request.is_json:
+        return jsonify({'success': False, 'message': 'El tipo de contenido no es JSON'}), 415
+
+    data = request.get_json()
+    id_solicitud = data.get('id_solicitud')
+
+    try:
+        solicitud = Vacaciones.query.get(id_solicitud)
+        if not solicitud:
+            return jsonify({'success': False, 'message': 'Solicitud no encontrada'})
+
+        # Envía el correo a todos los administradores
+        admins = Usuarios.query.join(Roles).filter(Roles.rol == 'Administrador').all()
+        for admin in admins:
+            subject = "Cancelación de Solicitud de Vacaciones"
+            body = f"""
+            <html>
+            <head></head>
+            <body>
+                <h1 style="color:SlateGray;">Cancelación de Solicitud de Vacaciones</h1>
+                <p>El usuario {solicitud.solicitante.nombre} {solicitud.solicitante.primer_apellido} {solicitud.solicitante.segundo_apellido} ha cancelado su solicitud de vacaciones.</p>
+                <p><strong>Fecha de Inicio:</strong> {solicitud.dia_inicio}</p>
+                <p><strong>Fecha de Finalización:</strong> {solicitud.dia_final}</p>
+                <p><strong>Detalles:</strong> {solicitud.detalles}</p>
+            </body>
+            </html>
+            """
+            send_email_async(admin.correo, subject, body)
+
+        # Eliminar la solicitud de la base de datos
+        db.session.delete(solicitud)
+        db.session.commit()
+
+        return jsonify({'success': True, 'message': 'La solicitud ha sido cancelada y eliminada correctamente'})
+    except Exception as e:
+        return jsonify({'success': False, 'message': f'Error al cancelar la solicitud: {str(e)}'})
+
+@vacaciones_bp.route('/vacaciones/solicitud-cancelacion/<int:id_vacacion>', methods=['POST'])
+def solicitud_cancelacion(id_vacacion):
+    try:
+        # Obtener la solicitud de vacaciones
+        solicitud = Vacaciones.query.get(id_vacacion)
+        if not solicitud:
+            return jsonify({'success': False, 'message': 'Solicitud no encontrada'}), 404
+
+        # Obtener los administradores y enviarles el correo
+        admins = Usuarios.query.join(Roles).filter(Roles.rol == 'Administrador').all()
+        for admin in admins:
+            subject = "Solicitud de Cancelación de Vacaciones"
+            body = f"""
+            <html>
+            <head></head>
+            <body>
+                <h1>Solicitud de Cancelación de Vacaciones</h1>
+                <p>El usuario {solicitud.solicitante.nombre} {solicitud.solicitante.primer_apellido} {solicitud.solicitante.segundo_apellido} ha solicitado cancelar sus vacaciones aprobadas previamente.</p>
+                <p>Fechas de vacaciones: del {solicitud.dia_inicio.strftime('%Y-%m-%d')} al {solicitud.dia_final.strftime('%Y-%m-%d')}.</p>
+            </body>
+            </html>
+            """
+            send_email_async(admin.correo, subject, body)
+
+        return jsonify({'success': True})
+
+    except Exception as e:
+        print(f"Error al procesar la solicitud de cancelación: {e}")
+        return jsonify({'success': False, 'message': 'Error al procesar la solicitud'})
 

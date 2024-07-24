@@ -13,3 +13,6 @@ class Vacaciones(db.Model):
     dia_final = db.Column(db.Date, nullable=False)
     fecha_solicitud = db.Column(db.DateTime, default=db.func.current_timestamp())
     dia_aprobacion = db.Column(db.DateTime, nullable=True) 
+
+    solicitante = db.relationship('Usuarios', foreign_keys=[id_solicitante], backref='vacaciones_solicitadas')
+    aprobador = db.relationship('Usuarios', foreign_keys=[id_aprobador], backref='vacaciones_aprobadas')

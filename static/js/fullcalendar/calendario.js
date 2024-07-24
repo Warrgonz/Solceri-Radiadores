@@ -10,9 +10,9 @@ let btnRol = () => {
     console.log(user_role)
 
     if (rol === "1") {
-        return "solicitar,archivadas,dayGridMonth,list"
+        return "solicitar"
     }
-    return "solicitar,dayGridMonth,list"
+    return "solicitar"
 
 }
 
@@ -52,6 +52,10 @@ document.addEventListener('DOMContentLoaded', function () {
                 method: 'GET'
             }).then(response=>response.json()).then(data=>{
                 document.getElementById('solicitanteVacacion').value = data.solicitante.nombre + " " + data.solicitante.primer_apellido + " " + data.solicitante.segundo_apellido
+                document.getElementById('estadoVacacion').value = data.estado
+                document.getElementById('aprobadorVacacion').value = data.aprobador.nombre + " " + data.aprobador.primer_apellido + " " + data.aprobador.segundo_apellido
+                document.getElementById('inicioVacacion').value = data.dia_inicio
+                document.getElementById('finalVacacion').value = data.dia_final
             })
             
             document.getElementById("btnDetalleVacacion").click()
