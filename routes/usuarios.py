@@ -1,6 +1,7 @@
 # routes/usuarios.py
 
-from flask import Blueprint, render_template, request, url_for, redirect, flash, jsonify, session, current_app
+from flask import Blueprint, render_template, request, url_for, redirect, flash, jsonify, session, current_app, make_response
+from datetime import timedelta
 from models.usuarios import Usuarios
 from models.roles import Roles
 from utils.firebase import FirebaseUtils
@@ -214,16 +215,22 @@ def login():
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']
+        remember_me = 'remember_me' in request.form
 
         user = Usuarios.query.filter_by(correo=email).first()
 
         if user and check_password_hash(user.contraseña, password):
             if user.contraseña_temp and check_password_hash(user.contraseña_temp, password):
                 session['user_id'] = user.id_usuario
-                return jsonify({'redirect_url': url_for('usuarios.password_reset'), 'alert_type': 'warning', 'alert_message': 'Por favor, cambia tu contraseña temporal.'})
+                response = make_response(jsonify({'redirect_url': url_for('usuarios.password_reset'), 'alert_type': 'warning', 'alert_message': 'Por favor, cambia tu contraseña temporal.'}))
+            else:
+                session['user_id'] = user.id_usuario
+                response = make_response(jsonify({'redirect_url': url_for('usuarios.usuarios')}))
 
-            session['user_id'] = user.id_usuario
-            return jsonify({'redirect_url': url_for('usuarios.usuarios')})
+            if remember_me:
+                remember_token = user.generate_remember_token()
+                response.set_cookie('remember_token', remember_token, max_age=30*24*60*60)  # 30 days
+            return response
         else:
             return jsonify({'alert_type': 'error', 'alert_message': 'Correo electrónico o contraseña incorrectos.'}), 401
 

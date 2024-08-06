@@ -2,6 +2,11 @@
 
 from utils.db import db
 from werkzeug.security import generate_password_hash, check_password_hash
+from datetime import datetime, timedelta
+from itsdangerous import TimedSerializer as Serializer
+from flask import current_app
+import jwt
+
 
 class Usuarios(db.Model):
     __tablename__ = 'usuarios'
@@ -57,3 +62,20 @@ class Usuarios(db.Model):
     def check_password(self, password):
         """Verifica la contraseña principal."""
         return check_password_hash(self.contraseña, password)
+
+    def generate_remember_token(self, expiration=2592000):  # 30 days
+        payload = {
+            'remember': self.id_usuario,
+            'exp': datetime.utcnow() + timedelta(seconds=expiration)
+        }
+        return jwt.encode(payload, current_app.config['SECRET_KEY'], algorithm='HS256')
+
+    @staticmethod
+    def verify_remember_token(token):
+        try:
+            payload = jwt.decode(token, current_app.config['SECRET_KEY'], algorithms=['HS256'])
+            return Usuarios.query.get(payload['remember'])
+        except jwt.ExpiredSignatureError:
+            return None
+        except jwt.InvalidTokenError:
+            return None
