@@ -46,7 +46,7 @@ def tiquete_crear():
     categorias = Categorias.query.all()
     estados = Estados.query.all()
     
-    return render_template('tiquete_crear.html', clientes=clientes, grupos=grupos, trabajadores=trabajadores, categorias=categorias, estados=estados)
+    return render_template('tiquete_nuevo.html', clientes=clientes, grupos=grupos, trabajadores=trabajadores, categorias=categorias, estados=estados)
 
 @tiquetes_bp.route('/tiquete/editar/<int:id_tiquete>', methods=['GET', 'POST'])
 def tiquete_editar(id_tiquete):

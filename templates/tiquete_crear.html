@@ -38,7 +38,7 @@
         <label for="categoria" class="form-label">Categoría</label>
         <select class="form-select" id="categoria" name="categoria" required>
             {% for categoria in categorias %}
-            <option value="{{ categoria.id_categoria }}">{{ categoria.nombre }}</option>
+            <option value="{{ categoria.id_categoria }}">{{ categoria.categoria }}</option>
             {% endfor %}
         </select>
     </div>
