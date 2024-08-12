@@ -23,14 +23,16 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <!-- CSS Files -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/app.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/background.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/index.css') }}">
 
     <!--Favicon-->
     <link rel="icon" href="{{ url_for('static', filename='images/faviconSolceri.png') }}">
 
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <!--Title-->
     <title>Solceri Radiadores</title>
 
@@ -41,7 +43,7 @@
         <div class="container-fluid">
             <!-- Logo posicionado a la izquierda -->
             <a class="navbar-brand" href="#">
-                <img src="{{ url_for('static', filename='images/logoSolceri.png') }}" alt="Logo" style="height: 40px;">
+                <img src="{{ url_for('static', filename='images/logoSolceri.png') }}" alt="Logo" style="height: 70px;">
             </a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="true" aria-label="Toggle navigation">
@@ -51,22 +53,142 @@
                 <!-- Opción de iniciar sesión alineada a la derecha -->
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
+                        <a class="nav-link" href="#">Inicio</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Nosotros</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Ubícanos</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#">Contáctenos</a>
+                    </li>
+                    <li class="nav-item">
                         <a class="" href="/login"><button class="btn btn-outline-warning">Ingresar</button></a>
                     </li>
                 </ul>
             </div>
         </div>
     </nav>
-    <div class="video-container">
-        <video onloadedmetadata="this.muted=true" autoplay loop playsinline>
-            <source src="{{ url_for('static', filename='video/banner-2.mp4') }}" type="video/mp4">
-            Your browser does not support the video tag.
-        </video>
-        <div class="overlay d-flex flex-column">
-            <p class="title-banner">¡Bienvenidos a Solceri Radiadores!</p>
-            <h2 class="p-banner">Servicio rápido y conciso</h2>
+    <section class="hero-sec d-flex justify-content-center align-items-center">
+        <div class="align-items-center">
+            <div class="container px-5">
+                <h1 class="title py-3">Solceri Radiadores</h1>
+                <p class="hero-call-to-action">
+                    ¡Reserva ahora tu cita en <strong>Solceri Radiadores</strong> y asegura el óptimo rendimiento de tu
+                    radiador! Nuestros expertos están listos para ofrecerte una revisión completa y profesional. ¡No
+                    esperes
+                    más y solicita tu revisión hoy mismo!
+                </p>
+                <div class="d-flex justify-content-center py-1">
+                    <button class="btn btn-dark btn-lg">Agendar cita</button>
+                </div>
+            </div>
         </div>
+    </section>
+
+    <!--Scroll btn-->
+    <div class="scroll" id="scrollToTop">
+        <span class="material-symbols-outlined">
+            keyboard_arrow_up
+        </span>
     </div>
+
+    <main>
+        <section class="container nosotros">
+            <h2 class="py-5 text-center">Nosotros</h2>
+            <div class="row">
+                <div class="col-sm-12 col-md-6">
+                    <img src="/static/images/Nosotros.jpg" class="nosotros-img" alt="Nosotros taller">
+                </div>
+                <div class="col-sm-12 col-md-6">
+                    <h1 class="text-center primary-color">¡Somos la mejor calidad del mercado!</h1>
+                    <p>Somos una empresa especializada en la venta de radiadores premium y reparación. Diseño de
+                        soluciones de enfriamiento, tanto maquinaria pesada como motores estacionarios. En Radiadores
+                        Solceri, fabricamos tu radiador en aluminio electro-soldado!
+                        Además, contamos con Radiadores nuevos de Calidad <strong>PREMIUM</strong> para todas las
+                        marcas.</p>
+                </div>
+            </div>
+            <div class="pt-5 d-flex text-center flex-column align-items-center justify-content-center">
+                <div class="row">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="solceri-card">
+                            <div class="solceri-card-content">
+                                <span class="material-symbols-outlined">
+                                    verified
+                                </span>
+                                <h3>Revisión GRATIS</h3>
+                                <p>Ofrecemos un servicio de revisión gratuita para evaluar el estado de tu radiador.
+                                    Nuestro equipo de expertos realizará una inspección completa para detectar posibles
+                                    problemas y ofrecerte las mejores soluciones para mantener tu sistema de
+                                    enfriamiento en óptimas condiciones.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="solceri-card">
+                            <div class="solceri-card-content">
+                                <span class="material-symbols-outlined">
+                                    construction
+                                </span>
+                                <h3>Reparación</h3>
+                                <p>Brindamos servicios de reparación especializados para todo tipo de radiadores.
+                                    Utilizamos técnicas avanzadas y materiales de alta calidad para garantizar que tu
+                                    radiador vuelva a funcionar como nuevo. Ya sea un vehículo ligero o maquinaria
+                                    pesada, podemos manejar cualquier tipo de reparación.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row pt-4">
+                    <div class="col-sm-12 col-md-6">
+                        <div class="solceri-card">
+                            <div class="solceri-card-content">
+                                <span class="material-symbols-outlined">
+                                    storefront
+                                </span>
+                                <h3>Venta</h3>
+                                <p>En Radiadores Solceri, ofrecemos una amplia gama de radiadores nuevos de calidad
+                                    PREMIUM para todas las marcas y modelos. Nuestros productos están diseñados para
+                                    proporcionar el máximo rendimiento y durabilidad, asegurando que tu vehículo
+                                    mantenga una temperatura óptima en todo momento.</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-sm-12 col-md-6">
+                        <div class="solceri-card">
+                            <div class="solceri-card-content">
+                                <span class="material-symbols-outlined">
+                                    local_shipping
+                                </span>
+                                <h3>Servicio a domicilio</h3>
+                                <p>Sabemos que tu tiempo es valioso, por eso ofrecemos un conveniente servicio a
+                                    domicilio. Nuestro equipo se desplazará hasta tu ubicación para realizar revisiones,
+                                    reparaciones o entregas de radiadores, brindándote la comodidad de un servicio
+                                    profesional sin tener que salir de casa.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <section class="mt-5 slogan d-flex justify-content-center align-items-center">
+            <h1>🏁 Ubícanos 🚘</h1>
+        </section>
+        <section class="ubicanos">
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3929.1119245668006!2d-84.03534379999999!3d10.0076129!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8fa0e5824d032c2d%3A0x50640d4cf7686320!2sRadiadores%20Solceri!5e0!3m2!1ses-419!2scr!4v1722916174010!5m2!1ses-419!2scr"
+                width="800" height="600" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </section>
+        <section class="slogan d-flex justify-content-center align-items-center">
+            <h1>🏁 Contáctenos 🚘</h1>
+        </section>
+    </main>
+
+
     <!--Bootstrap-->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
@@ -74,9 +196,17 @@
     <!-- Bootstrap Bundle with Popper -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/5.3.0/js/bootstrap.bundle.min.js"></script>
 
-    <!--JS-->
-    <script src="static/js/app.js"></script>
+    <!--Fontawesome-->
+    <script src="https://kit.fontawesome.com/4ccaae5e72.js" crossorigin="anonymous"></script>
 
+    <script>
+        document.getElementById('scrollToTop').addEventListener('click', function () {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    </script>
 </body>
 
 </html>

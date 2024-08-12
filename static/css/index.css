@@ -1,0 +1,146 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+:root {
+    --color-primary: #f9bb63;
+    --color-secondary: #1d4d72;
+}
+
+.navbar {
+    background-color: black;
+}
+
+.primary-color{
+    color: var(--color-primary);
+}
+
+body {
+    font-size: 1.2rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    overflow-x: hidden;
+    background-color: black;
+}
+
+main{
+    color: white;
+}
+
+p{
+    margin: 1em 0;
+    padding: 0;
+    line-height: 1.5;
+    text-align: justify;
+}
+
+h2{
+    font-size: 3rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: bolder;
+    font-style: normal;  
+}
+
+/*Navbar*/
+
+nav{
+    height: 100px;
+}
+
+ul li a{
+    color: white !important;
+    margin-right: 20px;
+}
+
+/*Hero*/
+
+.hero-sec {
+    background-image: url("/static/images/Radiador-para-auto.webp");
+    background-image: linear-gradient(135deg, rgba(29, 77, 114, 0.7), rgba(249, 187, 99, 0.7), rgba(13, 13, 13, 0.7)), url("/static/images/Radiador-para-auto.webp");
+    min-height: 1000px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    align-items: center;
+    width: 100%;
+    background-attachment: fixed;
+
+
+}
+
+.title {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 5rem;
+    font-family: "Poppins", sans-serif;
+    font-weight: 700;
+    font-style: italic; 
+    color: var(--color-primary);
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+.hero-call-to-action{
+    color: white;
+    font-size: 1.2rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
+}
+
+/*Scroll top*/
+
+.scroll{
+    position: fixed;
+    right: 80px;
+    top: 90%;
+    width: 50px;
+    height: 50px;
+    background-color: var(--color-primary);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+}
+
+.scroll span{
+    font-size: 50px;
+}
+
+/*Nosotros*/
+
+.nosotros-img{
+    width: 100%;
+    border-radius: 5px;
+}
+
+.solceri-card{
+    width: 90%;
+    border-color: var(--color-primary);
+    border-width: 2px; 
+    border-style: solid;
+    border-radius: 5px;
+    min-height: 400px;
+}
+.solceri-card-content{
+    padding: 20px;
+}
+
+.nosotros span{
+    font-size: 80px;
+    color: var(--color-primary);
+}
+
+/*slogan*/
+
+.slogan{
+    background-image: linear-gradient(135deg, rgba(29, 77, 114, 0.7), rgba(249, 187, 99, 0.7), rgba(13, 13, 13, 0.7)), url("/static/images/carretera.jpg");
+    min-height: 200px;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-size: cover;
+    align-items: center;
+    width: 100%;
+    background-attachment: fixed;
+}
+
+.ubicanos iframe{
+    width: 100%;
+    
+}
