@@ -29,15 +29,13 @@
                 <td>{{ tiquete.cliente.nombre }}</td>
                 <td>{{ tiquete.grupo.nombre if tiquete.grupo else 'No asignado' }}</td>
                 <td>{{ tiquete.trabajador.nombre if tiquete.trabajador else 'No asignado' }}</td>
-                <td>{{ tiquete.categoria.nombre if tiquete.categoria else 'No asignada' }}</td>
+                <td>{{ tiquete.categoria.categoria if tiquete.categoria else 'No asignada' }}</td>
                 <td>{{ tiquete.estado.estado }}</td>
                 <td>{{ tiquete.fecha_creacion }}</td>
                 <td>{{ tiquete.ultima_asignacion }}</td>
                 <td>
                     <a href="{{ url_for('tiquetes.tiquete_editar', id_tiquete=tiquete.id_tiquete) }}" class="btn btn-warning btn-sm">Editar</a>
-                    <form action="{{ url_for('tiquetes.tiquete_eliminar', id_tiquete=tiquete.id_tiquete) }}" method="POST" style="display:inline;">
-                        <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
-                    </form>
+                    
                 </td>
             </tr>
             {% endfor %}
