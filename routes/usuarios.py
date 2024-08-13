@@ -1,13 +1,12 @@
 # routes/usuarios.py
 
 from flask import Blueprint, render_template, request, url_for, redirect, flash, jsonify, session, current_app, make_response
-from datetime import timedelta
+from datetime import datetime
 from models.usuarios import Usuarios
 from models.roles import Roles
 from utils.firebase import FirebaseUtils
 from utils.db import db
 from utils.servicio_mail import generate_temp_password, send_email_async, generate_reset_token, verify_reset_token
-import datetime
 from utils.auth import login_required, role_required
 from werkzeug.security import generate_password_hash, check_password_hash
 from itsdangerous import URLSafeTimedSerializer
@@ -32,7 +31,7 @@ def usuarios_crear():
             primer_apellido = request.form['primer_apellido']
             segundo_apellido = request.form['segundo_apellido']
             ruta_imagen = None
-            imagen_default = "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/system.png?alt=media&token=c6dd24e5-c288-4223-bbf9-152e4c007b51"
+            imagen_default = "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/logoSolceri.png?alt=media&token=04720a06-9149-40da-9b39-1d3fa0bbb698"
             if 'ruta_imagen' in request.files:
                 ruta_imagen = request.files['ruta_imagen']
                 if ruta_imagen.filename != '':
@@ -134,10 +133,15 @@ def usuarios_editar(id):
 
             # Validar y asignar Fecha_Contratacion
             fecha_contratacion = request.form.get('fecha_contratacion')
-            if fecha_contratacion:
-                usuario.Fecha_Contratacion = datetime.strptime(fecha_contratacion, '%Y-%m-%d').date()
-            else:
-                usuario.Fecha_Contratacion = None
+            print(f"Fecha de contratación recibida: {fecha_contratacion}")
+            try:
+                if fecha_contratacion:
+                    usuario.Fecha_Contratacion = datetime.strptime(fecha_contratacion, '%Y-%m-%d').date()
+                else:
+                    usuario.Fecha_Contratacion = None
+            except ValueError as ve:
+                flash(f'Error en la fecha de contratación: {ve}', 'danger')
+                return redirect(url_for('usuarios.usuarios_editar', id=id))
 
             if usuario.id_rol != int(request.form['rol']):
                 usuario.id_rol = int(request.form['rol'])
@@ -159,6 +163,7 @@ def usuarios_editar(id):
             # Manejar el error y mostrar un mensaje al usuario
             db.session.rollback()
             flash(f'Error al actualizar el usuario: {e}', 'danger')
+            print(f"Detalles del error: {e}")
             return redirect(url_for('usuarios.usuarios_editar', id=id))
 
     return render_template('usuarios_editar.html', usuario=usuario, roles=roles)
@@ -169,9 +174,25 @@ def desactivar_usuario(id):
     if usuario:
         usuario.estado = False
         db.session.commit()
+
+        # Enviar correo electrónico de notificación
+        subject = "Tu cuenta ha sido inactivada"
+        body = f"""
+        <html>
+        <head></head>
+        <body>
+            <h1 style="color:SlateGray;">Cuenta Inactivada</h1>
+            <p>Tu cuenta ha sido inactivada por un administrador.</p>
+            <p>Si crees que esto es un error, por favor contacta con el soporte.</p>
+        </body>
+        </html>
+        """
+        send_email_async(usuario.correo, subject, body)
+        
         return jsonify({'success': True}), 200
     else:
         return jsonify({'success': False, 'error': 'Usuario no encontrado'}), 404
+
 
 @usuarios_bp.route('/usuarios/activar/<int:id>', methods=['POST'])
 def activar_usuario(id):
@@ -179,9 +200,25 @@ def activar_usuario(id):
     if usuario:
         usuario.estado = True
         db.session.commit()
+
+        # Enviar correo electrónico de notificación
+        subject = "Tu cuenta ha sido activada"
+        body = f"""
+        <html>
+        <head></head>
+        <body>
+            <h1 style="color:SlateGray;">Cuenta Activada</h1>
+            <p>Tu cuenta ha sido activada exitosamente. Ahora puedes iniciar sesión con tu correo y contraseña.</p>
+            <p>Si necesitas asistencia, contactenos.</p>
+        </body>
+        </html>
+        """
+        send_email_async(usuario.correo, subject, body)
+
         return jsonify({'success': True}), 200
     else:
         return jsonify({'success': False, 'error': 'Usuario no encontrado'}), 404
+
     
 @usuarios_bp.route('/usuarios/eliminar/<int:id_usuario>', methods=['GET', 'POST'])
 def eliminar_usuario(id_usuario):
@@ -192,10 +229,6 @@ def eliminar_usuario(id_usuario):
         if not usuario:
             flash('Usuario no encontrado', 'danger')
             return redirect(url_for('usuarios.usuarios'))
-
-        # Eliminar la imagen del usuario de Firebase si existe
-        if usuario.ruta_imagen and usuario.ruta_imagen != "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/system.png?alt=media&token=c6dd24e5-c288-4223-bbf9-152e4c007b51":
-            FirebaseUtils.delete_image(usuario.ruta_imagen)
 
         # Eliminar el usuario de la base de datos
         db.session.delete(usuario)
@@ -219,24 +252,30 @@ def login():
 
         user = Usuarios.query.filter_by(correo=email).first()
 
-        if user and check_password_hash(user.contraseña, password):
-            if user.contraseña_temp and check_password_hash(user.contraseña_temp, password):
-                session['user_id'] = user.id_usuario
-                response = make_response(jsonify({'redirect_url': url_for('usuarios.password_reset'), 'alert_type': 'warning', 'alert_message': 'Por favor, cambia tu contraseña temporal.'}))
-            else:
-                session['user_id'] = user.id_usuario
-                response = make_response(jsonify({'redirect_url': url_for('usuarios.usuarios')}))
+        if user:
+            # Verifica si el usuario está activo
+            if not user.estado:
+                return jsonify({'alert_type': 'error', 'alert_message': 'Tu cuenta está inactiva. Contacta al administrador.'}), 403
+            
+            # Verifica la contraseña
+            if check_password_hash(user.contraseña, password):
+                if user.contraseña_temp and check_password_hash(user.contraseña_temp, password):
+                    session['user_id'] = user.id_usuario
+                    response = make_response(jsonify({'redirect_url': url_for('usuarios.password_reset'), 'alert_type': 'warning', 'alert_message': 'Por favor, cambia tu contraseña temporal.'}))
+                else:
+                    session['user_id'] = user.id_usuario
+                    response = make_response(jsonify({'redirect_url': url_for('usuarios.usuarios')}))
 
-            if remember_me:
-                remember_token = user.generate_remember_token()
-                response.set_cookie('remember_token', remember_token, max_age=30*24*60*60)  # 30 days
-            return response
+                if remember_me:
+                    remember_token = user.generate_remember_token()
+                    response.set_cookie('remember_token', remember_token, max_age=30*24*60*60)  # 30 days
+                return response
+            else:
+                return jsonify({'alert_type': 'error', 'alert_message': 'Correo electrónico o contraseña incorrectos.'}), 401
         else:
             return jsonify({'alert_type': 'error', 'alert_message': 'Correo electrónico o contraseña incorrectos.'}), 401
 
     return render_template('login.html')
-
-
 
 
 #Reset while logged
@@ -285,7 +324,6 @@ def password_reset():
 def acceso_denegado():
     return render_template('403.html'), 403
 
-
 #Logout
 
 @usuarios_bp.route('/logout')
@@ -312,7 +350,7 @@ def password_recovery_request():
             <html>
             <head></head>
             <body>
-                <h1>Recuperación de Contraseña</h1>
+                <h1 style="color:SlateGray;">Recuperación de Contraseña</h1>
                 <p>Haga clic en el siguiente enlace para restablecer su contraseña:</p>
                 <a href="{reset_url}">Restablecer Contraseña</a>
             </body>

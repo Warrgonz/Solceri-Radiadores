@@ -1,0 +1,28 @@
+{% extends "layout.html" %}
+{% block content %}
+
+<div class="container-fluid">
+    <h1 class="py-3">Mi perfil</h2>
+        <div class="row">
+            <div class="col-md-6">
+                <div>
+                    <img src="{{ usuario.ruta_imagen }}" alt="Foto de Perfil" style="height: 150px;">
+                </div>
+                <p><strong>Cédula:</strong> {{ usuario.cedula }}</p>
+                <p><strong>Nombre Completo:</strong> {{ usuario.nombre }} {{ usuario.primer_apellido }} {{
+                    usuario.segundo_apellido }}
+                </p>
+                <p><strong>Correo Electrónico:</strong> {{ usuario.correo }}</p>
+
+            </div>
+            <div class="col-md-6">
+                <p><strong>Rol:</strong> {{ usuario.rol.rol }}</p>
+                <p><strong>Estado:</strong> {% if usuario.estado %} Activo {% else %} Inactivo {% endif %}</p>
+                <p><strong>Fecha de Contratación:</strong> {{ usuario.Fecha_Contratacion }}</p>
+                <a href="{{ url_for('dashboard.editar_perfil') }}">
+                    <button class="btn-solceri" style="width: 100%;">Editar</button>
+                </a>
+            </div>
+        </div>
+</div>
+{% endblock %}

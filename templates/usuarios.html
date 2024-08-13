@@ -9,6 +9,31 @@
 {% endif %}
 {% endwith %}
 
+<style>
+    @media only screen and (max-width: 480px) {
+        .btn-solceri-eliminar {
+            width: 100%;
+        }
+
+        .btn-solceri {
+            width: 100%;
+
+        }
+    }
+
+    @media only screen and (min-width: 760px) and (max-width: 890px) {
+        .btn-solceri-eliminar {
+            width: 100%;
+        }
+
+        .btn-solceri {
+            width: 100%;
+
+        }
+        
+    }
+</style>
+
 <div>
     <h1 class="pb-3 section-title">Usuarios</h1>
 </div>
@@ -44,7 +69,7 @@
             {% for usuario in usuarios %}
             <tr class="usuario">
                 <td class="cedula">{{ usuario.cedula }}</td>
-                <td class="nombre-completo">{{ usuario.nombre }} {{ usuario.primer_apellido }} {{
+                <td class="usuario-nombre">{{ usuario.nombre }} {{ usuario.primer_apellido }} {{
                     usuario.segundo_apellido }}</td>
                 <td class="correo">{{ usuario.correo }}</td>
                 <td><img src="{{ usuario.ruta_imagen }}" width="50px" alt="Foto de perfil"></td>
@@ -94,4 +119,21 @@
 </div>
 {% endif %}
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+    document.querySelectorAll('.correo').forEach(function(element) {
+        if (element.textContent.trim().toLowerCase() === "warreno0419s@gmail.com") {
+            console.log("Deshabilitando botones de Inactivar y Eliminar para el correo Warreno0419s@gmail.com");
+            const row = element.closest('tr');
+            // Seleccionar solo los botones de inactivar y eliminar
+            row.querySelectorAll('.btn-solceri-eliminar, .btn-dark').forEach(function(button) {
+                button.disabled = true;
+                button.style.pointerEvents = 'none';
+                button.style.opacity = '0.6';
+            });
+        }
+    });
+});
+
+</script>
 {% endblock %}
