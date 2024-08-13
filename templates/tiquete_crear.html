@@ -1,55 +1,84 @@
 {% extends "layout.html" %}
 {% block content %}
-<h2>Crear Nuevo Tiquete</h2>
-<form id="tiqueteCrearForm" method="POST" action="{{ url_for('tiquetes.tiquete_crear') }}">
-    <div class="mb-3">
-        <label for="resumen" class="form-label">Resumen</label>
-        <input type="text" class="form-control" id="resumen" name="resumen" required>
-    </div>
-    <div class="mb-3">
-        <label for="descripcion" class="form-label">Descripción</label>
-        <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
-    </div>
-    <div class="mb-3">
-        <label for="id_cliente" class="form-label">Cliente</label>
-        <select class="form-select" id="id_cliente" name="id_cliente" required>
-            {% for cliente in clientes %}
-            <option value="{{ cliente.id_usuario }}">{{ cliente.nombre }} {{ cliente.primer_apellido }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="grupo_asignado" class="form-label">Grupo Asignado</label>
-        <select class="form-select" id="grupo_asignado" name="grupo_asignado" required>
-            {% for grupo in grupos %}
-            <option value="{{ grupo.id_grupo }}">{{ grupo.nombre }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="trabajador_designado" class="form-label">Trabajador Designado</label>
-        <select class="form-select" id="trabajador_designado" name="trabajador_designado" required>
-            {% for trabajador in trabajadores %}
-            <option value="{{ trabajador.id_usuario }}">{{ trabajador.nombre }} {{ trabajador.primer_apellido }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="categoria" class="form-label">Categoría</label>
-        <select class="form-select" id="categoria" name="categoria" required>
-            {% for categoria in categorias %}
-            <option value="{{ categoria.id_categoria }}">{{ categoria.categoria }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <div class="mb-3">
-        <label for="estado" class="form-label">Estado</label>
-        <select class="form-select" id="estado" name="estado" required>
-            {% for estado in estados %}
-            <option value="{{ estado.id_estado }}">{{ estado.estado }}</option>
-            {% endfor %}
-        </select>
-    </div>
-    <button type="submit" class="btn btn-primary">Crear Tiquete</button>
-</form>
+
+<div>
+    <h2><strong>Tiquete # R5236487</strong></h2>
+    <form id="tiqueteCrearForm" method="POST" action="{{ url_for('tiquetes.tiquete_crear') }}" class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div>
+                <label for="id_cliente">Cliente<span>*</span></label>
+                <select class="form-select mb-3" id="id_cliente" name="id_cliente" required>
+                    <option selected>Seleccione un cliente</option>
+                    {% for cliente in clientes %}
+                    <option value="{{ cliente.id_usuario }}">{{ cliente.nombre }} {{ cliente.primer_apellido }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="grupo_asignado">Grupo<span>*</span></label>
+                <select class="form-select mb-3" id="grupo_asignado" name="grupo_asignado" required>
+                    <option selected>Seleccione un grupo</option>
+                    {% for grupo in grupos %}
+                    <option value="{{ grupo.id_grupo }}">{{ grupo.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <input type="hidden" disabled class="form-control" name="fecha" value="{{ fecha_actual }}" disabled>
+            </div>
+            <div>
+                <label for="trabajador_designado">Colaborador<span>*</span></label>
+                <select class="form-select mb-3" id="trabajador_designado" name="trabajador_designado" required>
+                    <option selected>Seleccione un colaborador</option>
+                    {% for trabajador in trabajadores %}
+                    <option value="{{ trabajador.id_usuario }}">{{ trabajador.nombre }} {{ trabajador.primer_apellido }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="resumen">Resumen<span>*</span></label>
+                <input type="text" class="form-control" id="resumen" name="resumen" placeholder="Motivo del tiquete" required>
+            </div>
+            <div>
+                <label for="descripcion">Descripción<span>*</span></label>
+                <textarea class="form-control" rows="3" id="descripcion" name="descripcion" placeholder="Descripción del servicio" required></textarea>
+            </div>
+            <div class="pt-2">
+                <label for="archivos">Adjunte un archivo <strong>(Opcional)</strong></label>
+                <input type="file" id="archivo" name="archivos" accept=".pdf, .doc, .docx, .png, .jpg, .webp">
+            </div>
+
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div>
+                <label for="categoria">Categoría<span>*</span></label>
+                <select class="form-select mb-3" id="categoria" name="categoria" required>
+                    <option selected>Seleccione una categoría</option>
+                    {% for categoria in categorias %}
+                    <option value="{{ categoria.id_categoria }}">{{ categoria.categoria }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="estado">Estado<span>*</span></label>
+                <select class="form-select mb-3" id="estado" name="estado" required>
+                    <option selected>Seleccione un estado</option>
+                    {% for estado in estados %}
+                    <option value="{{ estado.id_estado }}">{{ estado.estado }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="direccion">Dirección<span>*</span></label>
+                <input type="text" class="form-control" id="direccion" name="direccion" placeholder="Dirección de entrega" required>
+            </div>
+            <div class="pt-3">
+                <button type="submit" class="btn btn-success" style="width: 100%;">Guardar</button>
+                <a href="{{ url_for('tiquetes.tiquete_crear') }}"><button type="button" class="btn btn-danger mt-3" style="width: 100%;">Cancelar</button></a>
+                <a href=""><button type="button" class="btn-solceri mt-3" style="width: 100%;">Cotizaciones</button></a>
+            </div>
+        </div>
+    </form>
+</div>`
+
 {% endblock %}

@@ -4,34 +4,42 @@ from utils.db import db
 from models.usuarios import Usuarios  
 from models.grupos import Grupos  
 from models.categorias import Categorias
+from models.estados import Estados
+from datetime import datetime
 
-class Estados(db.Model):
-    __tablename__ = 'estados'
-    id_estado = db.Column(db.Integer, primary_key=True)
-    estado = db.Column(db.String(50), nullable=False)
-    descripcion = db.Column(db.String(255), nullable=True)
-
-    def __repr__(self):
-        return f"<Estado(id_estado={self.id_estado}, estado='{self.estado}')>"
+from utils.db import db
+from datetime import datetime
 
 class Tiquetes(db.Model):
     __tablename__ = 'tiquetes'
-    id_tiquete = db.Column(db.Integer, primary_key=True)
+    id_tiquete = db.Column(db.Integer, primary_key=True, autoincrement=True)
     id_cliente = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=False)
-    resumen = db.Column(db.Text, nullable=False)
-    descripcion = db.Column(db.Text, nullable=True)
-    grupo_asignado = db.Column(db.Integer, db.ForeignKey('grupos.id_grupo'), nullable=True)
-    trabajador_designado = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=True)
-    categoria = db.Column(db.Integer, db.ForeignKey('categorias.id_categoria'), nullable=True)
-    fecha_creacion = db.Column(db.DateTime, nullable=False)
-    ultima_asignacion = db.Column(db.DateTime, nullable=True)
+    grupo_asignado = db.Column(db.Integer, db.ForeignKey('grupos.id_grupo'), nullable=False)
+    trabajador_designado = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=False)
+    categoria = db.Column(db.Integer, db.ForeignKey('categorias.id_categoria'), nullable=False)
+    resumen = db.Column(db.String(255), nullable=False)
+    descripcion = db.Column(db.Text, nullable=False)
+    direccion = db.Column(db.String(255), nullable=False)
+    fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
     id_estado = db.Column(db.Integer, db.ForeignKey('estados.id_estado'), nullable=False)
 
+    # Relaciones
     cliente = db.relationship('Usuarios', foreign_keys=[id_cliente])
-    grupo = db.relationship('Grupos', foreign_keys=[grupo_asignado])
+    grupo = db.relationship('Grupos', backref=db.backref('tiquetes', lazy=True))
     trabajador = db.relationship('Usuarios', foreign_keys=[trabajador_designado])
-    estado = db.relationship('Estados', foreign_keys=[id_estado])
+    estado = db.relationship('Estados', backref=db.backref('tiquetes', lazy=True))
+    categoria_rel = db.relationship('Categorias', backref=db.backref('tiquetes', lazy=True))
+
+    def __init__(self, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado):
+        self.id_cliente = id_cliente
+        self.grupo_asignado = grupo_asignado
+        self.trabajador_designado = trabajador_designado
+        self.categoria = categoria
+        self.resumen = resumen
+        self.descripcion = descripcion
+        self.direccion = direccion
+        self.id_estado = id_estado
 
     def __repr__(self):
-        return f"<Tiquete(id_tiquete={self.id_tiquete}, resumen='{self.resumen}')>"
-
+        return f'<Tiquete #{self.id_tiquete}>'
+    
