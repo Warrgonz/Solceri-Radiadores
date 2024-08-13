@@ -3,12 +3,12 @@
 
 <div>
     <h2><strong>Tiquete # {{ tiquete.id_tiquete }}</strong></h2>
-    <form id="tiqueteEditarForm" method="POST" action="{{ url_for('tiquetes.tiquete_editar', id_tiquete=tiquete.id_tiquete) }}" class="row">
+    <form id="tiqueteEditarForm" method="POST" action="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}" class="row">
         <div class="col-sm-12 col-md-6 col-lg-6">
             <div>
                 <label for="id_cliente">Cliente<span>*</span></label>
                 <select class="form-select mb-3" id="id_cliente" name="id_cliente" required>
-                    <option>Seleccione un cliente</option>
+                    <option value="">Seleccione un cliente</option>
                     {% for cliente in clientes %}
                     <option value="{{ cliente.id_usuario }}" {% if cliente.id_usuario == tiquete.id_cliente %}selected{% endif %}>
                         {{ cliente.nombre }} {{ cliente.primer_apellido }}
@@ -19,7 +19,7 @@
             <div>
                 <label for="grupo_asignado">Grupo<span>*</span></label>
                 <select class="form-select mb-3" id="grupo_asignado" name="grupo_asignado" required>
-                    <option>Seleccione un grupo</option>
+                    <option value="">Seleccione un grupo</option>
                     {% for grupo in grupos %}
                     <option value="{{ grupo.id_grupo }}" {% if grupo.id_grupo == tiquete.grupo_asignado %}selected{% endif %}>
                         {{ grupo.nombre }}
@@ -28,13 +28,13 @@
                 </select>
             </div>
             <div>
-                <label for="fecha">Fecha<span>*</span></label> <!--Fecha actual-->
-                <input type="hidden" class="form-control" name="fecha" value="{{ tiquete.fecha_creacion }}" disabled>
+                <label for="fecha">Fecha<span>*</span></label>
+                <input type="text" class="form-control" name="fecha" value="{{ tiquete.fecha_creacion }}" disabled>
             </div>
             <div>
                 <label for="trabajador_designado">Colaborador<span>*</span></label>
                 <select class="form-select mb-3" id="trabajador_designado" name="trabajador_designado" required>
-                    <option>Seleccione un colaborador</option>
+                    <option value="">Seleccione un colaborador</option>
                     {% for trabajador in trabajadores %}
                     <option value="{{ trabajador.id_usuario }}" {% if trabajador.id_usuario == tiquete.trabajador_designado %}selected{% endif %}>
                         {{ trabajador.nombre }} {{ trabajador.primer_apellido }}
@@ -59,7 +59,7 @@
             <div>
                 <label for="categoria">Categoría<span>*</span></label>
                 <select class="form-select mb-3" id="categoria" name="categoria" required>
-                    <option>Seleccione una categoría</option>
+                    <option value="">Seleccione una categoría</option>
                     {% for categoria in categorias %}
                     <option value="{{ categoria.id_categoria }}" {% if categoria.id_categoria == tiquete.categoria %}selected{% endif %}>
                         {{ categoria.categoria }}
@@ -70,7 +70,7 @@
             <div>
                 <label for="estado">Estado<span>*</span></label>
                 <select class="form-select mb-3" id="estado" name="estado" required>
-                    <option>Seleccione un estado</option>
+                    <option value="">Seleccione un estado</option>
                     {% for estado in estados %}
                     <option value="{{ estado.id_estado }}" {% if estado.id_estado == tiquete.id_estado %}selected{% endif %}>
                         {{ estado.estado }}
@@ -84,7 +84,7 @@
             </div>
             <div class="pt-3">
                 <button type="submit" class="btn btn-success" style="width: 100%;">Guardar</button>
-                <a href="{{ url_for('tiquetes.tiquete_editar', id_tiquete=tiquete.id_tiquete) }}"><button type="button" class="btn btn-danger mt-3" style="width: 100%;">Cancelar</button></a>
+                <a href="{{ url_for('tiquetes.tiquetes_listar') }}"><button type="button" class="btn btn-danger mt-3" style="width: 100%;">Cancelar</button></a>
                 <a href=""><button type="button" class="btn-solceri mt-3" style="width: 100%;">Cotizaciones</button></a>
             </div>
         </div>
@@ -121,14 +121,10 @@
                 </div>
                 <div class="col-sm-12 col-md-11 col-lg-11">
                     <h5>David Gutierrez Ledezma</h5>
-                    <span>2024-03-07 4:24 PM (UTC-06:00)</span>
-                    <div>
-                        <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Magni debitis id, deleniti
-                            excepturi minus vel? Quisquam dignissimos alias officia temporibus quod molestiae
-                            ratione impedit iure optio, vitae in mollitia voluptatum.</p>
-                    </div>
+                    <p>Este es un comentario de prueba. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
                 </div>
             </div>
+            <!-- Fin del bloque de comentario -->
         </div>
     </div>
 </div>
