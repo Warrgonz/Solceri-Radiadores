@@ -1,0 +1,105 @@
+:root {
+    --color-primary: #f9bb63;
+    --color-secondary: #1d4d72;
+}
+
+body{
+    font-family: "Montserrat", sans-serif;
+    font-size: 1rem;
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+    font-weight: 400;
+    font-style: normal;
+}
+
+.back-dark{
+    background-color: #111111;
+}
+
+
+.login {
+    position: relative;
+    background-color: #161616;
+    padding: 15px;
+    margin: 0px auto 30px auto;
+    width: 500px;
+    border-radius: 3px;
+    box-shadow: 0 1px 5px 0 rgba(0,0,0,0.26);
+    color: white;
+    overflow: hidden;
+    border-radius: 10px;
+    height: 500px;
+}
+
+img{
+    width: 25%;
+    padding: 20px;
+}
+
+a{
+    color: var(--color-primary);
+}
+
+h1{
+    color: var(--color-primary);
+}
+
+button{
+    height: 54px;
+    padding-left: 30px;
+    padding-right: 30px;
+    font-size: 1.2rem;
+    font-weight: bolder;
+    width: 100%;
+    margin-top: 11px;
+    border: none;
+    background-color: #f9bb63;
+}
+
+button:hover{
+    width: 100%;
+    background-color: #245071;
+    color: white;
+    font-weight: bolder;
+
+  }
+
+.el-hechicero{
+    background-color: var(--color-secondary);
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.el-hechicero a i{
+    color: white;
+}
+
+
+@media only screen and (max-width: 480px) {
+    img{
+        width: 100%;
+        padding: 20px;
+    }
+
+    .login{
+        height: 450px;
+    }
+
+  }
+  
+  @media only screen and (min-width: 760px) and (max-width: 890px) {
+    img{
+        width: 50%;
+        padding: 20px;
+    }
+
+    .login{
+        height: 450px;
+    }
+
+}
+
+
+
+

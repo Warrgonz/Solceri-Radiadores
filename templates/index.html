@@ -20,6 +20,8 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css"/>
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
@@ -53,16 +55,16 @@
                 <!-- Opción de iniciar sesión alineada a la derecha -->
                 <ul class="navbar-nav ms-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Inicio</a>
+                        <a class="nav-link" href="#inicio">Inicio</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Nosotros</a>
+                        <a class="nav-link" href="#nosotros">Nosotros</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Ubícanos</a>
+                        <a class="nav-link" href="#ubicanos">Ubícanos</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="#">Contáctenos</a>
+                        <a class="nav-link" href="#contactenos">Contáctenos</a>
                     </li>
                     <li class="nav-item">
                         <a class="" href="/login"><button class="btn btn-outline-warning">Ingresar</button></a>
@@ -71,10 +73,10 @@
             </div>
         </div>
     </nav>
-    <section class="hero-sec d-flex justify-content-center align-items-center">
+    <section class="hero-sec d-flex justify-content-center align-items-center" id="inicio">
         <div class="align-items-center">
             <div class="container px-5">
-                <h1 class="title py-3">Solceri Radiadores</h1>
+                <h1 class="title py-3 animate__animated animate__bounceIn" data-aos="fade-up">Solceri Radiadores</h1>
                 <p class="hero-call-to-action">
                     ¡Reserva ahora tu cita en <strong>Solceri Radiadores</strong> y asegura el óptimo rendimiento de tu
                     radiador! Nuestros expertos están listos para ofrecerte una revisión completa y profesional. ¡No
@@ -82,7 +84,7 @@
                     más y solicita tu revisión hoy mismo!
                 </p>
                 <div class="d-flex justify-content-center py-1">
-                    <button class="btn btn-dark btn-lg">Agendar cita</button>
+                  <a href="#contactenos"><button class="btn btn-dark btn-lg">Agendar cita</button></a>  
                 </div>
             </div>
         </div>
@@ -96,7 +98,7 @@
     </div>
 
     <main>
-        <section class="container nosotros">
+        <section class="container nosotros" id="nosotros">
             <h2 class="py-5 text-center">Nosotros</h2>
             <div class="row">
                 <div class="col-sm-12 col-md-6">
@@ -113,7 +115,7 @@
             </div>
             <div class="pt-5 d-flex text-center flex-column align-items-center justify-content-center">
                 <div class="row">
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 d-flex justify-content-center col-md-6">
                         <div class="solceri-card">
                             <div class="solceri-card-content">
                                 <span class="material-symbols-outlined">
@@ -127,8 +129,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-6">
-                        <div class="solceri-card">
+                    <div class="col-sm-12 d-flex justify-content-center col-md-6">
+                        <div class="solceri-card mt-4">
                             <div class="solceri-card-content">
                                 <span class="material-symbols-outlined">
                                     construction
@@ -143,7 +145,7 @@
                     </div>
                 </div>
                 <div class="row pt-4">
-                    <div class="col-sm-12 col-md-6">
+                    <div class="col-sm-12 d-flex justify-content-center col-md-6">
                         <div class="solceri-card">
                             <div class="solceri-card-content">
                                 <span class="material-symbols-outlined">
@@ -157,8 +159,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="col-sm-12 col-md-6">
-                        <div class="solceri-card">
+                    <div class="col-sm-12 d-flex justify-content-center col-md-6">
+                        <div class="solceri-card mt-4">
                             <div class="solceri-card-content">
                                 <span class="material-symbols-outlined">
                                     local_shipping
@@ -174,7 +176,7 @@
                 </div>
             </div>
         </section>
-        <section class="mt-5 slogan d-flex justify-content-center align-items-center">
+        <section class="mt-5 ubicanos slogan d-flex justify-content-center align-items-center" id="ubicanos">
             <h1>🏁 Ubícanos 🚘</h1>
         </section>
         <section class="ubicanos">
@@ -183,9 +185,58 @@
                 width="800" height="600" style="border:0;" allowfullscreen="" loading="lazy"
                 referrerpolicy="no-referrer-when-downgrade"></iframe>
         </section>
-        <section class="slogan d-flex justify-content-center align-items-center">
-            <h1>🏁 Contáctenos 🚘</h1>
+        <section class="contactenos container py-5" id="contactenos">
+            <h2 class="py-4 text-center">🏁 Contáctenos 🚘</h2>
+            <p>En Radiadores Solceri, estamos aquí para ofrecerle soluciones rápidas y efectivas. Si su radiador
+                necesita reparación o si tiene alguna consulta, no dude en contactarnos. Nuestro equipo de expertos está
+                disponible para atenderle y brindarle la mejor asistencia. Puede visitarnos o llamarnos dentro de
+                nuestro horario de atención, que es de <strong>8:00 a.m. a 5:00 p.m.</strong>. Será un placer ayudarle a
+                mantener su vehículo en óptimas condiciones.</p>
+            <div>
+                <p>Número de teléfono: <span>+506 2268 8034</span></p>
+            </div>
+            <div>
+                <p class="p-start">Correo electrónico: <span>Radiadoressolceri@gmail.com</span></p>
+            </div>
         </section>
+        <!-- Footer -->
+        <footer class="text-center bg-dark">
+            <!-- Grid container -->
+            <div class="container p-4">
+                <!-- Section: Social media -->
+                <section class=" mb-4">
+                    <!-- Facebook -->
+                    <a data-mdb-ripple-init class="btn text-white btn-floating m-1" style="background-color: #3b5998;"
+                        href="https://www.facebook.com/radiadoressolceri" role="button"><i
+                            class="fab fa-facebook-f"></i></a>
+
+                    <!-- Instagram -->
+                    <a data-mdb-ripple-init class="btn text-white btn-floating m-1"
+                        style="background: radial-gradient(circle at 30% 107%, #fdf497 0%, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285AEB 90%);"
+                        href="https://www.instagram.com/solceri_radiadores/?hl=es-la" role="button"><i
+                            class="fab fa-instagram"></i></a>
+                    <!--Whatsapp-->
+                    <a data-mdb-ripple-init class="btn text-white btn-floating m-1" style="background-color: #05e244;"
+                        href="https://www.instagram.com/solceri_radiadores/?hl=es-la" role="button"><i
+                            class="fab fa-whatsapp"></i></a>
+                    <!--Maps-->
+                    <a data-mdb-ripple-init class="btn text-white btn-floating m-1" style="background-color: red;"
+                        href="https://www.google.com/maps/place/Radiadores+Solceri/@10.0076524,-84.0374045,17z/data=!3m1!4b1!4m5!3m4!1s0x8fa0e5824d032c2d:0x50640d4cf7686320!8m2!3d10.0076524!4d-84.0352158?hl=es&shorturl=1"
+                        role="button"><i class="fab fa-google"></i></a>
+                    <!--Waze-->
+                    <a data-mdb-ripple-init class="btn text-white btn-floating m-1" style="background-color: #33ccff;"
+                        href="https://www.waze.com/es-419/live-map/directions/cr/heredia/para/radiadores-solceri?to=place.ChIJLSwDTYLloI8RIGNo90wNZFA"
+                        role="button"><i class="fab fa-waze"></i></a>
+                </section>
+            </div>
+            <!-- Copyright -->
+            <div class="text-center p-3" style="background-color: rgba(0, 0, 0, 0.05);">
+                © 2024 Derechos de autor:
+                <a class="text-reset fw-bold" href="https://solceri.com/">solceri.com</a>
+            </div>
+            <!-- Copyright -->
+        </footer>
+        <!-- Footer -->
     </main>
 
 
