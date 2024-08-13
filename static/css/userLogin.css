@@ -1,3 +1,9 @@
+:root {
+  --color-primary: #f9bb63;
+  --color-secondary: #1d4d72;
+}
+
+
 body {
     font-family: "Roboto", sans-serif;
     background-color: #fff;
@@ -253,3 +259,13 @@ body {
     color: #f0bc60;
     font-size: 1.2rem;
   }
+
+  .el-hechicero{
+    background-color: var(--color-secondary);
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+.el-hechicero a i{
+    color: white;
+}

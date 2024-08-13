@@ -92,6 +92,10 @@
     color: white;
 }
 
+.card-header h3{
+    font-size: 1.2rem;
+}
+
 .tt-on-time .card-header {
     background-color: #315973;
 }
@@ -298,4 +302,69 @@ form span{
 
 .fc-button{
     background-color: #265071 !important;
+}
+
+/* Tiquetes */
+
+.my-cards-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px; /* Distancia entre las tarjetas */
+}
+
+/* Estilo por defecto: 3 columnas */
+.my-cards-container .card {
+    flex-basis: calc(33.333% - 10px); /* 3 columnas en pantallas grandes */
+    margin-bottom: 10px;
+}
+
+/*tabs*/
+
+.tabs li a{
+    
+    color: black;
+}
+
+.tabs .nav-link.active {
+    background-color: transparent !important;
+    color: black !important;
+    border-bottom: 2px solid #1d4d72;
+}
+
+/* Estilo para tabletas: 2 columnas */
+@media (max-width: 768px) {
+    .my-cards-container .card {
+        flex-basis: calc(50% - 10px); /* 2 columnas en pantallas medianas (tabletas) */
+    }
+}
+
+/* Estilo para móviles: 1 columna */
+@media (max-width: 576px) {
+    .my-cards-container .card {
+        flex-basis: calc(100% - 10px); /* 1 columna en pantallas pequeñas (móviles) */
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    img{
+        width: 100%;
+        padding: 20px;
+    }
+
+    .login{
+        height: 450px;
+    }
+
+  }
+
+@media only screen and (min-width: 760px) and (max-width: 890px) {
+    .card-header h3, .estado-tt, .tiempo-tt{
+        font-size: 1rem;
+    }
+}
+
+@media only screen and (max-width: 768px) and (orientation: landscape) {
+    .card-header h3, .estado-tt, .tiempo-tt{
+        font-size: 1rem !important;
+    }
 }

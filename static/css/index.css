@@ -10,6 +10,10 @@
     background-color: black;
 }
 
+.navbar-toggler{
+    background-color: var(--color-primary);
+}
+
 .primary-color{
     color: var(--color-primary);
 }
@@ -51,6 +55,11 @@ ul li a{
     color: white !important;
     margin-right: 20px;
 }
+
+ul li a:hover{
+    color: var(--color-primary) !important;
+}
+
 
 /*Hero*/
 
@@ -141,6 +150,34 @@ ul li a{
 }
 
 .ubicanos iframe{
-    width: 100%;
-    
+    width: 100%; 
 }
+
+  @media only screen and (max-width: 480px) {
+    .title{
+        font-size: 60px;
+    }
+    .scroll{
+        right: 30px;
+    }
+    .nosotros h1{
+        padding-top: 30px;
+    }
+    .contactenos h2,  .ubicanos h1{
+        font-size: 40px;
+    }
+    .p-start{
+        text-align: start;
+    }
+    .navbar-nav{
+        background-color: black;
+        padding: 20px;
+        text-align: center;
+    }
+
+    nav ul li a{
+        padding: 20px;
+    }
+
+
+  }

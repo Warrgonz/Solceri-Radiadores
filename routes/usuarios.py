@@ -246,7 +246,6 @@ def login():
 def password_reset():
     if request.method == 'POST':
         user_id = session.get('user_id')
-        print(f"User ID from session: {user_id}")  # Debugging
         user = Usuarios.query.get(user_id)
         
         if user:
@@ -254,37 +253,32 @@ def password_reset():
             new_password = request.form['new_password']
             confirm_password = request.form['confirm_password']
             
+            # Verificación de la contraseña actual
             if not user.check_password(current_password):
-                flash('La contraseña actual es incorrecta.', 'danger')
-                return redirect(url_for('usuarios.password_reset'))
+                return jsonify({'status': 'error', 'message': 'La contraseña actual es incorrecta.'})
             
+            # Verificación de coincidencia entre nueva contraseña y su confirmación
             if new_password != confirm_password:
-                flash('Las contraseñas no coinciden.', 'danger')
-                return redirect(url_for('usuarios.password_reset'))
+                return jsonify({'status': 'error', 'message': 'Las contraseñas no coinciden.'})
             
+            # Verificación de longitud de la nueva contraseña
             if len(new_password) < 8:
-                flash('La contraseña debe tener al menos 8 caracteres.', 'danger')
-                return redirect(url_for('usuarios.password_reset'))
+                return jsonify({'status': 'error', 'message': 'La contraseña debe tener al menos 8 caracteres.'})
 
             try:
+                # Actualización de la contraseña del usuario
                 user.set_password(new_password)
-                user.contraseña_temp = None  # Clear the temp pasword
+                user.contraseña_temp = None  # Elimina la contraseña temporal, si existe
                 db.session.commit()
-                flash('Contraseña cambiada exitosamente.', 'success')
-                return redirect(url_for('usuarios.logout'))
-
+                return jsonify({'status': 'success', 'message': 'Contraseña cambiada exitosamente.'})
             except Exception as e:
-                db.session.rollback()
-                
-                flash(f'Error al cambiar la contraseña: {str(e)}', 'danger')
-                return redirect(url_for('usuarios.password_reset'))
+                db.session.rollback()  # Revertir en caso de error
+                return jsonify({'status': 'error', 'message': f'Error al cambiar la contraseña: {str(e)}'})
 
-            return redirect(url_for('usuarios.usuarios'))
-        else:
-            flash('Usuario no encontrado.', 'danger')
-            return redirect(url_for('usuarios.password_reset'))
-            
+        return jsonify({'status': 'error', 'message': 'Usuario no encontrado.'})
+    
     return render_template('password_reset.html')
+
 
 #Ruta para acceso denegado
 @usuarios_bp.route('/403')
@@ -325,10 +319,12 @@ def password_recovery_request():
             </html>
             """
             send_email_async(email, subject, body)
-            flash('Correo de recuperación enviado', 'info')
-            return redirect(url_for('usuarios.login'))
+            return jsonify({'status': 'success', 'message': 'Hemos enviado exitosamente la solicitud para cambiar la contraseña. Revisa tu correo electrónico para restaurar tu contraseña.'})
+        else:
+            return jsonify({'status': 'error', 'message': 'No se encontró ninguna cuenta con ese correo electrónico.'})
     
     return render_template('password_recovery_request.html')
+
 
 #Reset ya con token
 @usuarios_bp.route('/password_recovery/<token>', methods=['GET', 'POST'])
