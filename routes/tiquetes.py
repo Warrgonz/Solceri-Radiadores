@@ -27,6 +27,7 @@ def tiquete_crear():
         descripcion = request.form.get('descripcion')
         direccion = request.form.get('direccion')
         id_estado = request.form.get('estado')
+        fecha_asignacion = datetime.utcnow()  # Establecer la fecha de asignación actual
 
         nuevo_tiquete = Tiquetes(
             id_cliente=id_cliente,
@@ -36,14 +37,15 @@ def tiquete_crear():
             resumen=resumen,
             descripcion=descripcion,
             direccion=direccion,
-            id_estado=id_estado
+            id_estado=id_estado,
+            fecha_asignacion=fecha_asignacion  # Incluir la fecha de asignación
         )
 
         try:
             db.session.add(nuevo_tiquete)
             db.session.commit()
             flash('Tiquete creado exitosamente', 'success')
-            return redirect(url_for('tiquetes.tiquete_crear'))
+            return redirect(url_for('tiquetes.tiquetes_listar'))
         except Exception as e:
             db.session.rollback()
             flash(f'Error al crear el tiquete: {str(e)}', 'danger')
@@ -66,38 +68,44 @@ def tiquete_crear():
         fecha_actual=datetime.utcnow()
     )
 
-
-
-
-@tiquetes_bp.route('/tiquete/editar/<int:id_tiquete>', methods=['GET', 'POST'])
-def tiquete_editar(id_tiquete):
-    # Obtener el tiquete a editar
-    tiquete = Tiquetes.query.get_or_404(id_tiquete)
+@tiquetes_bp.route('/tiquete/editar/<int:id>', methods=['GET', 'POST'])
+def tiquete_editar(id):
+    tiquete = Tiquetes.query.get_or_404(id)
 
     if request.method == 'POST':
-        # Actualizar los campos con los datos del formulario
+        nuevo_trabajador = request.form.get('trabajador_designado')
+        nuevo_estado = request.form.get('estado')
+
+        # Verificar si el trabajador designado ha cambiado
+        trabajador_cambio = (tiquete.trabajador_designado != nuevo_trabajador)
+
+        # Actualizar los campos del tiquete
         tiquete.id_cliente = request.form.get('id_cliente')
         tiquete.grupo_asignado = request.form.get('grupo_asignado')
-        tiquete.trabajador_designado = request.form.get('trabajador_designado')
+        tiquete.trabajador_designado = nuevo_trabajador
         tiquete.categoria = request.form.get('categoria')
         tiquete.resumen = request.form.get('resumen')
         tiquete.descripcion = request.form.get('descripcion')
         tiquete.direccion = request.form.get('direccion')
-        tiquete.id_estado = request.form.get('estado')
+        tiquete.id_estado = nuevo_estado
+
+        # Solo actualizar la fecha de asignación si el trabajador designado ha cambiado
+        if trabajador_cambio:
+            tiquete.fecha_asignacion = datetime.utcnow()
 
         try:
             db.session.commit()
             flash('Tiquete actualizado exitosamente', 'success')
-            return redirect(url_for('tiquetes.tiquete_editar', id_tiquete=tiquete.id_tiquete))
+            return redirect(url_for('tiquetes.tiquetes_listar'))
         except Exception as e:
             db.session.rollback()
             flash(f'Error al actualizar el tiquete: {str(e)}', 'danger')
-            return redirect(url_for('tiquetes.tiquete_editar', id_tiquete=tiquete.id_tiquete))
+            return redirect(url_for('tiquetes.tiquete_editar', id=id))
 
     # Cargar datos necesarios para los selects
-    clientes = Usuarios.query.filter_by(id_rol=3).all()
+    clientes = Usuarios.query.filter_by(id_rol=3).all()  # Clientes
     grupos = Grupos.query.all()
-    trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
+    trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()  # Admin y Colaboradores
     categorias = Categorias.query.all()
     estados = Estados.query.all()
 
@@ -111,3 +119,28 @@ def tiquete_editar(id_tiquete):
         estados=estados,
         fecha_actual=datetime.utcnow()
     )
+
+
+
+@tiquetes_bp.route('/tiquete/eliminar/<int:id_tiquete>', methods=['POST'])
+def eliminar_tiquete(id_tiquete):
+    try:
+        # Obtener el tiquete de la base de datos
+        tiquete = Tiquetes.query.get(id_tiquete)
+        
+        if not tiquete:
+            flash('Tiquete no encontrado', 'danger')
+            return redirect(url_for('tiquetes.tiquetes_listar'))
+
+        # Eliminar el tiquete de la base de datos
+        db.session.delete(tiquete)
+        db.session.commit()
+
+        flash('Tiquete eliminado exitosamente', 'success')
+    except Exception as e:
+        # Manejo de excepciones
+        print(f"Error al eliminar tiquete: {str(e)}")
+        db.session.rollback()
+        flash('Error al eliminar el tiquete', 'danger')
+    
+    return redirect(url_for('tiquetes.tiquetes_listar'))
