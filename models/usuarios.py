@@ -26,7 +26,6 @@ class Usuarios(db.Model):
     id_rol = db.Column(db.Integer, db.ForeignKey('roles.id_rol'))
 
     rol = db.relationship('Roles', backref=db.backref('usuarios', lazy=True))
-
     def __init__(self, cedula, correo, nombre=None, primer_apellido=None, segundo_apellido=None, id_rol=None, contraseña=None, contraseña_temp=None, estado=False, ultima_actividad=None, Fecha_Contratacion=None, ruta_imagen=None):
         self.cedula = cedula
         self.correo = correo
