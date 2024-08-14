@@ -23,32 +23,21 @@
                 <label for="nombre">Correo electronico<span>*</span></label>
                 <input type="text" class="form-control" name="correo" value="{{ usuario.correo }}" readonly
                     placeholder="Correo del usuario">
-                <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
             <div class="pb-2">
                 <label for="nombre">Nombre<span>*</span></label>
-                <input type="text" class="form-control" name="nombre" value="{{ usuario.nombre }}" required
+                <input type="text" class="form-control" name="nombre" id="nombre" value="{{ usuario.nombre }}" required
                     placeholder="Nombre del usuario">
-                <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
             <div class="pb-2">
                 <label for="primer_apellido">Primer Apellido<span>*</span></label>
-                <input type="text" class="form-control" name="primer_apellido" value="{{ usuario.primer_apellido }}"
+                <input type="text" class="form-control" name="primer_apellido" id="primer_apellido" value="{{ usuario.primer_apellido }}"
                     required placeholder="Primer apellido del usuario">
-                <div class="invalid-feedback"></div> <!-- Mensaje de error -->
             </div>
             <div class="pb-2">
                 <label for="segundo_apellido">Segundo Apellido<span>*</span></label>
-                <input type="text" class="form-control" name="segundo_apellido" value="{{ usuario.segundo_apellido }}"
+                <input type="text" class="form-control" name="segundo_apellido" id="segundo_apellido" value="{{ usuario.segundo_apellido }}"
                     required placeholder="Segundo apellido del usuario">
-                <div class="invalid-feedback"></div> <!-- Mensaje de error -->
-            </div>
-            <div class="pt-3 pb-3">
-                <label for="ruta_imagen">Foto de perfil</label>
-                <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp" onchange="readURL(this);">
-            </div>
-            <div class="pt-3 pb-3" id="imagePreview">
-                <img id="blah" src="{{ usuario.ruta_imagen }}" alt="Tu imagen" style="height: 200px;">
             </div>
             <div class="pb-2">
                 <label for="rol">Seleccione un rol<span>*</span></label>
@@ -64,6 +53,13 @@
                 <input type="date" class="form-control" name="fecha_contratacion"
                     value="{{ usuario.Fecha_Contratacion | default('', true) }}">
             </div>
+            <div class="pt-3 pb-3">
+                <label for="ruta_imagen">Foto de perfil</label>
+                <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp" onchange="readURL(this);">
+            </div>
+            <div class="pt-3 pb-3" id="imagePreview">
+                <img id="blah" src="{{ usuario.ruta_imagen }}" alt="Tu imagen" style="height: 200px;">
+            </div>
         </div>
         <div class="modal-footer">
             <a href="{{ url_for('usuarios.usuarios') }}" class="btn btn-danger btn-md mx-2">Cancelar</a>
@@ -71,62 +67,5 @@
         </div>
     </form>
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-    const rolSelect = document.getElementById('rolSelect');
-    const fechaContratacionInput = document.querySelector('input[name="fecha_contratacion"]');
-    const fechaContratacionDiv = document.getElementById('fechaContratacionDiv');
-
-    // Función para verificar el rol seleccionado y mostrar/ocultar la fecha de contratación
-    function verificarRol() {
-        const rolSeleccionado = rolSelect.options[rolSelect.selectedIndex].text.toLowerCase();
-        if (rolSeleccionado === "cliente") {
-            fechaContratacionDiv.style.display = 'none';
-        } else {
-            fechaContratacionDiv.style.display = 'block';
-        }
-    }
-
-    // Verificar el rol seleccionado cuando la página carga
-    verificarRol();
-
-    // Escuchar cambios en el select de roles
-    rolSelect.addEventListener('change', verificarRol);
-
-    const emailField = document.querySelector('input[name="correo"]');
-    const userEmail = emailField.value.trim().toLowerCase();
-
-    // Si el correo es "Warreno0419s@gmail.com", deshabilitar ciertos campos
-    if (userEmail === "warreno0419s@gmail.com") {
-        const form = document.getElementById('usuarioAgregarForm');
-        form.querySelectorAll('input, select').forEach(function(input) {
-            const fieldName = input.getAttribute('name');
-            if (fieldName !== 'cedula' && fieldName !== 'ruta_imagen' && fieldName !== 'fecha_contratacion') {
-                if (input.tagName.toLowerCase() === 'input') {
-                    input.readOnly = true; // Cambiar a readonly para los campos de texto
-                } else if (input.tagName.toLowerCase() === 'select') {
-                    // Deshabilitar el select pero mantener el valor con un campo oculto
-                    const hiddenInput = document.createElement('input');
-                    hiddenInput.type = 'hidden';
-                    hiddenInput.name = input.name;
-                    hiddenInput.value = input.value;
-                    form.appendChild(hiddenInput);
-
-                    input.disabled = true; // Deshabilitar el select
-                }
-            }
-        });
-    }
-
-    // Deshabilitar el select de roles y poner readonly el campo de fecha de contratación si el rol por defecto no es "Administrador"
-    const selectedRoleText = rolSelect.options[rolSelect.selectedIndex].text.toLowerCase();
-    if (selectedRoleText !== "administrador") {
-        rolSelect.disabled = true;
-        fechaContratacionInput.readOnly = true; // Poner readonly el campo de fecha de contratación
-    }
-});
-
-</script>
 
 {% endblock %}

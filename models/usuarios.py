@@ -89,7 +89,7 @@ def create_admin_user():
     admin_segundo_apellido = "Radiadores"
     admin_estado = True
     admin_rol_id = 1
-    admin_imagen_url = "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/logoSolceri.png?alt=media&token=04720a06-9149-40da-9b39-1d3fa0bbb698"
+    admin_imagen_url = "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/logoSolceri.png?alt=media&token=ae59e640-bba6-40f4-bce9-acb89c01d47f"
 
     # Verificar si los roles existen y crearlos si no existen
     roles = [

@@ -1,12 +1,22 @@
 {% extends "layout.html" %}
 {% block content %}
 
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 <div class="container-fluid">
     <h1 class="py-3">Mi perfil</h2>
         <div class="row">
             <div class="col-md-6">
-                <div>
-                    <img src="{{ usuario.ruta_imagen }}" alt="Foto de Perfil" style="height: 150px;">
+                <div class=" mt-3 mb-3">
+                    <h3>Foto de perfil:</h3>
+                    <img src="{{ usuario.ruta_imagen }}" style="width: 45%;" alt="Foto de Perfil">
+                    <p>Su foto de perfil nos ayuda a personalizar tu cuenta.</p>
                 </div>
                 <p><strong>Cédula:</strong> {{ usuario.cedula }}</p>
                 <p><strong>Nombre Completo:</strong> {{ usuario.nombre }} {{ usuario.primer_apellido }} {{
@@ -19,7 +29,7 @@
                 <p><strong>Rol:</strong> {{ usuario.rol.rol }}</p>
                 <p><strong>Estado:</strong> {% if usuario.estado %} Activo {% else %} Inactivo {% endif %}</p>
                 <p><strong>Fecha de Contratación:</strong> {{ usuario.Fecha_Contratacion }}</p>
-                <a href="{{ url_for('dashboard.editar_perfil') }}">
+                <a href="{{ url_for('dashboard.usuarios_editar', id=usuario.id_usuario) }}">
                     <button class="btn-solceri" style="width: 100%;">Editar</button>
                 </a>
             </div>

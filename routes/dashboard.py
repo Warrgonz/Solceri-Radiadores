@@ -45,15 +45,20 @@ def perfil():
         flash('No se ha iniciado sesión', 'danger')
         return redirect(url_for('usuarios.login'))
     
-@dashboard_bp.route('/perfil/editar', methods=['GET', 'POST'])
-def editar_perfil():
-    user_id = session.get('user_id')
-    if not user_id:
-        flash('No se ha iniciado sesión', 'danger')
-        return redirect(url_for('usuarios.login'))
-
-    usuario = Usuarios.query.get_or_404(user_id)
+@dashboard_bp.route('/perfil/editar/<int:id>', methods=['GET', 'POST'])
+def usuarios_editar(id):
+    usuario = Usuarios.query.get_or_404(id)
     roles = Roles.query.all()
+    user_id = session.get('user_id') 
+
+    # Verificar si el usuario está en la base de datos
+    usuario_id = Usuarios.query.filter_by(id_usuario=user_id).first()
+
+    # Asegurarse de que el usuario_id existe antes de acceder a id_rol
+    if usuario_id:
+        rol_usuario_sesion = usuario_id.id_rol
+    else:
+        rol_usuario_sesion = None
 
     if request.method == 'POST':
         try:
@@ -80,7 +85,11 @@ def editar_perfil():
                     usuario.Fecha_Contratacion = None
             except ValueError as ve:
                 flash(f'Error en la fecha de contratación: {ve}', 'danger')
-                return redirect(url_for('dashboard_bp.editar_perfil'))
+                return redirect(url_for('usuarios.usuarios_editar', id=id))
+
+            # Actualizar el rol del usuario si ha cambiado
+            if usuario.id_rol != int(request.form['rol']):
+                usuario.id_rol = int(request.form['rol'])
 
             # Manejar la actualización de la imagen
             if 'ruta_imagen' in request.files:
@@ -93,16 +102,16 @@ def editar_perfil():
             # Guardar los cambios en la base de datos
             db.session.commit()
 
-            flash(f'Perfil actualizado exitosamente.', 'success')
-            return redirect(url_for('dashboard_bp.perfil'))
+            flash(f'Usuario con cédula {usuario.cedula} modificado exitosamente.', 'success')
+            return redirect(url_for('dashboard.perfil', id=id)) 
         except Exception as e:
             # Manejar el error y mostrar un mensaje al usuario
             db.session.rollback()
-            flash(f'Error al actualizar el perfil: {e}', 'danger')
+            flash(f'Error al actualizar el usuario: {e}', 'danger')
             print(f"Detalles del error: {e}")
-            return redirect(url_for('dashboard_bp.editar_perfil'))
+            return redirect(url_for('dashboard.usuarios_editar', id=id))
 
-    return render_template('usuarios_editar.html', usuario=usuario, roles=roles)
+    return render_template('usuarios_editpublic.html', usuario=usuario, roles=roles, rol_usuario_sesion=rol_usuario_sesion)
 
     
 @dashboard_bp.route('/test')
@@ -122,3 +131,11 @@ def test():
             return jsonify({'error': 'Usuario no encontrado'}), 404
     else:
         return jsonify({'error': 'No hay usuario en sesión'}), 401
+    
+@dashboard_bp.route('/404')
+def error404():
+    return render_template('404.html')
+
+@dashboard_bp.route('/403')
+def error403():
+    return render_template('403.html')

@@ -31,7 +31,7 @@ def usuarios_crear():
             primer_apellido = request.form['primer_apellido']
             segundo_apellido = request.form['segundo_apellido']
             ruta_imagen = None
-            imagen_default = "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/logoSolceri.png?alt=media&token=04720a06-9149-40da-9b39-1d3fa0bbb698"
+            imagen_default = "https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/logoSolceri.png?alt=media&token=ae59e640-bba6-40f4-bce9-acb89c01d47f"
             if 'ruta_imagen' in request.files:
                 ruta_imagen = request.files['ruta_imagen']
                 if ruta_imagen.filename != '':
@@ -115,6 +115,16 @@ def usuarios_crear():
 def usuarios_editar(id):
     usuario = Usuarios.query.get_or_404(id)
     roles = Roles.query.all()
+    user_id = session.get('user_id') 
+
+    # Verificar si el usuario está en la base de datos
+    usuario_id = Usuarios.query.filter_by(id_usuario=user_id).first()
+
+    # Asegurarse de que el usuario_id existe antes de acceder a id_rol
+    if usuario_id:
+        rol_usuario_sesion = usuario_id.id_rol
+    else:
+        rol_usuario_sesion = None
 
     if request.method == 'POST':
         try:
@@ -143,6 +153,7 @@ def usuarios_editar(id):
                 flash(f'Error en la fecha de contratación: {ve}', 'danger')
                 return redirect(url_for('usuarios.usuarios_editar', id=id))
 
+            # Actualizar el rol del usuario si ha cambiado
             if usuario.id_rol != int(request.form['rol']):
                 usuario.id_rol = int(request.form['rol'])
 
@@ -166,7 +177,7 @@ def usuarios_editar(id):
             print(f"Detalles del error: {e}")
             return redirect(url_for('usuarios.usuarios_editar', id=id))
 
-    return render_template('usuarios_editar.html', usuario=usuario, roles=roles)
+    return render_template('usuarios_editar.html', usuario=usuario, roles=roles, rol_usuario_sesion=rol_usuario_sesion)
 
 @usuarios_bp.route('/usuarios/desactivar/<int:id>', methods=['POST'])
 def desactivar_usuario(id):
