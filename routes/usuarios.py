@@ -14,13 +14,15 @@ from itsdangerous import URLSafeTimedSerializer
 usuarios_bp = Blueprint('usuarios', __name__)
 
 @usuarios_bp.route('/usuarios')
-#@login_required
-#@role_required([1,2,3])
+@login_required
+@role_required([1])
 def usuarios():
     usuarios = Usuarios.query.all()
     return render_template('usuarios.html', usuarios=usuarios)
 
 @usuarios_bp.route('/usuarios/crear', methods=['GET', 'POST'])
+@login_required
+@role_required([1])
 def usuarios_crear():
     if request.method == 'POST':
         try:
@@ -112,6 +114,8 @@ def usuarios_crear():
     return render_template('usuarios_crear.html', roles=roles)
 
 @usuarios_bp.route('/usuarios/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
+@role_required([1])
 def usuarios_editar(id):
     usuario = Usuarios.query.get_or_404(id)
     roles = Roles.query.all()
@@ -180,6 +184,8 @@ def usuarios_editar(id):
     return render_template('usuarios_editar.html', usuario=usuario, roles=roles, rol_usuario_sesion=rol_usuario_sesion)
 
 @usuarios_bp.route('/usuarios/desactivar/<int:id>', methods=['POST'])
+@login_required
+@role_required([1])
 def desactivar_usuario(id):
     usuario = Usuarios.query.get_or_404(id)
     if usuario:
@@ -206,6 +212,8 @@ def desactivar_usuario(id):
 
 
 @usuarios_bp.route('/usuarios/activar/<int:id>', methods=['POST'])
+@login_required
+@role_required([1])
 def activar_usuario(id):
     usuario = Usuarios.query.get_or_404(id)
     if usuario:
@@ -232,6 +240,8 @@ def activar_usuario(id):
 
     
 @usuarios_bp.route('/usuarios/eliminar/<int:id_usuario>', methods=['GET', 'POST'])
+@login_required
+@role_required([1])
 def eliminar_usuario(id_usuario):
     try:
         # Obtener el usuario de la base de datos
