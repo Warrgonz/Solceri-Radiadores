@@ -351,6 +351,14 @@ form span{
     color: #333; /* Color de la fecha */
 }
 
+/* General Styles for the Card and Icons */
+.sla-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+
 /* Estilo para tabletas: 2 columnas */
 @media (max-width: 768px) {
     .my-cards-container .card {

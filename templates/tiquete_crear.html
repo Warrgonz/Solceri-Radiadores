@@ -8,7 +8,7 @@
             <div>
                 <label for="id_cliente">Cliente<span>*</span></label>
                 <select class="form-select mb-3" id="id_cliente" name="id_cliente" required>
-                    <option selected>Seleccione un cliente</option>
+                    <option value="" disabled selected>Seleccione un cliente</option>
                     {% for cliente in clientes %}
                     <option value="{{ cliente.id_usuario }}">{{ cliente.nombre }} {{ cliente.primer_apellido }}</option>
                     {% endfor %}
@@ -17,7 +17,7 @@
             <div>
                 <label for="grupo_asignado">Grupo<span>*</span></label>
                 <select class="form-select mb-3" id="grupo_asignado" name="grupo_asignado" required>
-                    <option selected>Seleccione un grupo</option>
+                    <option value="" disabled selected>Seleccione un grupo</option>
                     {% for grupo in grupos %}
                     <option value="{{ grupo.id_grupo }}">{{ grupo.nombre }}</option>
                     {% endfor %}
@@ -29,7 +29,7 @@
             <div>
                 <label for="trabajador_designado">Colaborador<span>*</span></label>
                 <select class="form-select mb-3" id="trabajador_designado" name="trabajador_designado" required>
-                    <option selected>Seleccione un colaborador</option>
+                    <option value="" disabled selected>Seleccione un colaborador</option>
                     {% for trabajador in trabajadores %}
                     <option value="{{ trabajador.id_usuario }}">{{ trabajador.nombre }} {{ trabajador.primer_apellido }}</option>
                     {% endfor %}
@@ -53,7 +53,7 @@
             <div>
                 <label for="categoria">Categoría<span>*</span></label>
                 <select class="form-select mb-3" id="categoria" name="categoria" required>
-                    <option selected>Seleccione una categoría</option>
+                    <option value="" disabled selected>Seleccione una categoría</option>
                     {% for categoria in categorias %}
                     <option value="{{ categoria.id_categoria }}">{{ categoria.categoria }}</option>
                     {% endfor %}
@@ -62,7 +62,7 @@
             <div>
                 <label for="estado">Estado<span>*</span></label>
                 <select class="form-select mb-3" id="estado" name="estado" required>
-                    <option selected>Seleccione un estado</option>
+                    <option value="" disabled selected>Seleccione un estado</option>
                     {% for estado in estados %}
                     <option value="{{ estado.id_estado }}">{{ estado.estado }}</option>
                     {% endfor %}

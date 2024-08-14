@@ -4,7 +4,7 @@
 <div class="d-flex justify-content-between">
     <h2>Nuevo Grupo de Trabajo</h2>
 </div>
-<form method="POST" action="{{ url_for('grupos.grupos_crear') }}">
+<form id="grupoCrearForm" method="POST" action="{{ url_for('grupos.grupos_crear') }}">
     <div class="mb-3">
         <label for="nombre" class="form-label">Nombre del grupo</label>
         <input type="text" class="form-control" id="nombre" name="nombre" required>
@@ -13,14 +13,33 @@
         <label for="descripcion" class="form-label">Descripción</label>
         <textarea class="form-control" id="descripcion" name="descripcion" rows="3"></textarea>
     </div>
+
+    <!-- SLA -->
     <div class="mb-3">
-        <label for="usuarios" class="form-label">Seleccionar Usuarios</label>
-        <select multiple class="form-control" id="usuarios" name="usuarios">
-            {% for usuario in usuarios %}
-            <option value="{{ usuario.id_usuario }}">{{ usuario.nombre }} {{ usuario.primer_apellido }}</option>
+        <label for="on_time" class="form-label">On Time (minutos)</label>
+        <select class="form-control" id="on_time" name="on_time">
+            {% for i in range(15, 361, 15) %}
+            <option value="{{ i }}">{{ i }} minutos</option>
             {% endfor %}
         </select>
     </div>
+    <div class="mb-3">
+        <label for="running_late" class="form-label">Running Late (minutos)</label>
+        <select class="form-control" id="running_late" name="running_late">
+            {% for i in range(15, 361, 15) %}
+            <option value="{{ i }}">{{ i }} minutos</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="mb-3">
+        <label for="is_late" class="form-label">Is Late (minutos)</label>
+        <select class="form-control" id="is_late" name="is_late">
+            {% for i in range(15, 361, 15) %}
+            <option value="{{ i }}">{{ i }} minutos</option>
+            {% endfor %}
+        </select>
+    </div>
+
     <button type="submit" class="btn btn-primary">Guardar Grupo</button>
 </form>
 {% endblock %}

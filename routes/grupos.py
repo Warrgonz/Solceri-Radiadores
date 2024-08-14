@@ -22,31 +22,41 @@ def grupos_crear():
     if request.method == 'POST':
         nombre = request.form['nombre']
         descripcion = request.form['descripcion']
-        usuarios_ids = request.form.getlist('usuarios')  # Obtén los IDs de los usuarios seleccionados
 
-        nuevo_grupo = Grupos(nombre=nombre, descripcion=descripcion)
+        # Captura los tiempos en minutos desde el formulario
+        on_time = int(request.form['on_time'])
+        running_late = int(request.form['running_late'])
+        is_late = int(request.form['is_late'])
+
+        # Validar que el nombre del grupo sea único
+        nombre_existente = Grupos.query.filter(Grupos.nombre == nombre).first()
+        if nombre_existente:
+            return jsonify({'error': 'Ya existe un grupo con este nombre'}), 400
+
+        # Crea el nuevo grupo con los SLA definidos
+        nuevo_grupo = Grupos(nombre=nombre, descripcion=descripcion, on_time=on_time, running_late=running_late, is_late=is_late)
         db.session.add(nuevo_grupo)
-        db.session.commit()
+        try:
+            db.session.commit()
+            return jsonify({'message': 'Grupo creado exitosamente'}), 200
+        except Exception as e:
+            db.session.rollback()
+            return jsonify({'error': str(e)}), 500
 
-        for usuario_id in usuarios_ids:
-            usuario = Usuarios.query.get(int(usuario_id))
-            if usuario:
-                nuevo_grupo.usuarios.append(usuario)
-
-        db.session.commit()
-
-        return redirect(url_for('grupos.grupos'))  # Redirige a la lista de grupos
-
-    usuarios = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
-    return render_template('grupos_crear.html', usuarios=usuarios)
-
+    return render_template('grupos_crear.html')
 
 @grupos_bp.route('/grupos/editar/<int:id_grupo>', methods=['GET', 'POST'])
 def grupos_editar(id_grupo):
     grupo = Grupos.query.get(id_grupo)
     if request.method == 'POST':
         if grupo:
-            grupo.nombre = request.form['nombre']
+            nuevo_nombre = request.form['nombre']
+            # Validar que el nombre del grupo sea único
+            nombre_existente = Grupos.query.filter(Grupos.nombre == nuevo_nombre, Grupos.id_grupo != id_grupo).first()
+            if nombre_existente:
+                return jsonify({'error': 'Ya existe un grupo con este nombre'}), 400
+
+            grupo.nombre = nuevo_nombre
             grupo.descripcion = request.form['descripcion']
             db.session.commit()
             return jsonify({'message': 'Cambios guardados exitosamente'})
@@ -55,6 +65,7 @@ def grupos_editar(id_grupo):
 
     usuarios = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
     return render_template('grupos_editar.html', grupo=grupo, usuarios=usuarios)
+
 
 @grupos_bp.route('/grupos/agregar_usuario/<int:id_grupo>/<int:id_usuario>', methods=['POST'])
 def agregar_usuario(id_grupo, id_usuario):

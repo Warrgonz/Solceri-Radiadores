@@ -1,6 +1,71 @@
 'use strict';
 
 document.addEventListener('DOMContentLoaded', function () {
+    
+    // Manejar el formulario de creación de grupo
+const crearForm = document.getElementById('grupoCrearForm');
+if (crearForm) {
+    crearForm.addEventListener('submit', function (event) {
+        event.preventDefault(); // Evita el envío del formulario
+
+        Swal.fire({
+            title: '¿Estás seguro?',
+            text: "¿Quieres crear este grupo?",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, crear grupo'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                const formData = new FormData(crearForm);
+
+                fetch(crearForm.action, {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                })
+                .then(response => {
+                    // Verificar si la respuesta es JSON
+                    if (response.ok) {
+                        return response.json();
+                    } else {
+                        return response.json().then(data => { // Tratar la respuesta JSON
+                            throw new Error(data.error || 'Error desconocido');
+                        });
+                    }
+                })
+                .then(data => {
+                    if (data.message) {
+                        Swal.fire(
+                            '¡Creado!',
+                            data.message,
+                            'success'
+                        ).then(() => {
+                            window.location.href = '/grupos';
+                        });
+                    } else if (data.error) {
+                        Swal.fire(
+                            'Error',
+                            data.error,
+                            'error'
+                        );
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    Swal.fire(
+                        'Error',
+                        'Hubo un problema al intentar crear el grupo.',
+                        'error'
+                    );
+                });
+            }
+        });
+    });
+}
     // Manejar el formulario de edición de grupo
     const editarForm = document.getElementById('grupoEditarForm');
     if (editarForm) {
@@ -23,15 +88,9 @@ document.addEventListener('DOMContentLoaded', function () {
                         method: 'POST',
                         body: formData
                     })
-                    .then(response => {
-                        if (response.redirected) {
-                            window.location.href = response.url;
-                        } else {
-                            return response.json();
-                        }
-                    })
+                    .then(response => response.json())
                     .then(data => {
-                        if (data && data.message) {
+                        if (data.message) {
                             Swal.fire(
                                 '¡Guardado!',
                                 data.message,
@@ -39,7 +98,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             ).then(() => {
                                 window.location.href = '/grupos';
                             });
-                        } else if (data && data.error) {
+                        } else if (data.error) {
                             Swal.fire(
                                 'Error',
                                 data.error,
@@ -78,7 +137,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     ).then(() => {
                         location.reload(); // Recargar la página después de agregar
                     });
-                } else {
+                } else if (data.error) {
                     Swal.fire(
                         'Error',
                         data.error,
@@ -125,7 +184,7 @@ document.addEventListener('DOMContentLoaded', function () {
                             ).then(() => {
                                 location.reload(); // Recargar la página después de remover
                             });
-                        } else {
+                        } else if (data.error) {
                             Swal.fire(
                                 'Error',
                                 data.error,
@@ -172,9 +231,9 @@ document.addEventListener('DOMContentLoaded', function () {
                                 data.message,
                                 'success'
                             ).then(() => {
-                                location.reload(); // Recargar la página después de eliminar
+                                window.location.href = '/grupos'; // Redirige después de eliminar
                             });
-                        } else {
+                        } else if (data.error) {
                             Swal.fire(
                                 'Error',
                                 data.error,

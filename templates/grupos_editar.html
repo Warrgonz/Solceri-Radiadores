@@ -15,6 +15,33 @@
             <label for="descripcion" class="form-label">Descripción</label>
             <textarea class="form-control" id="descripcion" name="descripcion" rows="3">{{ grupo.descripcion }}</textarea>
         </div>
+        
+        <!-- Campos de SLA -->
+        <div class="mb-3">
+            <label for="on_time" class="form-label">On Time (minutos)</label>
+            <select class="form-control" id="on_time" name="on_time">
+                {% for i in range(15, 361, 15) %}
+                <option value="{{ i }}" {% if grupo.on_time == i %}selected{% endif %}>{{ i }} minutos</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="running_late" class="form-label">Running Late (minutos)</label>
+            <select class="form-control" id="running_late" name="running_late">
+                {% for i in range(15, 361, 15) %}
+                <option value="{{ i }}" {% if grupo.running_late == i %}selected{% endif %}>{{ i }} minutos</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="mb-3">
+            <label for="is_late" class="form-label">Is Late (minutos)</label>
+            <select class="form-control" id="is_late" name="is_late">
+                {% for i in range(15, 361, 15) %}
+                <option value="{{ i }}" {% if grupo.is_late == i %}selected{% endif %}>{{ i }} minutos</option>
+                {% endfor %}
+            </select>
+        </div>
+
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
     </form>
     

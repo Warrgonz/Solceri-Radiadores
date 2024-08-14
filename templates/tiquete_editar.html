@@ -112,10 +112,11 @@
             <h3><strong>Agregar comentarios</strong></h3>
         </div>
         <form method="POST" action="{{ url_for('tiquetes.add_comment', id=tiquete.id_tiquete) }}">
+            <input type="hidden" name="redirect_url" value="tiquetes.tiquete_editar">
             <div>
-                <label for="nota_interna">Comentario <strong>(Interno)</strong></label>
+                <label for="nota_interna">Comentario</label>
                 <textarea class="form-control" rows="3" id="nota_interna" name="nota_interna"
-                    placeholder="Descripción del servicio"></textarea>
+                    placeholder="Escriba su comentario aquí"></textarea>
             </div>
             <div class="pt-3">
                 <div class="form-check">

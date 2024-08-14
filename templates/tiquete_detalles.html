@@ -1,0 +1,105 @@
+{% extends "layout.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<div>
+    <h2><strong>Tiquete # {{ tiquete.id_tiquete }}</strong></h2>
+    <form class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div>
+                <label for="id_cliente">Cliente<span>*</span></label>
+                <input type="text" class="form-control" value="{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}" readonly>
+            </div>
+            <div>
+                <label for="grupo_asignado">Grupo<span>*</span></label>
+                <input type="text" class="form-control" value="{{ tiquete.grupo.nombre }}" readonly>
+            </div>
+            <div>
+                <label for="fecha">Fecha<span>*</span></label>
+                <input type="text" class="form-control" value="{{ tiquete.fecha_creacion }}" readonly>
+            </div>
+            <div>
+                <label for="trabajador_designado">Colaborador<span>*</span></label>
+                <input type="text" class="form-control" value="{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}" readonly>
+            </div>
+            <div>
+                <label for="resumen">Resumen<span>*</span></label>
+                <input type="text" class="form-control" value="{{ tiquete.resumen }}" readonly>
+            </div>
+            <div>
+                <label for="descripcion">Descripción<span>*</span></label>
+                <textarea class="form-control" rows="3" readonly>{{ tiquete.descripcion }}</textarea>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div>
+                <label for="categoria">Categoría<span>*</span></label>
+                <input type="text" class="form-control" value="{{ categoria.categoria }}" readonly>
+            </div>
+            <div>
+                <label for="estado">Estado<span>*</span></label>
+                <input type="text" class="form-control" value="{{ tiquete.estado.estado }}" readonly>
+            </div>
+            <div>
+                <label for="direccion">Dirección<span>*</span></label>
+                <input type="text" class="form-control" value="{{ tiquete.direccion }}" readonly>
+            </div>
+        </div>
+    </form>
+
+    <div>
+        <div class="p-3">
+            <h3><strong>Agregar comentarios</strong></h3>
+        </div>
+        <form method="POST" action="{{ url_for('tiquetes.add_comment', id=tiquete.id_tiquete) }}">
+            <input type="hidden" name="redirect_url" value="tiquetes.tiquete_detalles">
+            <div>
+                <label for="nota_interna">Comentario</label>
+                <textarea class="form-control" rows="3" id="nota_interna" name="nota_interna"
+                    placeholder="Escriba su comentario aquí"></textarea>
+            </div>
+            {% if usuario_sesion_rol == 3 %} <!-- Rol de cliente -->
+            <div class="pt-3">
+                <input type="hidden" id="visible_cliente" name="visible_cliente" value="on">
+            </div>
+            {% else %}
+            <div class="pt-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="visible_cliente" name="visible_cliente">
+                    <label class="form-check-label" for="visible_cliente">
+                        Hacer visible para el cliente
+                    </label>
+                </div>
+            </div>
+            {% endif %}
+            <div class="pt-3">
+                <button type="submit" class="btn-solceri">Enviar</button>
+                <button type="button" class="btn btn-danger">Borrar</button>
+            </div>
+        </form>
+    </div>
+    <div>
+        <div class="p-3">
+            <h3><strong>Correspondencia</strong></h3>
+        </div>
+        <div>
+            {% for comentario in comentarios %}
+            <div class="comentarios mb-3">
+                <div class="d-flex align-items-center">
+                    <h5 class="mb-0 me-2">{{ comentario.nombre_usuario }}</h5>
+                    <small class="mb-0">| {{ comentario.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</small>
+                </div>
+                <p class="mt-2">{{ comentario.comentario|safe }}</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+{% endblock %}

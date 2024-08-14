@@ -66,15 +66,17 @@ function calcularTiempoTranscurrido(fechaAsignacion) {
 
     const diferencia = ahora - fecha; // Diferencia en milisegundos
 
-    const segundos = Math.floor(diferencia / 1000);
-    const minutos = Math.floor(segundos / 60);
-    const horas = Math.floor(minutos / 60);
-    const dias = Math.floor(horas / 24);
+    const segundosTotales = Math.floor(diferencia / 1000); // Total en segundos
+    const horas = Math.floor(segundosTotales / 3600);
+    const minutos = Math.floor((segundosTotales % 3600) / 60);
+    const segundos = segundosTotales % 60;
 
-    if (dias > 0) return `${dias} días`;
-    if (horas > 0) return `${horas} horas`;
-    if (minutos > 0) return `${minutos} minutos`;
-    return `${segundos} segundos`;
+    // Formatear en HH:MM:SS con ceros a la izquierda
+    const formatoHoras = String(horas).padStart(2, '0');
+    const formatoMinutos = String(minutos).padStart(2, '0');
+    const formatoSegundos = String(segundos).padStart(2, '0');
+
+    return `${formatoHoras}:${formatoMinutos}:${formatoSegundos}`;
 }
 
 function actualizarTiempoTranscurrido() {
@@ -85,7 +87,7 @@ function actualizarTiempoTranscurrido() {
     });
 }
 
-// Actualizar cada 5 segundos
+// Actualizar cada x milisegundos
 setInterval(actualizarTiempoTranscurrido, 1000);
 
 // Actualizar inmediatamente cuando se carga la página

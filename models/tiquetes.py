@@ -11,7 +11,7 @@ from datetime import datetime
 
 class Tiquetes(db.Model):
     __tablename__ = 'tiquetes'
-    id_tiquete = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id_tiquete = db.Column(db.String(10), primary_key=True)
     id_cliente = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=False)
     grupo_asignado = db.Column(db.Integer, db.ForeignKey('grupos.id_grupo'), nullable=False)
     trabajador_designado = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=False)
@@ -34,7 +34,8 @@ class Tiquetes(db.Model):
 
     
 
-    def __init__(self, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado, fecha_asignacion):
+    def __init__(self, id_tiquete, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado, fecha_asignacion):
+        self.id_tiquete = id_tiquete
         self.id_cliente = id_cliente
         self.grupo_asignado = grupo_asignado
         self.trabajador_designado = trabajador_designado

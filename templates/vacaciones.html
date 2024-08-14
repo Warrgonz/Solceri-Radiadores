@@ -1,5 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
 <section class="container-fluid">
     <div>
         <h1 class="pb-3 pt-3 section-title">Vacaciones</h1>
