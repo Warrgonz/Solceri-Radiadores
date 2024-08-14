@@ -331,6 +331,26 @@ form span{
     border-bottom: 2px solid #1d4d72;
 }
 
+.comentarios {
+    background-color: #e9ecef; /* Color de fondo ligeramente más claro que #f5f7fb */
+    border-radius: 8px; /* Bordes redondeados */
+    padding: 15px; /* Espaciado interno */
+    border: 1px solid #d0d7de; /* Borde ligero para mayor definición */
+}
+
+.comentarios h5 {
+    font-size: 1rem; /* Tamaño del texto del nombre del usuario */
+    white-space: nowrap; /* Evita el salto de línea en el nombre del usuario */
+    overflow: hidden; /* Oculta el texto que se desborda */
+    text-overflow: ellipsis; /* Añade "..." si el texto es muy largo */
+    max-width: 200px; /* Ancho máximo del nombre del usuario */
+}
+
+.comentarios small {
+    font-size: 0.875rem; /* Tamaño de la fecha */
+    color: #333; /* Color de la fecha */
+}
+
 /* Estilo para tabletas: 2 columnas */
 @media (max-width: 768px) {
     .my-cards-container .card {

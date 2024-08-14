@@ -1,16 +1,25 @@
 {% extends "layout.html" %}
 {% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
 
 <div>
     <h2><strong>Tiquete # {{ tiquete.id_tiquete }}</strong></h2>
-    <form id="tiqueteEditarForm" method="POST" action="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}" class="row">
+    <form id="tiqueteEditarForm" method="POST" action="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"
+        class="row">
         <div class="col-sm-12 col-md-6 col-lg-6">
             <div>
                 <label for="id_cliente">Cliente<span>*</span></label>
                 <select class="form-select mb-3" id="id_cliente" name="id_cliente" required>
                     <option value="">Seleccione un cliente</option>
                     {% for cliente in clientes %}
-                    <option value="{{ cliente.id_usuario }}" {% if cliente.id_usuario == tiquete.id_cliente %}selected{% endif %}>
+                    <option value="{{ cliente.id_usuario }}" {% if cliente.id_usuario==tiquete.id_cliente %}selected{%
+                        endif %}>
                         {{ cliente.nombre }} {{ cliente.primer_apellido }}
                     </option>
                     {% endfor %}
@@ -21,7 +30,8 @@
                 <select class="form-select mb-3" id="grupo_asignado" name="grupo_asignado" required>
                     <option value="">Seleccione un grupo</option>
                     {% for grupo in grupos %}
-                    <option value="{{ grupo.id_grupo }}" {% if grupo.id_grupo == tiquete.grupo_asignado %}selected{% endif %}>
+                    <option value="{{ grupo.id_grupo }}" {% if grupo.id_grupo==tiquete.grupo_asignado %}selected{% endif
+                        %}>
                         {{ grupo.nombre }}
                     </option>
                     {% endfor %}
@@ -36,7 +46,8 @@
                 <select class="form-select mb-3" id="trabajador_designado" name="trabajador_designado" required>
                     <option value="">Seleccione un colaborador</option>
                     {% for trabajador in trabajadores %}
-                    <option value="{{ trabajador.id_usuario }}" {% if trabajador.id_usuario == tiquete.trabajador_designado %}selected{% endif %}>
+                    <option value="{{ trabajador.id_usuario }}" {% if
+                        trabajador.id_usuario==tiquete.trabajador_designado %}selected{% endif %}>
                         {{ trabajador.nombre }} {{ trabajador.primer_apellido }}
                     </option>
                     {% endfor %}
@@ -44,11 +55,13 @@
             </div>
             <div>
                 <label for="resumen">Resumen<span>*</span></label>
-                <input type="text" class="form-control" id="resumen" name="resumen" value="{{ tiquete.resumen }}" required>
+                <input type="text" class="form-control" id="resumen" name="resumen" value="{{ tiquete.resumen }}"
+                    required>
             </div>
             <div>
                 <label for="descripcion">Descripción<span>*</span></label>
-                <textarea class="form-control" rows="3" id="descripcion" name="descripcion" required>{{ tiquete.descripcion }}</textarea>
+                <textarea class="form-control" rows="3" id="descripcion" name="descripcion"
+                    required>{{ tiquete.descripcion }}</textarea>
             </div>
             <div class="pt-2">
                 <label for="archivos">Adjunte un archivo <strong>(Opcional)</strong></label>
@@ -61,7 +74,8 @@
                 <select class="form-select mb-3" id="categoria" name="categoria" required>
                     <option value="">Seleccione una categoría</option>
                     {% for categoria in categorias %}
-                    <option value="{{ categoria.id_categoria }}" {% if categoria.id_categoria == tiquete.categoria %}selected{% endif %}>
+                    <option value="{{ categoria.id_categoria }}" {% if categoria.id_categoria==tiquete.categoria
+                        %}selected{% endif %}>
                         {{ categoria.categoria }}
                     </option>
                     {% endfor %}
@@ -72,7 +86,8 @@
                 <select class="form-select mb-3" id="estado" name="estado" required>
                     <option value="">Seleccione un estado</option>
                     {% for estado in estados %}
-                    <option value="{{ estado.id_estado }}" {% if estado.id_estado == tiquete.id_estado %}selected{% endif %}>
+                    <option value="{{ estado.id_estado }}" {% if estado.id_estado==tiquete.id_estado %}selected{% endif
+                        %}>
                         {{ estado.estado }}
                     </option>
                     {% endfor %}
@@ -80,11 +95,13 @@
             </div>
             <div>
                 <label for="direccion">Dirección<span>*</span></label>
-                <input type="text" class="form-control" id="direccion" name="direccion" value="{{ tiquete.direccion }}" required>
+                <input type="text" class="form-control" id="direccion" name="direccion" value="{{ tiquete.direccion }}"
+                    required>
             </div>
             <div class="pt-3">
                 <button type="submit" class="btn btn-success" style="width: 100%;">Guardar</button>
-                <a href="{{ url_for('tiquetes.tiquetes_listar') }}"><button type="button" class="btn btn-danger mt-3" style="width: 100%;">Cancelar</button></a>
+                <a href="{{ url_for('tiquetes.tiquetes_listar') }}"><button type="button" class="btn btn-danger mt-3"
+                        style="width: 100%;">Cancelar</button></a>
                 <a href=""><button type="button" class="btn-solceri mt-3" style="width: 100%;">Cotizaciones</button></a>
             </div>
         </div>
@@ -92,39 +109,42 @@
 
     <div>
         <div class="p-3">
-            <h3><strong>Agregar notas</strong></h3>
+            <h3><strong>Agregar comentarios</strong></h3>
         </div>
-    </div>
-    <div>
-        <div>
-            <label for="nota_interna">Agregar comentarios <strong>(Interno)</strong></label>
-            <textarea class="form-control" rows="3" id="nota_interna" name="nota_interna" placeholder="Descripción del servicio"></textarea>
-        </div>
-        <div class="pt-2">
-            <label for="nota_cliente">Agregar comentarios <strong>(Cliente)</strong></label>
-            <textarea class="form-control" rows="3" id="nota_cliente" name="nota_cliente" placeholder="Descripción del servicio"></textarea>
-        </div>
-        <div class="pt-3">
-            <button type="button" class="btn-solceri">Enviar</button>
-            <button type="button" class="btn btn-danger">Borrar</button>
-        </div>
+        <form method="POST" action="{{ url_for('tiquetes.add_comment', id=tiquete.id_tiquete) }}">
+            <div>
+                <label for="nota_interna">Comentario <strong>(Interno)</strong></label>
+                <textarea class="form-control" rows="3" id="nota_interna" name="nota_interna"
+                    placeholder="Descripción del servicio"></textarea>
+            </div>
+            <div class="pt-3">
+                <div class="form-check">
+                    <input class="form-check-input" type="checkbox" id="visible_cliente" name="visible_cliente">
+                    <label class="form-check-label" for="visible_cliente">
+                        Hacer visible para el cliente
+                    </label>
+                </div>
+            </div>
+            <div class="pt-3">
+                <button type="submit" class="btn-solceri">Enviar</button>
+                <button type="button" class="btn btn-danger">Borrar</button>
+            </div>
+        </form>
     </div>
     <div>
         <div class="p-3">
             <h3><strong>Correspondencia</strong></h3>
         </div>
         <div>
-            <!-- Bloque de comentario -->
-            <div class="row profile-tt">
-                <div class="col-sm-12 col-md-1 col-lg-1 profile-img-tt">
-                    <img src="/static/images/NPC_2.jpg" alt="Usuario Administrador">
+            {% for comentario in comentarios %}
+            <div class="comentarios mb-3">
+                <div class="d-flex align-items-center">
+                    <h5 class="mb-0 me-2">{{ comentario.nombre_usuario }}</h5>
+                    <small class="mb-0">| {{ comentario.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</small>
                 </div>
-                <div class="col-sm-12 col-md-11 col-lg-11">
-                    <h5>David Gutierrez Ledezma</h5>
-                    <p>Este es un comentario de prueba. Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
-                </div>
+                <p class="mt-2">{{ comentario.comentario|safe }}</p>
             </div>
-            <!-- Fin del bloque de comentario -->
+            {% endfor %}
         </div>
     </div>
 </div>

@@ -5,6 +5,7 @@ from models.usuarios import Usuarios
 from models.grupos import Grupos  
 from models.categorias import Categorias
 from models.estados import Estados
+from models.categorias import Categorias
 from datetime import datetime
 
 
@@ -28,6 +29,10 @@ class Tiquetes(db.Model):
     trabajador = db.relationship('Usuarios', foreign_keys=[trabajador_designado])
     estado = db.relationship('Estados', backref=db.backref('tiquetes', lazy=True))
     categoria_obj = db.relationship('Categorias', backref=db.backref('tiquetes', lazy=True))
+    comentarios = db.relationship('Comentarios', back_populates='tiquete')
+    
+
+    
 
     def __init__(self, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado, fecha_asignacion):
         self.id_cliente = id_cliente
