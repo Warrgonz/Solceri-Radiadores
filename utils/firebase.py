@@ -39,17 +39,17 @@ class FirebaseUtils:
             print(f"Error al obtener la imagen de Firebase: {str(e)}")
             return None
 
-    @staticmethod
-    def delete_image(image_url):
-        try:
+#    @staticmethod
+#    def delete_image(image_url):
+#        try:
             # Obtener el nombre del archivo de la URL
-            filename = os.path.basename(image_url.split("?")[0])
+#            filename = os.path.basename(image_url.split("?")[0])
             # Eliminar el archivo del bucket de Firebase
-            blob = bucket.blob(filename)
-            blob.delete()
-            print(f"Archivo {filename} eliminado correctamente de Firebase Storage.")
-        except Exception as e:
-            print(f"Error al eliminar archivo de Firebase Storage: {str(e)}")
+#            blob = bucket.blob(filename)
+#            blob.delete()
+#            print(f"Archivo {filename} eliminado correctamente de Firebase Storage.")
+#        except Exception as e:
+#            print(f"Error al eliminar archivo de Firebase Storage: {str(e)}")
                         
     @staticmethod
     def update_image(file, old_filename=None):

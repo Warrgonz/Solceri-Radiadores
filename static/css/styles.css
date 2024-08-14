@@ -56,6 +56,15 @@
     height: 50%;
 }
 
+.disabled {
+    background-color: #6c757d;
+    color: black;
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.65;
+}
+
+
 /**/
 
 

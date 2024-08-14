@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+<section class="container-fluid">
+    <form class="row" id="usuarioAgregarForm" method="POST"
+        action="{{ url_for('dashboard.usuarios_editar', id=usuario.id_usuario) }}" enctype="multipart/form-data">
+        <div class="col-sm-12 col-md-6">
+            <div class="pb-2">
+                <label for="cedula">Cédula empleado</label>
+                <input type="text" class="form-control" name="cedula" id="cedula" value="{{ usuario.cedula }}" required
+                    minlength="8" placeholder="Cédula del usuario">
+            </div>
+            <div class="pb-2">
+                <label for="nombre">Correo electronico</label>
+                <input type="text" class="form-control" name="correo" id="correo" value="{{ usuario.correo }}" readonly
+                    placeholder="Correo del usuario">
+            </div>
+            <div class="pb-2">
+                <label for="nombre">Nombre</label>
+                <input type="text" class="form-control" name="nombre" id="nombre" value="{{ usuario.nombre }}" required
+                    placeholder="Nombre del usuario">
+            </div>
+            <div class="pb-2">
+                <label for="primer_apellido">Primer Apellido</label>
+                <input type="text" class="form-control" name="primer_apellido" id="primer_apellido"
+                    value="{{ usuario.primer_apellido }}" required placeholder="Primer apellido del usuario">
+            </div>
+            <div class="pb-2">
+                <label for="segundo_apellido">Segundo Apellido</label>
+                <input type="text" class="form-control" name="segundo_apellido" id="segundo_apellido"
+                    value="{{ usuario.segundo_apellido }}" required placeholder="Segundo apellido del usuario">
+            </div>
+        </div>
+
+        <div class="col-sm-12 col-md-6">
+            <div class="pb-2">
+                <label for="rol">Tienes otorgado el rol</label>
+                <input type="text" class="form-control" id="rol" value="{{ usuario.rol.rol }}">
+                <input type="text" class="form-control" name="rol" value="{{ usuario.rol.id_rol }}" hidden>
+            </div>
+            <div class="pb-2" id="fechaContratacionDiv">
+                <label for="fecha_contratacion">Fecha de contratación</label>
+                <input type="date" class="form-control" name="fecha_contratacion"
+                    value="{{ usuario.Fecha_Contratacion | default('', true) }}" id="fechaContratacion">
+            </div>
+            <div class="pt-3 pb-3">
+                <label for="ruta_imagen">Foto de perfil<span>*</span></label>
+                <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp" onchange="readURL(this);">
+            </div>
+            <div class="pt-3 pb-3" id="imagePreview">
+                <img id="blah" src="{{ usuario.ruta_imagen }}" alt="Tu imagen" style="height: 200px;">
+            </div>
+            <div class="modal-footer">
+                <a href="{{ url_for('dashboard.perfil') }}" class="btn btn-danger btn-md mx-2">Cancelar</a>
+                <button type="submit" class="btn btn-success btn-md">Confirmar</button>
+            </div>
+        </div>
+    </form>
+</section>
+<script>
+    var rolInput = document.getElementById('rol');
+    var fechaContratacion = document.getElementById('fechaContratacion');
+    var cedula = document.getElementById('cedula');
+    var correo = document.getElementById('correo');
+    var nombre = document.getElementById('nombre');
+    var primer_apellido = document.getElementById('primer_apellido');
+    var segundo_apellido = document.getElementById('segundo_apellido');
+
+    if (rolInput) {
+        rolInput.setAttribute('readonly', true);
+        rolInput.classList.add('disabled');
+    }
+    if (fechaContratacion) {
+        fechaContratacion.setAttribute('readonly', true);
+        fechaContratacion.classList.add('disabled');
+    }
+    if (cedula) {
+        cedula.setAttribute('readonly', true);
+        cedula.classList.add('disabled');
+    }
+    if (correo) {
+        correo.setAttribute('readonly', true);
+        correo.classList.add('disabled');
+    }
+    if (nombre) {
+        nombre.setAttribute('readonly', true);
+        nombre.classList.add('disabled');
+    }
+    if (primer_apellido) {
+        primer_apellido.setAttribute('readonly', true);
+        primer_apellido.classList.add('disabled');
+    }
+    if (segundo_apellido) {
+        segundo_apellido.setAttribute('readonly', true);
+        segundo_apellido.classList.add('disabled');
+    }
+
+</script>
+
+{% endblock %}
