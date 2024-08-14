@@ -3,6 +3,7 @@
 from flask import Flask, session, g
 from models.usuarios import Usuarios, create_admin_user
 from models.roles import Roles
+from models.estados import Estados
 from routes import blueprints
 from utils.db import init_db
 import os
@@ -25,6 +26,8 @@ for blueprint in blueprints:
 with app.app_context():
     create_admin_user()
     Roles.set_roles()
+    Estados.set_estados()
+
 
 @app.before_request
 def before_request():

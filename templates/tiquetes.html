@@ -49,7 +49,7 @@
                 <td class="cliente">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</td>
                 <td class="grupo">{{ tiquete.grupo.nombre if tiquete.grupo else 'No asignado' }}</td>
                 <td class="trabajador">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}</td>
-                <td class="estado">{% if tiquete.estado %} Activo {% else %} Inactivo {% endif %}</td>
+                <td class="estado">{{ tiquete.estado.estado }}</td>
                 <td class="ultima_asignacion">{{ tiquete.fecha_asignacion }}</td>
                 <td class="tiempo_transcurrido">Calculando...</td> <!-- Nueva celda -->
                 <td>

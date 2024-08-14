@@ -4,10 +4,10 @@ from models.roles import Roles
 from datetime import datetime
 from utils.db import db
 from utils.firebase import FirebaseUtils
+from models.tiquetes import Tiquetes
+from models.estados import Estados
 
 dashboard_bp = Blueprint('dashboard', __name__)
-
-# Funcionalidades para el usuario
 
 @dashboard_bp.route('/dashboard')
 def dashboard():
@@ -16,9 +16,29 @@ def dashboard():
     if user_id:
         user = Usuarios.query.get(user_id)
         if user:
-            user_role = user.id_rol  
+            user_role = user.id_rol
             
-            return render_template('dashboard.html', user_role=user_role , nombre_usuario=user.nombre)
+            # Obtener todos los tiquetes
+            todos_los_tiquetes = Tiquetes.query.all()
+
+            # Filtrar tiquetes asignados al usuario actual
+            tiquetes_asignados = Tiquetes.query.filter_by(trabajador_designado=user.id_usuario).all()
+
+            # Filtrar tiquetes por estado
+            tiquetes_en_progreso = Tiquetes.query.join(Estados).filter(Estados.estado == 'En progreso').all()
+            tiquetes_en_espera = Tiquetes.query.join(Estados).filter(Estados.estado == 'En espera').all()
+            tiquetes_llamar_cliente = Tiquetes.query.join(Estados).filter(Estados.estado == 'Llamar cliente').all()
+            tiquetes_en_camino = Tiquetes.query.join(Estados).filter(Estados.estado == 'En camino').all()
+
+            return render_template('dashboard.html', 
+                                   user_role=user_role,
+                                   nombre_usuario=user.nombre,
+                                   todos_los_tiquetes=todos_los_tiquetes,
+                                   tiquetes_asignados=tiquetes_asignados,
+                                   tiquetes_en_progreso=tiquetes_en_progreso,
+                                   tiquetes_en_espera=tiquetes_en_espera,
+                                   tiquetes_llamar_cliente=tiquetes_llamar_cliente,
+                                   tiquetes_en_camino=tiquetes_en_camino)
     return render_template('dashboard.html')
 
 # Funcionalidades para internos

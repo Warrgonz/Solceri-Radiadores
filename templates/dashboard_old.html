@@ -1,0 +1,112 @@
+{% extends "layout.html" %}
+{% block content %}
+
+
+{% if user_role == 1 or user_role == 2 %}
+<!--Interno-->
+
+<section class="container">
+    <h1>¡Bienvenido, {{ nombre_usuario }}!</h1>
+    
+    <div class="d-flex justify-content-between">
+        <h3>Tiquetes activos</h3>
+        <button class="btn-solceri">Refrescar</button>
+    </div>
+
+    <!-- Nav pills -->
+    <ul class="nav nav-pills tabs py-2">
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="pill" href="#todos">Todos</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="pill" href="#activo">Asignados</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="pill" href="#urgentes">Urgentes</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="pill" href="#en-espera">En espera</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="pill" href="#por-llamar">Por llamar</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" data-bs-toggle="pill" href="#en-camino">En camino</a>
+        </li>
+
+    </ul>
+    <!-- Tab panes -->
+    <div class="tab-content">
+        <div class="tab-pane container fade" id="todos">Contenido para todos</div>
+
+        <div class="tab-pane container active" id="activo">
+            <div class="container my-cards-container">
+                <!--Aqui contenido de los cards-->
+                <div class="card tt-on-time" style="width: 20rem;">
+                    <div class="card-header border-bottom border-primary">
+                        <div class="d-flex justify-content-between">
+                            <div>
+                                <div>
+                                    <div>
+                                        <strong>
+                                            <h3 class="mb-0"># R102315</h3>
+                                        </strong>
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <div class="d-flex">
+                                    <strong>Status:</strong>
+                                    <p class="px-1">activo</p>
+                                </div>
+                                <div class="d-flex">
+                                    <strong>Tiempo:</strong>
+                                    <p class="px-1">30:15</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <strong class="card-text">Cliente:</strong>
+                            <p class="px-2">Warren González Reyes.</p>
+                        </div>
+                        <div class="d-flex">
+                            <strong class="card-text">Prioridad:</strong>
+                            <p class="px-2">Alta.</p>
+                        </div>
+                        <div>
+                            <strong>Fecha creación:</strong>
+                            <p>10/04/2024</p>
+                        </div>
+                        <div>
+                            <strong>Asignado:</strong>
+                            <p class="d-block">Alejandro Castro García</p>
+                        </div>
+                        <div>
+                            <strong>Grupo asignado:</strong>
+                            <p class="d-block">Limpieza</p>
+                        </div>
+                        <div>
+                            <strong>Resumen:</strong>
+                            <p class="d-block">El radiador está muy sucio, necesita limpieza.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane container fade" id="urgentes">Contenido para Urgentes</div>
+        <div class="tab-pane container fade" id="en-espera">Contenido para En espera</div>
+        <div class="tab-pane container fade" id="por-llamar">Contenido para Por llamar</div>
+        <div class="tab-pane container fade" id="en-camino">Contenido para En camino</div>
+        <div class="tab-pane container fade" id="entregado">Contenido para Entregado</div>
+        <div class="tab-pane container fade" id="finalizado">Contenido para Finalizado</div>
+        <div class="tab-pane container fade" id="cancelado">Contenido para Cancelado</div>
+    </div>
+</section>
+{% else %}
+<h1 class="p-4 section-title">Solicitudes</h1>
+{% endif %}
+
+{% endblock %}
