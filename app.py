@@ -34,9 +34,15 @@ def before_request():
     user_id = session.get('user_id')
     if user_id:
         user = Usuarios.query.get(user_id)
-        g.user = user
+        if user:
+            g.user = user
+            g.user_role = user.id_rol  # Asegúrate de asignar el ID numérico del rol aquí
+        else:
+            g.user = None
+            g.user_role = None
     else:
         g.user = None
+        g.user_role = None
 
 # Configura una clave secreta personalizada
 app.secret_key = os.getenv("PASSWORD_APP")

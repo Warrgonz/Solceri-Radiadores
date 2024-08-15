@@ -266,6 +266,11 @@ def eliminar_usuario(id_usuario):
 
 @usuarios_bp.route('/login', methods=['GET', 'POST'])
 def login():
+
+    if 'user_id' in session:
+        # Redirige al dashboard o a la página principal
+        return redirect(url_for('dashboard.dashboard'))
+    
     if request.method == 'POST':
         email = request.form['email']
         password = request.form['password']

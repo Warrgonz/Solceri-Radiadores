@@ -65,48 +65,65 @@
                             <i class="align-middle" data-feather="mail"></i> <span class="align-middle">Tiquetes</span>
                         </a>
                     </li>
-
+                    {% if g.user.id_rol == 1 %}
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="/usuarios">
                             <i class="align-middle" data-feather="user-plus"></i> <span
                                 class="align-middle">Usuarios</span>
                         </a>
+                    {% endif %}
                     </li>
+                    {% if g.user.id_rol == 1 %}
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="/grupos">
-                            <i class="align-middle" data-feather="users"></i> <span class="align-middle">Equipos</span>
+                                </span>
+                                <i class="align-middle" data-feather="users"></i> <span class="align-middle">Equipos </span>
                         </a>
                     </li>
+                    {% endif %}
+
+                    {% if g.user.id_rol in [1, 2] %}
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="/vacaciones">
                             <i class="align-middle" data-feather="book"></i> <span
                                 class="align-middle">Vacaciones</span>
                         </a>
                     </li>
+                    {% endif %}
 
+                    {% if g.user.id_rol == 1 %}
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="/categorias">
                             <i class="align-middle" data-feather="folder"></i> <span
                                 class="align-middle">Categorias</span>
                         </a>
                     </li>
+                    {% endif %}
+
+                    {% if g.user.id_rol == 1 %}
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="/catalogo">
                             <i class="align-middle" data-feather="list"></i> <span class="align-middle">Catalogo</span>
                         </a>
                     </li>
+                    {% endif %}
+
+                    {% if g.user.id_rol == 1 %}
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="/cotizaciones">
                             <i class="align-middle" data-feather="bar-chart"></i> <span
                                 class="align-middle">Cotizaciones</span>
                         </a>
                     </li>
+                    {% endif %}
+                    {% if g.user.id_rol == 4 %}
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="/reportes">
                             <i class="align-middle" data-feather="file-text"></i> <span
                                 class="align-middle">Reportes</span>
                         </a>
                     </li>
+                    {% endif %}
                 </ul>
 
                 <div class="sidebar-cta">

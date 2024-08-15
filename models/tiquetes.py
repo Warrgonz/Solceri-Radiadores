@@ -29,7 +29,7 @@ class Tiquetes(db.Model):
     trabajador = db.relationship('Usuarios', foreign_keys=[trabajador_designado])
     estado = db.relationship('Estados', backref=db.backref('tiquetes', lazy=True))
     categoria_obj = db.relationship('Categorias', backref=db.backref('tiquetes', lazy=True))
-    comentarios = db.relationship('Comentarios', back_populates='tiquete')
+    comentarios = db.relationship('Comentarios', back_populates='tiquete', cascade="all, delete-orphan")
     
 
     
