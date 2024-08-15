@@ -45,7 +45,7 @@
                 <td><img src="{{ producto.ruta_imagen }}" alt="Foto de {{ producto.nombre_producto }}"
                         style="width: 50px; height: 50px;"></td>
                 <td>{{ producto.descripcion }}</td>
-                <td>{{ producto.precio }}</td>
+                <td>₡{{ producto.precio }}</td>
                 <td>
                     <a href="{{ url_for('catalogo.catalogo_editar', id=producto.id_catalogo) }}"
                         style="text-decoration: none;" class="btn-solceri"><strong>Modificar</strong></a>

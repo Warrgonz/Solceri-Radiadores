@@ -30,10 +30,7 @@ class Tiquetes(db.Model):
     estado = db.relationship('Estados', backref=db.backref('tiquetes', lazy=True))
     categoria_obj = db.relationship('Categorias', backref=db.backref('tiquetes', lazy=True))
     comentarios = db.relationship('Comentarios', back_populates='tiquete')
-    
-
-    
-
+ 
     def __init__(self, id_tiquete, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado, fecha_asignacion):
         self.id_tiquete = id_tiquete
         self.id_cliente = id_cliente

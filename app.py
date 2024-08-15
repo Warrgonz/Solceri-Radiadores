@@ -8,6 +8,8 @@ from utils.db import init_db
 import os
 from dotenv import load_dotenv
 from utils.config import Config
+from models.cotizaciones import Cotizaciones
+from models.mtl_cotizaciones import MtlCotizaciones
 
 load_dotenv()
 

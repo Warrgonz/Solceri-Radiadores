@@ -17,41 +17,43 @@ def catalogo():
 @catalogo_bp.route('/catalogo/create', methods=['GET', 'POST'])
 def catalogo_crear():
     if request.method == 'POST':
+        sku = request.form['sku']
+        nombre_producto = request.form['producto']
+        descripcion = request.form['descripcion']
+        precio = request.form['precio'].strip()
+
+        # Verificar que el precio sea un número entero
+        if not precio.isdigit():
+            flash('El precio debe ser un número entero válido.', 'danger')
+            return render_template('catalogo_crear.html', sku=sku, nombre_producto=nombre_producto, descripcion=descripcion, precio=precio)
+
+        # Verificar que los campos no estén vacíos
+        if not sku or not nombre_producto or not descripcion or not precio:
+            flash('Por favor, complete todos los campos obligatorios.', 'danger')
+            return render_template('catalogo_crear.html', sku=sku, nombre_producto=nombre_producto, descripcion=descripcion, precio=precio)
+
+        # Verificar si el SKU ya existe
+        if Catalogo.query.filter_by(sku=sku).first():
+            flash('El SKU ya existe. Por favor, elija otro.', 'danger')
+            return render_template('catalogo_crear.html', sku=sku, nombre_producto=nombre_producto, descripcion=descripcion, precio=precio)
+
+        ruta_imagen = None
+
+        if 'ruta_imagen' in request.files and request.files['ruta_imagen'].filename != '':
+            file = request.files['ruta_imagen']
+            ruta_imagen = FirebaseUtils.post_image(file)
+        else:
+            ruta_imagen = 'https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/logoSolceri.png?alt=media&token=ae59e640-bba6-40f4-bce9-acb89c01d47f'
+
+        nuevo_producto = Catalogo(
+            sku=sku,
+            nombre_producto=nombre_producto,
+            descripcion=descripcion,
+            precio=int(precio),  # Convertir el precio a entero
+            ruta_imagen=ruta_imagen
+        )
+
         try:
-            sku = request.form['sku']
-            nombre_producto = request.form['producto']
-            descripcion = request.form['descripcion']
-            precio = request.form['precio'].strip()  # Obtener precio y eliminar espacios en blanco
-
-            if not precio:  # Si precio está vacío después de eliminar espacios en blanco
-                precio = None  # Establecer precio a None
-                
-            # Verificar si el SKU ya existe
-            if Catalogo.query.filter_by(sku=sku).first():
-                flash('El SKU ya existe. Por favor, elija otro.', 'danger')
-                return redirect(url_for('catalogo.catalogo_crear'))
-
-            # Verificar que los campos no estén vacíos
-            if not sku or not nombre_producto or not descripcion:
-                flash('Por favor, complete todos los campos obligatorios.', 'danger')
-                return redirect(url_for('catalogo.catalogo_crear'))
-
-            ruta_imagen = None
-
-            if 'ruta_imagen' in request.files and request.files['ruta_imagen'].filename != '':
-                file = request.files['ruta_imagen']
-                ruta_imagen = FirebaseUtils.post_image(file)
-            else:
-                ruta_imagen = 'https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/system.png?alt=media&token=c6dd24e5-c288-4223-bbf9-152e4c007b51'
-
-            nuevo_producto = Catalogo(
-                sku=sku,
-                nombre_producto=nombre_producto,
-                descripcion=descripcion,
-                precio=precio,
-                ruta_imagen=ruta_imagen
-            )
-
             db.session.add(nuevo_producto)
             db.session.commit()
 
@@ -62,9 +64,12 @@ def catalogo_crear():
             print(f"Error al crear producto: {str(e)}")
             db.session.rollback()
             flash('Hubo un error al agregar el producto. Por favor, intente de nuevo.', 'danger')
+            return render_template('catalogo_crear.html', sku=sku, nombre_producto=nombre_producto, descripcion=descripcion, precio=precio)
 
     return render_template('catalogo_crear.html')
 
+
+    
 @catalogo_bp.route('/catalogo/edit/<int:id>', methods=['GET', 'POST'])
 def catalogo_editar(id):
     producto = Catalogo.query.get_or_404(id)
@@ -113,9 +118,6 @@ def eliminar_producto(id_producto):
         if not producto:
             return jsonify({'message': 'Producto no encontrado'}), 404
 
-        # Eliminar la imagen de Firebase
-        FirebaseUtils.delete_image(producto.ruta_imagen)
-
         # Eliminar el producto de la base de datos
         db.session.delete(producto)
         db.session.commit()
@@ -124,5 +126,3 @@ def eliminar_producto(id_producto):
     except Exception as e:
         print(f"Error al eliminar el producto: {str(e)}")
         return jsonify({'message': 'Error al eliminar el producto'}), 500
-
-

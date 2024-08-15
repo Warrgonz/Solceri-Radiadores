@@ -8,6 +8,7 @@ from .index import inicio_bp
 from .vacaciones import vacaciones_bp
 from .tiquetes import tiquetes_bp
 from .dashboard import dashboard_bp
+from .cotizaciones import cotizaciones_bp
 
 blueprints = [
     grupos_bp,
@@ -17,5 +18,6 @@ blueprints = [
     inicio_bp,
     vacaciones_bp,
     tiquetes_bp,
-    dashboard_bp
+    dashboard_bp,
+    cotizaciones_bp
 ]

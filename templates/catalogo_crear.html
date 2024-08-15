@@ -11,7 +11,7 @@
 
 <div class="d-flex flex-column">
     <h2 class="pb-3 section-title">Agregar artículo al catálogo</h2>
-    <form method="POST" action="{{ url_for('catalogo.catalogo_crear') }}" enctype="multipart/form-data">
+    <form method="POST" id="crear-producto-form"  action="{{ url_for('catalogo.catalogo_crear') }}" enctype="multipart/form-data">
         <div class="pt-3">
             <div class="pb-3">
                 <label for="sku">SKU<span>*</span></label>
@@ -27,8 +27,8 @@
             </div>
             <div class="pb-3">
                 <label for="precio">Precio</label>
-                <input type="number" min="0" class="form-control" name="precio" placeholder="Precio del artículo">
-            </div>            
+                <input type="text" min="0" class="form-control" name="precio" placeholder="Precio del artículo">
+            </div>   
             <div class="pt-3 pb-3">
                 <label for="ruta_imagen">Foto de perfil</label>
                 <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp" onchange="readURL(this);">
@@ -43,5 +43,48 @@
         </div>
     </form>
 </div>
+
+
+<script>
+function validarFormulario(event) {
+    event.preventDefault();
+
+    var sku = document.querySelector('input[name="sku"]').value.trim();
+    var nombreProducto = document.querySelector('input[name="producto"]').value.trim();
+    var descripcion = document.querySelector('textarea[name="descripcion"]').value.trim();
+    var precio = document.querySelector('input[name="precio"]').value.trim();
+
+    // Validación de campos vacíos
+    if (!sku || !nombreProducto || !descripcion || !precio) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Campos incompletos',
+            text: 'Por favor, complete todos los campos obligatorios.',
+        });
+        return;
+    }
+
+    // Validación de que el precio sea un número entero
+    if (!/^\d+$/.test(precio)) {
+        Swal.fire({
+            icon: 'warning',
+            title: 'Precio inválido',
+            text: 'El precio debe ser un número entero válido.',
+        });
+        return;
+    }
+
+    // Validación de SKU único (esto se maneja en el backend, pero puedes hacer una llamada AJAX si lo deseas)
+
+    // Si todo está bien, enviar el formulario
+    event.target.submit();
+}
+
+document.querySelector('form').addEventListener('submit', validarFormulario);
+
+
+
+
+</script>
 
 {% endblock %}

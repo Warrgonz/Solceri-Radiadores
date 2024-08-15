@@ -11,7 +11,7 @@
 
 <div class="d-flex flex-column">
     <h2 class="pb-3 section-title">Editar artículo del catálogo</h2>
-    <form method="POST" action="{{ url_for('catalogo.catalogo_editar', id=producto.id_catalogo) }}" enctype="multipart/form-data">
+    <form method="POST" id="crear-producto-form"  action="{{ url_for('catalogo.catalogo_editar', id=producto.id_catalogo) }}" enctype="multipart/form-data">
 
         <div class="pt-3">
             <div class="pb-3">
@@ -28,7 +28,7 @@
             </div>
             <div class="pb-3">
                 <label for="precio">Precio</label>
-                <input type="number" min="0" class="form-control" name="precio" value="{{ producto.precio }}" placeholder="Precio del artículo">
+                <input type="text" min="0" class="form-control" name="precio" value="{{ producto.precio }}" placeholder="Precio del artículo">
             </div>            
             <div class="pt-3 pb-3">
                 <label for="ruta_imagen">Foto de perfil</label>
@@ -44,5 +44,53 @@
         </div>
     </form>
 </div>
+
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+    // Seleccionar formularios de creación y edición
+    var crearProductoForm = document.getElementById('crear-producto-form');
+    var editarProductoForm = document.getElementById('editar-producto-form');
+
+    // Añadir validación al formulario de creación
+    if (crearProductoForm) {
+        crearProductoForm.addEventListener('submit', function (event) {
+            var precioInput = document.getElementById('precio').value.trim();
+
+            if (!esNumeroEntero(precioInput)) {
+                event.preventDefault(); // Prevenir el envío del formulario
+                mostrarAlerta("Error en el precio", "El precio debe ser un número entero.", "error");
+            }
+        });
+    }
+
+    // Añadir validación al formulario de edición
+    if (editarProductoForm) {
+        editarProductoForm.addEventListener('submit', function (event) {
+            var precioInput = document.getElementById('precio').value.trim();
+
+            if (!esNumeroEntero(precioInput)) {
+                event.preventDefault(); // Prevenir el envío del formulario
+                mostrarAlerta("Error en el precio", "El precio debe ser un número entero.", "error");
+            }
+        });
+    }
+
+    // Función para verificar si el valor es un número entero
+    function esNumeroEntero(valor) {
+        return /^-?\d+$/.test(valor); // Expresión regular para verificar números enteros
+    }
+
+    // Función para mostrar alertas con SweetAlert
+    function mostrarAlerta(titulo, texto, icono) {
+        Swal.fire({
+            icon: icono,
+            title: titulo,
+            text: texto
+        });
+    }
+});
+
+</script>
 
 {% endblock %}

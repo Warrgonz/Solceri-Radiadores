@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block content %}
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<header class="d-flex justify-content-between">
+  <h1>Catálogo de Productos</h1>
+
+  <!-- Botón para lanzar el modal del carrito -->
+  <button type="button" class="btn-solceri" data-bs-toggle="modal" data-bs-target="#carritoModal">
+    Ver Cotización
+  </button>
+
+</header>
+<section class="contenedor">
+
+  <!-- Contenedor de elementos -->
+  <div class="contenedor-items row pt-3">
+    {% for catalogo in catalogo %}
+    <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
+      <div class="card h-100">
+        <img src="{{ catalogo.ruta_imagen }}" class="img-item card-img-top" alt="{{ catalogo.nombre_producto }}">
+        <div class="card-body">
+          <h1 class="titulo-item">{{ catalogo.nombre_producto }}</h1>
+          <p class="precio-item"><strong>Precio:</strong><br>₡{{ catalogo.precio }}</p>
+          <div class="card-text">
+            <p><strong>Código del producto:</strong><br>{{ catalogo.sku }}</p>
+            <p><strong>Descripción:</strong><br>{{ catalogo.descripcion }}</p>
+            <div class="d-flex justify-content-center">
+              <button class="btn-solceri boton-item">Añadir a cotización</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+
+  
+  <!-- Modal Carrito -->
+  <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-body">
+          <!-- Carrito de Compras -->
+          <div class="carrito" id="carrito">
+            <div class="header-carrito">
+              <h2>Tu Cotización</h2>
+            </div>
+            <div class="carrito-items">
+              <!-- Items del carrito se generarán dinámicamente aquí -->
+            </div>
+            <div class="carrito-total">
+              <a href="#" id="otroProductoLink">Otro artículo</a>
+
+              <!-- Formulario para añadir otro artículo (inicialmente oculto) -->
+              <form method="POST" id="crear-cotizacion" action="{{ url_for('cotizaciones.crear_cotizacion') }}"
+                enctype="multipart/form-data" style="display: none;">
+                <div class="pt-3">
+                  <div class="pb-3">
+                    <label for="producto">Nombre del producto<span>*</span></label>
+                    <input type="text" class="form-control" name="producto" placeholder="Nombre del producto">
+                  </div>
+                  <div class="pb-3">
+                    <label for="descripcion">Descripción<span>*</span></label>
+                    <textarea class="form-control" rows="3" name="descripcion"
+                      placeholder="Descripción del producto"></textarea>
+                  </div>
+                  <div class="pb-3">
+                    <label for="precio">Precio</label>
+                    <input type="number" min="0" class="form-control" name="precio" placeholder="Precio del artículo">
+                  </div>
+                  <div class="pt-3 pb-3">
+                    <label for="ruta_imagen">Foto de perfil</label>
+                    <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp"
+                      onchange="readURL(this);">
+                  </div>
+                  <div class="pt-3 pb-3" id="imagePreview">
+                    <img id="blah" src="#" alt="Tu imagen" style="display: none; height: 200px;">
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <a href="#" class="btn btn-danger btn-md mx-2">Cancelar</a>
+                  <button type="submit" class="btn btn-success btn-md">Agregar a cotización</button>
+                </div>
+              </form>
+              <div class="fila">
+                <strong>Total</strong>
+                <span class="carrito-precio-total">₡0,00</span>
+              </div>
+              <button class="btn-solceri" style="width: 100%;">Completar cotización</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+{% endblock %}
