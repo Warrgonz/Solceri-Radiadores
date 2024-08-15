@@ -105,17 +105,7 @@
     font-size: 1.2rem;
 }
 
-.tt-on-time .card-header {
-    background-color: #315973;
-}
 
-.tt-on-running .card-header {
-    background-color: #ff9c37;
-}
-
-.tt-on-late .card-header {
-    background-color: #e9286b;
-}
 
 /* Tabs  */
 .sectionTabs .nav-tabs {
@@ -367,6 +357,35 @@ form span{
     margin-bottom: 10px;
 }
 
+/*Colores para sla*/
+/* Colores personalizados para SLA */
+.sla-verde {
+    background-color: #1e9526 !important; /* Verde */
+}
+
+.sla-amarillo {
+    background-color: #ff9c37 !important; /* Amarillo */
+}
+
+.sla-rojo {
+    background-color: #c7313d !important; /* Rojo */
+}
+
+.border-primary {
+    border-bottom: black !important;
+}
+
+/*.tt-on-time .card-header {
+    background-color: ;
+}
+
+.tt-on-running .card-header {
+    background-color: #ff9c37;
+}
+
+.tt-on-late .card-header {
+    background-color: #e9286b;
+}*/
 
 /* Estilo para tabletas: 2 columnas */
 @media (max-width: 768px) {

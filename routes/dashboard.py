@@ -4,10 +4,11 @@ from models.roles import Roles
 from datetime import datetime
 from utils.db import db
 from utils.firebase import FirebaseUtils
+from models.tiquetes import Tiquetes
+from models.estados import Estados
+from models.grupos import Grupos
 
 dashboard_bp = Blueprint('dashboard', __name__)
-
-# Funcionalidades para el usuario
 
 @dashboard_bp.route('/dashboard')
 def dashboard():
@@ -16,10 +17,48 @@ def dashboard():
     if user_id:
         user = Usuarios.query.get(user_id)
         if user:
-            user_role = user.id_rol  
+            user_role = user.id_rol
             
-            return render_template('dashboard.html', user_role=user_role , nombre_usuario=user.nombre)
+            if user_role == 3:
+                # Si es cliente, solo puede ver los tiquetes donde es el cliente
+                todos_los_tiquetes = Tiquetes.query.filter_by(id_cliente=user.id_usuario)\
+                                                    .order_by(Tiquetes.fecha_asignacion.asc()).all()
+                
+                # No se requieren otros filtros ni se muestran otros tabs
+                return render_template('dashboard.html',
+                                       user_role=user_role,
+                                       nombre_usuario=user.nombre,
+                                       todos_los_tiquetes=todos_los_tiquetes)
+            
+            else:
+                # Para otros roles, se muestran todos los tiquetes y filtrados por estado
+                todos_los_tiquetes = Tiquetes.query.order_by(Tiquetes.fecha_asignacion.asc()).all()
+                
+                # Filtrar tiquetes asignados al usuario actual
+                tiquetes_asignados = Tiquetes.query.filter_by(trabajador_designado=user.id_usuario).all()
+
+                # Filtrar tiquetes por estado
+                tiquetes_en_progreso = Tiquetes.query.join(Estados).filter(Estados.estado == 'En progreso')\
+                                                     .order_by(Tiquetes.fecha_asignacion.asc()).all()
+                tiquetes_en_espera = Tiquetes.query.join(Estados).filter(Estados.estado == 'En espera')\
+                                                     .order_by(Tiquetes.fecha_asignacion.asc()).all()
+                tiquetes_llamar_cliente = Tiquetes.query.join(Estados).filter(Estados.estado == 'Llamar cliente')\
+                                                         .order_by(Tiquetes.fecha_asignacion.asc()).all()
+                tiquetes_en_camino = Tiquetes.query.join(Estados).filter(Estados.estado == 'En camino')\
+                                                     .order_by(Tiquetes.fecha_asignacion.asc()).all()
+
+                return render_template('dashboard.html',
+                                       user_role=user_role,
+                                       nombre_usuario=user.nombre,
+                                       todos_los_tiquetes=todos_los_tiquetes,
+                                       tiquetes_asignados=tiquetes_asignados,
+                                       tiquetes_en_progreso=tiquetes_en_progreso,
+                                       tiquetes_en_espera=tiquetes_en_espera,
+                                       tiquetes_llamar_cliente=tiquetes_llamar_cliente,
+                                       tiquetes_en_camino=tiquetes_en_camino)
+                
     return render_template('dashboard.html')
+
 
 # Funcionalidades para internos
 

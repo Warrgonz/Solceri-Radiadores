@@ -62,7 +62,7 @@
             <div>
                 <label for="nota_interna">Comentario</label>
                 <textarea class="form-control" rows="3" id="nota_interna" name="nota_interna"
-                    placeholder="Escriba su comentario aquí"></textarea>
+                    placeholder="Escriba su comentario aquí" required></textarea>
             </div>
             {% if usuario_sesion_rol == 3 %} <!-- Rol de cliente -->
             <div class="pt-3">
@@ -80,7 +80,6 @@
             {% endif %}
             <div class="pt-3">
                 <button type="submit" class="btn-solceri">Enviar</button>
-                <button type="button" class="btn btn-danger">Borrar</button>
             </div>
         </form>
     </div>

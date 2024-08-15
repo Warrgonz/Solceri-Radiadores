@@ -1,112 +1,354 @@
 {% extends "layout.html" %}
 {% block content %}
 
-
-{% if user_role == 1 or user_role == 2 %}
-<!--Interno-->
-
+<!-- Interno -->
+<!-- Interno -->
 <section class="container">
     <h1>¡Bienvenido, {{ nombre_usuario }}!</h1>
-    
+
     <div class="d-flex justify-content-between">
         <h3>Tiquetes activos</h3>
-        <button class="btn-solceri">Refrescar</button>
     </div>
 
     <!-- Nav pills -->
     <ul class="nav nav-pills tabs py-2">
+        {% if user_role != 3 %}
         <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="pill" href="#todos">Todos</a>
+            <a class="nav-link active" data-bs-toggle="pill" href="#todos" >Todos</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="pill" href="#activo">Asignados</a>
+            <a class="nav-link" data-bs-toggle="pill" href="#asignados">Asignados</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="pill" href="#urgentes">Urgentes</a>
+            <a class="nav-link" data-bs-toggle="pill" href="#en-progreso">En progreso</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="pill" href="#en-espera">En espera</a>
         </li>
         <li class="nav-item">
-            <a class="nav-link" data-bs-toggle="pill" href="#por-llamar">Por llamar</a>
+            <a class="nav-link" data-bs-toggle="pill" href="#llamar-cliente">Llamar cliente</a>
         </li>
         <li class="nav-item">
             <a class="nav-link" data-bs-toggle="pill" href="#en-camino">En camino</a>
         </li>
-
+        {% endif %}
     </ul>
+
     <!-- Tab panes -->
     <div class="tab-content">
-        <div class="tab-pane container fade" id="todos">Contenido para todos</div>
-
-        <div class="tab-pane container active" id="activo">
+        <div class="tab-pane container active" id="todos">
             <div class="container my-cards-container">
-                <!--Aqui contenido de los cards-->
-                <div class="card tt-on-time" style="width: 20rem;">
-                    <div class="card-header border-bottom border-primary">
-                        <div class="d-flex justify-content-between">
+                <!-- Aquí se mostrarán todos los tiquetes -->
+                {% for tiquete in todos_los_tiquetes %}
+                <div class="card tt-on-time tiquete" style="width: 18rem; max-width: 18rem;"
+                    data-fecha-asignacion="{{ tiquete.fecha_asignacion }}" data-on-time="{{ tiquete.grupo.on_time }}"
+                    data-running-late="{{ tiquete.grupo.running_late }}" data-is-late="{{ tiquete.grupo.is_late }}">
+                    <div class="card-header border-bottom" id="paint-status">
+                        <div class="d-flex flex-column">
+                            <!-- Número de tiquete -->
                             <div>
-                                <div>
-                                    <div>
-                                        <strong>
-                                            <h3 class="mb-0"># R102315</h3>
-                                        </strong>
-                                    </div>
-                                </div>
+                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
                             </div>
-                            <div>
-                                <div class="d-flex">
-                                    <strong>Status:</strong>
-                                    <p class="px-1">activo</p>
-                                </div>
-                                <div class="d-flex">
-                                    <strong>Tiempo:</strong>
-                                    <p class="px-1">30:15</p>
-                                </div>
+                            <!-- Status y Tiempo -->
+                            <div class="d-flex py-2">
+                                <strong>Status:</strong>
+                                <p class="px-1 mb-0">{{ tiquete.estado.estado }}</p>
+                            </div>
+                            <div class="d-flex mt-1">
+                                <strong>Tiempo:</strong>
+                                <p class="px-1 mb-0 tiempo_transcurrido">00:00:00</p>
                             </div>
                         </div>
                     </div>
                     <div class="card-body">
                         <div class="d-flex">
                             <strong class="card-text">Cliente:</strong>
-                            <p class="px-2">Warren González Reyes.</p>
-                        </div>
-                        <div class="d-flex">
-                            <strong class="card-text">Prioridad:</strong>
-                            <p class="px-2">Alta.</p>
+                            <p class="px-2">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</p>
                         </div>
                         <div>
                             <strong>Fecha creación:</strong>
-                            <p>10/04/2024</p>
+                            <p>{{ tiquete.fecha_creacion }}</p>
                         </div>
                         <div>
                             <strong>Asignado:</strong>
-                            <p class="d-block">Alejandro Castro García</p>
+                            <p class="d-block">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}
+                            </p>
                         </div>
                         <div>
                             <strong>Grupo asignado:</strong>
-                            <p class="d-block">Limpieza</p>
+                            <p class="d-block">{{ tiquete.grupo.nombre }}</p>
                         </div>
                         <div>
                             <strong>Resumen:</strong>
-                            <p class="d-block">El radiador está muy sucio, necesita limpieza.</p>
+                            <p class="d-block">{{ tiquete.resumen }}</p>
                         </div>
                     </div>
                 </div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="tab-pane container fade" id="asignados">
+            <div class="container my-cards-container">
+                <!-- Aquí se mostrarán los tiquetes asignados -->
+                {% for tiquete in tiquetes_asignados %}
+                <div class="card tt-on-time tiquete" style="width: 18rem; max-width: 18rem;"
+                    data-fecha-asignacion="{{ tiquete.fecha_asignacion }}" data-on-time="{{ tiquete.grupo.on_time }}"
+                    data-running-late="{{ tiquete.grupo.running_late }}" data-is-late="{{ tiquete.grupo.is_late }}">
+                    <div class="card-header border-bottom border-primary" id="paint-status">
+                        <div class="d-flex flex-column">
+                            <!-- Número de tiquete -->
+                            <div>
+                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                            </div>
+                            <!-- Status y Tiempo -->
+                            <div class="d-flex py-2">
+                                <strong>Status:</strong>
+                                <p class="px-1 mb-0">{{ tiquete.estado.estado }}</p>
+                            </div>
+                            <div class="d-flex mt-1">
+                                <strong>Tiempo:</strong>
+                                <p class="px-1 mb-0 tiempo_transcurrido">00:00:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <strong class="card-text">Cliente:</strong>
+                            <p class="px-2">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</p>
+                        </div>
+                        <div>
+                            <strong>Fecha creación:</strong>
+                            <p>{{ tiquete.fecha_creacion }}</p>
+                        </div>
+                        <div>
+                            <strong>Asignado:</strong>
+                            <p class="d-block">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}
+                            </p>
+                        </div>
+                        <div>
+                            <strong>Grupo asignado:</strong>
+                            <p class="d-block">{{ tiquete.grupo.nombre }}</p>
+                        </div>
+                        <div>
+                            <strong>Resumen:</strong>
+                            <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
             </div>
         </div>
 
-        <div class="tab-pane container fade" id="urgentes">Contenido para Urgentes</div>
-        <div class="tab-pane container fade" id="en-espera">Contenido para En espera</div>
-        <div class="tab-pane container fade" id="por-llamar">Contenido para Por llamar</div>
-        <div class="tab-pane container fade" id="en-camino">Contenido para En camino</div>
-        <div class="tab-pane container fade" id="entregado">Contenido para Entregado</div>
-        <div class="tab-pane container fade" id="finalizado">Contenido para Finalizado</div>
-        <div class="tab-pane container fade" id="cancelado">Contenido para Cancelado</div>
+
+        <div class="tab-pane container fade" id="en-progreso">
+            <div class="container my-cards-container">
+                <!-- Aquí se mostrarán los tiquetes en progreso -->
+                {% for tiquete in tiquetes_en_progreso %}
+                <div class="card tt-on-time tiquete" style="width: 18rem; max-width: 18rem;"
+                    data-fecha-asignacion="{{ tiquete.fecha_asignacion }}" data-on-time="{{ tiquete.grupo.on_time }}"
+                    data-running-late="{{ tiquete.grupo.running_late }}" data-is-late="{{ tiquete.grupo.is_late }}">
+                    <div class="card-header border-bottom border-primary" id="paint-status">
+                        <div class="d-flex flex-column">
+                            <!-- Número de tiquete -->
+                            <div>
+                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                            </div>
+                            <!-- Status y Tiempo -->
+                            <div class="d-flex py-2">
+                                <strong>Status:</strong>
+                                <p class="px-1 mb-0">{{ tiquete.estado.estado }}</p>
+                            </div>
+                            <div class="d-flex mt-1">
+                                <strong>Tiempo:</strong>
+                                <p class="px-1 mb-0 tiempo_transcurrido">00:00:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <strong class="card-text">Cliente:</strong>
+                            <p class="px-2">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</p>
+                        </div>
+                        <div>
+                            <strong>Fecha creación:</strong>
+                            <p>{{ tiquete.fecha_creacion }}</p>
+                        </div>
+                        <div>
+                            <strong>Asignado:</strong>
+                            <p class="d-block">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}
+                            </p>
+                        </div>
+                        <div>
+                            <strong>Grupo asignado:</strong>
+                            <p class="d-block">{{ tiquete.grupo.nombre }}</p>
+                        </div>
+                        <div>
+                            <strong>Resumen:</strong>
+                            <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="tab-pane container fade" id="en-espera">
+            <div class="container my-cards-container">
+                <!-- Aquí se mostrarán los tiquetes en espera -->
+                {% for tiquete in tiquetes_en_espera %}
+                <div class="card tt-on-time tiquete" style="width: 18rem; max-width: 18rem;"
+                    data-fecha-asignacion="{{ tiquete.fecha_asignacion }}" data-on-time="{{ tiquete.grupo.on_time }}"
+                    data-running-late="{{ tiquete.grupo.running_late }}" data-is-late="{{ tiquete.grupo.is_late }}">
+                    <div class="card-header border-bottom border-primary" id="paint-status">
+                        <div class="d-flex flex-column">
+                            <!-- Número de tiquete -->
+                            <div>
+                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                            </div>
+                            <!-- Status y Tiempo -->
+                            <div class="d-flex py-2">
+                                <strong>Status:</strong>
+                                <p class="px-1 mb-0">{{ tiquete.estado.estado }}</p>
+                            </div>
+                            <div class="d-flex mt-1">
+                                <strong>Tiempo:</strong>
+                                <p class="px-1 mb-0 tiempo_transcurrido">00:00:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <strong class="card-text">Cliente:</strong>
+                            <p class="px-2">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</p>
+                        </div>
+                        <div>
+                            <strong>Fecha creación:</strong>
+                            <p>{{ tiquete.fecha_creacion }}</p>
+                        </div>
+                        <div>
+                            <strong>Asignado:</strong>
+                            <p class="d-block">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}
+                            </p>
+                        </div>
+                        <div>
+                            <strong>Grupo asignado:</strong>
+                            <p class="d-block">{{ tiquete.grupo.nombre }}</p>
+                        </div>
+                        <div>
+                            <strong>Resumen:</strong>
+                            <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="tab-pane container fade" id="llamar-cliente">
+            <div class="container my-cards-container">
+                <!-- Aquí se mostrarán los tiquetes para llamar al cliente -->
+                {% for tiquete in tiquetes_llamar_cliente %}
+                <div class="card tt-on-time tiquete" style="width: 18rem; max-width: 18rem;"
+                    data-fecha-asignacion="{{ tiquete.fecha_asignacion }}" data-on-time="{{ tiquete.grupo.on_time }}"
+                    data-running-late="{{ tiquete.grupo.running_late }}" data-is-late="{{ tiquete.grupo.is_late }}">
+                    <div class="card-header border-bottom border-primary" id="paint-status">
+                        <div class="d-flex flex-column">
+                            <!-- Número de tiquete -->
+                            <div>
+                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                            </div>
+                            <!-- Status y Tiempo -->
+                            <div class="d-flex py-2">
+                                <strong>Status:</strong>
+                                <p class="px-1 mb-0">{{ tiquete.estado.estado }}</p>
+                            </div>
+                            <div class="d-flex mt-1">
+                                <strong>Tiempo:</strong>
+                                <p class="px-1 mb-0 tiempo_transcurrido">00:00:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <strong class="card-text">Cliente:</strong>
+                            <p class="px-2">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</p>
+                        </div>
+                        <div>
+                            <strong>Fecha creación:</strong>
+                            <p>{{ tiquete.fecha_creacion }}</p>
+                        </div>
+                        <div>
+                            <strong>Asignado:</strong>
+                            <p class="d-block">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}
+                            </p>
+                        </div>
+                        <div>
+                            <strong>Grupo asignado:</strong>
+                            <p class="d-block">{{ tiquete.grupo.nombre }}</p>
+                        </div>
+                        <div>
+                            <strong>Resumen:</strong>
+                            <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+
+        <div class="tab-pane container fade" id="en-camino">
+            <div class="container my-cards-container">
+                <!-- Aquí se mostrarán los tiquetes en camino -->
+                {% for tiquete in tiquetes_en_camino %}
+                <div class="card tt-on-time tiquete" style="width: 18rem; max-width: 18rem;"
+                    data-fecha-asignacion="{{ tiquete.fecha_asignacion }}" data-on-time="{{ tiquete.grupo.on_time }}"
+                    data-running-late="{{ tiquete.grupo.running_late }}" data-is-late="{{ tiquete.grupo.is_late }}">
+                    <div class="card-header border-bottom border-primary" id="paint-status">
+                        <div class="d-flex flex-column">
+                            <!-- Número de tiquete -->
+                            <div>
+                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                            </div>
+                            <!-- Status y Tiempo -->
+                            <div class="d-flex py-2">
+                                <strong>Status:</strong>
+                                <p class="px-1 mb-0">{{ tiquete.estado.estado }}</p>
+                            </div>
+                            <div class="d-flex mt-1">
+                                <strong>Tiempo:</strong>
+                                <p class="px-1 mb-0 tiempo_transcurrido">00:00:00</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="d-flex">
+                            <strong class="card-text">Cliente:</strong>
+                            <p class="px-2">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</p>
+                        </div>
+                        <div>
+                            <strong>Fecha creación:</strong>
+                            <p>{{ tiquete.fecha_creacion }}</p>
+                        </div>
+                        <div>
+                            <strong>Asignado:</strong>
+                            <p class="d-block">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}
+                            </p>
+                        </div>
+                        <div>
+                            <strong>Grupo asignado:</strong>
+                            <p class="d-block">{{ tiquete.grupo.nombre }}</p>
+                        </div>
+                        <div>
+                            <strong>Resumen:</strong>
+                            <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
     </div>
 </section>
-{% else %}
-<h1 class="p-4 section-title">Solicitudes</h1>
-{% endif %}
-
 {% endblock %}

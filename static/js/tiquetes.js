@@ -51,8 +51,7 @@ function confirmDeleteTiquete(idTiquete) {
 }
 
 function convertirFecha(fecha) {
-    // Reemplaza el espacio entre la fecha y la hora por 'T' y añade una zona horaria opcional
-    return fecha.replace(' ', 'T') + 'Z'; // Añade 'Z' para indicar UTC
+    return fecha.replace(' ', 'T') + 'Z'; 
 }
 
 function calcularTiempoTranscurrido(fechaAsignacion) {

@@ -1,5 +1,6 @@
 from flask import Blueprint, render_template, request, redirect, url_for, jsonify, flash, session
 from utils.db import db
+from models.roles import Roles
 from utils.auth import login_required, role_required
 from models.usuarios import Usuarios
 from models.grupos import Grupos
@@ -14,9 +15,23 @@ from utils.servicio_mail import send_email_async
 tiquetes_bp = Blueprint('tiquetes', __name__)
 
 @tiquetes_bp.route('/tiquetes')
+@login_required
 def tiquetes_listar():
-    tiquetes = Tiquetes.query.all()
-    return render_template('tiquetes.html', tiquetes=tiquetes)
+    user_id = session.get('user_id')
+    user_role = session.get('user_role')
+
+    if user_role == 3:
+        # Usuario cliente, muestra solo sus tiquetes
+        tiquetes = Tiquetes.query.filter_by(id_cliente=user_id).all()
+    elif user_role in [1, 2]:
+        # Usuario administrador o colaborador, muestra todos los tiquetes
+        tiquetes = Tiquetes.query.all()
+    else:
+        # Para otros roles, muestra todos los tiquetes (puedes ajustar esto según el rol)
+        tiquetes = Tiquetes.query.all()
+
+    return render_template('tiquetes.html', tiquetes=tiquetes, user_role=user_role, user_id=user_id)
+
 
 @tiquetes_bp.route('/tiquete/detalles/<string:id>', methods=['GET'])
 def tiquete_detalles(id):
