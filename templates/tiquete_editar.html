@@ -102,7 +102,15 @@
                 <button type="submit" class="btn btn-success" style="width: 100%;">Guardar</button>
                 <a href="{{ url_for('tiquetes.tiquetes_listar') }}"><button type="button" class="btn btn-danger mt-3"
                         style="width: 100%;">Cancelar</button></a>
-                <a href=""><button type="button" class="btn-solceri mt-3" style="width: 100%;">Cotizaciones</button></a>
+                <a href="#" onclick="confirmarCrearCotizacion('{{ tiquete.id_tiquete }}')">
+                    <button type="button" class="btn-solceri mt-3" style="width: 100%;">Cotizaciones</button>
+                </a>
+
+
+
+
+
+
             </div>
         </div>
     </form>

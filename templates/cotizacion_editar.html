@@ -25,7 +25,8 @@
     {% for catalogo in catalogo %}
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
       <div class="card h-100">
-        <img src="{{ catalogo.ruta_imagen }}" class="img-item card-img-top" alt="{{ catalogo.nombre_producto }}">
+        <img src="{{ catalogo.ruta_imagen }}" class="img-item card-img-top" alt="{{ catalogo.nombre_producto }}"
+          data-id-catalogo="{{ catalogo.id_catalogo }}">
         <div class="card-body">
           <h1 class="titulo-item">{{ catalogo.nombre_producto }}</h1>
           <p class="precio-item"><strong>Precio:</strong><br>₡{{ catalogo.precio }}</p>
@@ -42,7 +43,7 @@
     {% endfor %}
   </div>
 
-  
+
   <!-- Modal Carrito -->
   <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
     <div class="modal-dialog">
@@ -60,8 +61,7 @@
               <a href="#" id="otroProductoLink">Otro artículo</a>
 
               <!-- Formulario para añadir otro artículo (inicialmente oculto) -->
-              <form method="POST" id="crear-cotizacion" action="{{ url_for('cotizaciones.crear_cotizacion') }}"
-                enctype="multipart/form-data" style="display: none;">
+              <form method="POST" id="crear-cotizacion" enctype="multipart/form-data" style="display: none;">
                 <div class="pt-3">
                   <div class="pb-3">
                     <label for="producto">Nombre del producto<span>*</span></label>
@@ -86,7 +86,7 @@
                   </div>
                 </div>
                 <div class="modal-footer">
-                  <a href="#" class="btn btn-danger btn-md mx-2">Cancelar</a>
+                  <a href="#" id="cancelarFormulario" class="btn btn-danger btn-md mx-2">Cancelar</a>
                   <button type="submit" class="btn btn-success btn-md">Agregar a cotización</button>
                 </div>
               </form>
@@ -94,7 +94,14 @@
                 <strong>Total</strong>
                 <span class="carrito-precio-total">₡0,00</span>
               </div>
-              <button class="btn-solceri" style="width: 100%;">Completar cotización</button>
+              <!-- Formulario que completa la cotización -->
+              <form id="completar-cotizacion-form" method="POST" action="/cotizacion/completar">
+                <input type="hidden" name="id_cotizacion" value="{{ cotizacion.id_cotizacion }}">
+                <input type="hidden" id="cart-items" name="cart_items">
+
+                <button type="submit" class="btn-solceri" style="width: 100%;">Completar cotización</button>
+              </form>
+
             </div>
           </div>
         </div>

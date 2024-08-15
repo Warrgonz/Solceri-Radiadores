@@ -278,4 +278,3 @@ document.getElementById('completar-cotizacion-form').addEventListener('submit', 
     // Submit the form
     this.submit();
 });
-

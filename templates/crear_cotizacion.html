@@ -1,0 +1,40 @@
+{% extends "layout.html" %}
+{% block content %}
+{% with messages = get_flashed_messages(with_categories=true) %}
+{% if messages %}
+{% for category, message in messages %}
+<div class="alert alert-{{ category }}">{{ message }}</div>
+{% endfor %}
+{% endif %}
+{% endwith %}
+
+<div>
+    <h2><strong>Crear Cotización para Tiquete # {{ tiquete.id_tiquete }}</strong></h2>
+    <form id="crearCotizacionForm" method="POST" action="{{ url_for('cotizaciones.crear_cotizacion', id_tiquete=tiquete.id_tiquete) }}" class="row">
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div>
+                <label for="id_usuario">Usuario<span>*</span></label>
+                <select class="form-select mb-3" id="id_usuario" name="id_usuario" required>
+                    <option value="">Seleccione un usuario</option>
+                    {% for usuario in usuarios %}
+                    <option value="{{ usuario.id_usuario }}" {% if usuario.id_usuario==current_user.id_usuario %}selected{% endif %}>
+                        {{ usuario.nombre }} {{ usuario.primer_apellido }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div>
+                <label for="fecha_creacion">Fecha de Creación<span>*</span></label>
+                <input type="text" class="form-control" name="fecha_creacion" value="{{ datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S') }}" disabled>
+            </div>
+        </div>
+        <div class="col-sm-12 col-md-6 col-lg-6">
+            <div class="pt-3">
+                <button type="submit" class="btn btn-success" style="width: 100%;">Crear Cotización</button>
+                <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"><button type="button" class="btn btn-danger mt-3" style="width: 100%;">Cancelar</button></a>
+            </div>
+        </div>
+    </form>
+</div>
+
+{% endblock %}

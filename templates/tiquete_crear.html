@@ -2,7 +2,7 @@
 {% block content %}
 
 <div>
-    <h2><strong>Tiquete # R5236487</strong></h2>
+    <h2><strong>Crear un tiquete</strong></h2>
     <form id="tiqueteCrearForm" method="POST" action="{{ url_for('tiquetes.tiquete_crear') }}" class="row">
         <div class="col-sm-12 col-md-6 col-lg-6">
             <div>
@@ -74,8 +74,7 @@
             </div>
             <div class="pt-3">
                 <button type="submit" class="btn btn-success" style="width: 100%;">Guardar</button>
-                <a href="{{ url_for('tiquetes.tiquete_crear') }}"><button type="button" class="btn btn-danger mt-3" style="width: 100%;">Cancelar</button></a>
-                <a href=""><button type="button" class="btn-solceri mt-3" style="width: 100%;">Cotizaciones</button></a>
+                <a href="{{ url_for('tiquetes.tiquetes_listar') }}"><button type="button" class="btn btn-danger mt-3" style="width: 100%;">Cancelar</button></a>
             </div>
         </div>
     </form>

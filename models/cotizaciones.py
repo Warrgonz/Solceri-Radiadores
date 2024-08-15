@@ -9,7 +9,6 @@ class Cotizaciones(db.Model):
     id_tiquete = db.Column(db.String(10), db.ForeignKey('tiquetes.id_tiquete'), nullable=False)
     id_usuario = db.Column(db.Integer, db.ForeignKey('usuarios.id_usuario'), nullable=False)  # Nuevo campo para el usuario
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
-    descripcion = db.Column(db.String(255))
 
     # Relaciones
     tiquete = db.relationship('Tiquetes', backref=db.backref('cotizaciones', lazy=True))

@@ -91,3 +91,56 @@ setInterval(actualizarTiempoTranscurrido, 1000);
 
 // Actualizar inmediatamente cuando se carga la página
 document.addEventListener('DOMContentLoaded', actualizarTiempoTranscurrido);
+
+function confirmarCrearCotizacion(id_tiquete) {
+    Swal.fire({
+        title: '¿Deseas crear una cotización?',
+        text: "Tiquete #" + id_tiquete,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, crear cotización'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            // Construir la URL para la solicitud POST usando la variable id_tiquete
+            const url = `/cotizacion/crear/${id_tiquete}`;
+            
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': '{{ csrf_token() }}'  // Si estás usando protección CSRF
+                },
+                body: JSON.stringify({})  // Puedes pasar datos adicionales aquí si es necesario
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    Swal.fire(
+                        '¡Cotización creada!',
+                        'La cotización ha sido creada exitosamente. ',
+                        'success'
+                    ).then(() => {
+                        // Redirigir a la página de edición de la cotización
+                        window.location.href = `/cotizacion/editar/${data.cotizacion_id}`;
+                    });
+                } else {
+                    Swal.fire(
+                        'Error',
+                        'Hubo un problema al crear la cotización: ' + data.message,
+                        'error'
+                    );
+                }
+            })
+            .catch(error => {
+                console.error('Error al crear la cotización:', error);
+                Swal.fire(
+                    'Error',
+                    'Hubo un problema al crear la cotización. Intente nuevamente más tarde.',
+                    'error'
+                );
+            });
+        }
+    });
+}
