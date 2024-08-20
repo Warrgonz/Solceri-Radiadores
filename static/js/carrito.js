@@ -115,7 +115,11 @@ function agregarItemAlCarrito(titulo, precio, imagenSrc) {
 
     // Actualizamos total
     actualizarTotalCarrito();
+
+    // Actualizamos el badge del carrito
+    actualizarBadgeCarrito();
 }
+
 
 // Aumento en uno la cantidad del elemento seleccionado
 function sumarCantidad(event) {
@@ -142,9 +146,11 @@ function restarCantidad(event) {
 // Elimino el item seleccionado del carrito
 function eliminarItemCarrito(event) {
     var buttonClicked = event.target;
-    buttonClicked.closest('.carrito-item').remove();  
+    buttonClicked.closest('.carrito-item').remove();
 
     actualizarTotalCarrito();
+    actualizarBadgeCarrito();  
+
     ocultarCarrito();
 }
 
@@ -156,7 +162,7 @@ function actualizarTotalCarrito() {
     for (var i = 0; i < carritoItems.length; i++) {
         var item = carritoItems[i];
         var precioElemento = item.getElementsByClassName('carrito-item-precio')[0];
-        var precio = parseInt(precioElemento.innerText.replace('₡', '').replace(/,/g, '').trim());
+        var precio = parseFloat(precioElemento.innerText.replace('₡', '').replace(/\./g, '').replace(/,/g, '').trim());
         if (isNaN(precio)) {
             console.error("El precio no es un número válido:", precioElemento.innerText);
             precio = 0; 
@@ -167,8 +173,9 @@ function actualizarTotalCarrito() {
 
     total = Math.round(total);
 
-    document.getElementsByClassName('carrito-precio-total')[0].innerText = '₡' + total.toLocaleString();
+    document.getElementsByClassName('carrito-precio-total')[0].innerText = '₡' + total.toLocaleString('de-DE');
 }
+
 
 function toggleFormularioArticuloPersonalizado() {
     var form = document.getElementById('crear-cotizacion');
@@ -200,6 +207,10 @@ function agregarArticuloPersonalizado(event) {
     var form = document.getElementById('crear-cotizacion');
     var formData = new FormData(form);
 
+    // Convertir el valor del precio a un entero para evitar el formato incorrecto
+    var precio = parseInt(formData.get('precio').replace(/\./g, '').trim()); // Eliminar puntos y convertir a número entero
+    formData.set('precio', precio); // Reemplazar el valor en formData con el número limpio
+
     fetch('/cotizacion/crear/otro', {
         method: 'POST',
         body: formData
@@ -207,8 +218,8 @@ function agregarArticuloPersonalizado(event) {
     .then(response => response.json())
     .then(data => {
         if (data.status === 'success') {
-            // Añadir el artículo personalizado al carrito
-            agregarItemAlCarrito(data.nombre_producto, parseInt(data.precio), data.ruta_imagen);
+            // Añadir el artículo personalizado al carrito con el precio correcto
+            agregarItemAlCarrito(data.nombre_producto, precio, data.ruta_imagen); // Aquí usamos el precio limpio
 
             // Mostrar notificación de éxito
             Swal.fire({
@@ -223,6 +234,9 @@ function agregarArticuloPersonalizado(event) {
             form.reset();  
             form.style.display = 'none';
             document.getElementById('otroProductoLink').style.display = 'block';
+
+            // Actualizar el badge del carrito
+            actualizarBadgeCarrito();
         } else if (data.status === 'error') {
             // Mostrar notificación de error si hubo un problema en la respuesta
             Swal.fire({
@@ -243,7 +257,10 @@ function agregarArticuloPersonalizado(event) {
     });
 }
 
-document.querySelector('#crear-cotizacion button[type="submit"]').addEventListener('click', agregarArticuloPersonalizado);
+document.querySelector('#crear-cotizacion button[type="submit"]').addEventListener('click', function (event) {
+    agregarArticuloPersonalizado(event);
+    actualizarBadgeCarrito();  
+});
 
 // Funcion para poder completar el detalle de la cotizacion
 document.getElementById('completar-cotizacion-form').addEventListener('submit', function(event) {
@@ -255,12 +272,12 @@ document.getElementById('completar-cotizacion-form').addEventListener('submit', 
     for (var i = 0; i < carritoItems.length; i++) {
         var item = carritoItems[i];
         var titulo = item.getElementsByClassName('carrito-item-titulo')[0].innerText;
-        var precio = parseInt(item.getElementsByClassName('carrito-item-precio')[0].innerText.replace('₡', '').replace(/,/g, '').trim());
+        var precio = parseInt(item.getElementsByClassName('carrito-item-precio')[0].innerText.replace('₡', '').replace(/\./g, '').replace(/,/g, '').trim());
         var cantidad = parseInt(item.getElementsByClassName('carrito-item-cantidad')[0].value);  // Captura la cantidad
 
         var productoData = {
             'producto': titulo,
-            'precio': precio,
+            'precio': precio,  // Precio ahora se envía sin puntos decimales
             'cantidad': cantidad  // Añade la cantidad al objeto
         };
 
@@ -278,16 +295,16 @@ document.getElementById('completar-cotizacion-form').addEventListener('submit', 
     this.submit();
 });
 
+function actualizarBadgeCarrito() {
+    var carritoItems = document.getElementsByClassName('carrito-item');
+    var totalItems = 0;
 
+    // Suma la cantidad de cada producto en el carrito
+    for (var i = 0; i < carritoItems.length; i++) {
+        var cantidad = parseInt(carritoItems[i].getElementsByClassName('carrito-item-cantidad')[0].value);
+        totalItems += cantidad;
+    }
 
-
-
-
-
-
-
-
-
-
-
-
+    // Actualiza el badge con el total de artículos
+    document.getElementById('cart-badge').innerText = totalItems;
+}

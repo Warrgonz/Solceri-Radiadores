@@ -12,12 +12,14 @@
 <header class="d-flex justify-content-between">
   <h1>Catálogo de Productos</h1>
 
-  <!-- Botón para lanzar el modal del carrito -->
-  <button type="button" class="btn-solceri" data-bs-toggle="modal" data-bs-target="#carritoModal">
-    Ver Cotización
-  </button>
-
+  <div class="cart-container">
+    <a href="#" class="cart-icon" data-bs-toggle="modal" data-bs-target="#carritoModal">
+      <i class="fas fa-shopping-cart"></i>
+      <span class="badge" id="cart-badge">0</span>
+    </a>
+  </div>
 </header>
+
 <section class="contenedor">
   <!-- Verificar si hay artículos en el catálogo -->
   {% if catalogo|length > 0 %}
@@ -50,7 +52,7 @@
     <p class="mt-3">No se han encontrado artículos en el catálogo</p>
     {% if user_role == 1 %}
     <div class="d-flex justify-content-end mb-3">
-        <a href="{{ url_for('catalogo.catalogo_crear') }}" class="btn btn-success">Agregar Catálogo</a>
+      <a href="{{ url_for('catalogo.catalogo_crear') }}" class="btn btn-success">Agregar Catálogo</a>
     </div>
     {% endif %}
   </div>

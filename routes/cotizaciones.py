@@ -22,16 +22,21 @@ def inicio():
     catalogo = Catalogo.query.all()
     cotizaciones = Cotizaciones.query.all()
 
-    cotizaciones_con_totales = []
+    cotizaciones_con_totales_y_detalles = []
 
     for cotizacion in cotizaciones:
         total = db.session.query(db.func.sum(MtlCotizaciones.precio)).filter_by(id_cotizacion=cotizacion.id_cotizacion).scalar()
-        cotizaciones_con_totales.append({
+        
+        # Obtener los detalles de los artículos de la cotización
+        detalles = MtlCotizaciones.query.filter_by(id_cotizacion=cotizacion.id_cotizacion).all()
+        
+        cotizaciones_con_totales_y_detalles.append({
             'cotizacion': cotizacion,
-            'total': total if total else 0
+            'total': total if total else 0,
+            'detalles': detalles
         })
 
-    return render_template('cotizacion.html', catalogo=catalogo, cotizaciones=cotizaciones_con_totales)
+    return render_template('cotizacion.html', catalogo=catalogo, cotizaciones=cotizaciones_con_totales_y_detalles)
 
 @cotizaciones_bp.route('/cotizacion/crear/<string:id_tiquete>', methods=['GET', 'POST'])
 def crear_cotizacion(id_tiquete):   
@@ -133,7 +138,8 @@ def completar_cotizacion():
         # Iterar sobre los productos y agregar cada uno a la tabla MtlCotizaciones
         for producto in productos:
             nombre_producto = producto.get('producto')
-            precio = producto.get('precio')
+            # Asegurarse de que el precio sea una cadena antes de eliminar puntos y convertirlo a entero
+            precio = int(str(producto.get('precio')).replace('.', ''))
             cantidad = producto.get('cantidad')  # Asegúrate de obtener la cantidad
 
             nueva_mtl_cotizacion = MtlCotizaciones(
@@ -248,9 +254,10 @@ def enviar_cotizacion(id_cotizacion):
 @cotizaciones_bp.route('/cotizacion/eliminar/<int:id_cotizacion>', methods=['POST'])
 def eliminar_cotizacion(id_cotizacion):
     try:
+        # Obtener la cotización que se va a eliminar
         cotizacion = Cotizaciones.query.get_or_404(id_cotizacion)
-        
-        # Eliminar todos los items asociados a la cotización
+
+        # Eliminar todos los items asociados a la cotización en MtlCotizaciones
         MtlCotizaciones.query.filter_by(id_cotizacion=id_cotizacion).delete()
 
         # Eliminar la cotización
@@ -263,6 +270,7 @@ def eliminar_cotizacion(id_cotizacion):
         flash(f'Error al eliminar la cotización: {str(e)}', 'danger')
 
     return redirect(url_for('cotizaciones.inicio'))
+
 
 
 

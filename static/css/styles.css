@@ -375,17 +375,37 @@ form span{
     border-bottom: black !important;
 }
 
-/*.tt-on-time .card-header {
-    background-color: ;
+.cart-container {
+    position: relative;
 }
 
-.tt-on-running .card-header {
-    background-color: #ff9c37;
+.cart-icon {
+    font-size: 24px;
+    color: #333;
+    text-decoration: none;
+    position: relative;
 }
 
-.tt-on-late .card-header {
-    background-color: #e9286b;
-}*/
+.cart-icon i {
+    font-size: 40px;
+}
+
+.badge {
+    position: absolute;
+    top: -10px;
+    right: -10px;
+    background-color: #ff0000;
+    color: white;
+    border-radius: 50%;
+    padding: 5px 10px;
+    font-size: 14px;
+    font-weight: bold;
+    line-height: 1;
+}
+
+.cart-icon:hover .badge {
+    background-color: #cc0000;
+}
 
 /* Estilo para tabletas: 2 columnas */
 @media (max-width: 768px) {

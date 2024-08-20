@@ -88,12 +88,10 @@ def perfil():
 def usuarios_editar(id):
     usuario = Usuarios.query.get_or_404(id)
     roles = Roles.query.all()
-    user_id = session.get('user_id') 
+    user_id = session.get('user_id')
 
-    # Verificar si el usuario está en la base de datos
     usuario_id = Usuarios.query.filter_by(id_usuario=user_id).first()
 
-    # Asegurarse de que el usuario_id existe antes de acceder a id_rol
     if usuario_id:
         rol_usuario_sesion = usuario_id.id_rol
     else:
@@ -102,55 +100,42 @@ def usuarios_editar(id):
     if request.method == 'POST':
         try:
             # Capturar los cambios realizados
-            if usuario.cedula != request.form['cedula']:
-                usuario.cedula = request.form['cedula']
-
-            if usuario.nombre != request.form['nombre']:
-                usuario.nombre = request.form['nombre']
-
-            if usuario.primer_apellido != request.form['primer_apellido']:
-                usuario.primer_apellido = request.form['primer_apellido']
-
-            if usuario.segundo_apellido != request.form['segundo_apellido']:
-                usuario.segundo_apellido = request.form['segundo_apellido']
+            usuario.cedula = request.form['cedula']
+            usuario.nombre = request.form['nombre']
+            usuario.primer_apellido = request.form['primer_apellido']
+            usuario.segundo_apellido = request.form['segundo_apellido']
 
             # Validar y asignar Fecha_Contratacion
             fecha_contratacion = request.form.get('fecha_contratacion')
-            print(f"Fecha de contratación recibida: {fecha_contratacion}")
-            try:
-                if fecha_contratacion:
-                    usuario.Fecha_Contratacion = datetime.strptime(fecha_contratacion, '%Y-%m-%d').date()
-                else:
-                    usuario.Fecha_Contratacion = None
-            except ValueError as ve:
-                flash(f'Error en la fecha de contratación: {ve}', 'danger')
-                return redirect(url_for('usuarios.usuarios_editar', id=id))
+            if fecha_contratacion:
+                usuario.Fecha_Contratacion = datetime.strptime(fecha_contratacion, '%Y-%m-%d').date()
+            else:
+                usuario.Fecha_Contratacion = None
 
             # Actualizar el rol del usuario si ha cambiado
-            if usuario.id_rol != int(request.form['rol']):
-                usuario.id_rol = int(request.form['rol'])
+            usuario.id_rol = int(request.form['rol'])
 
             # Manejar la actualización de la imagen
-            if 'ruta_imagen' in request.files:
-                nueva_imagen = request.files['ruta_imagen']
-                if nueva_imagen.filename != '':
-                    # Subir la nueva imagen a Firebase con un nombre único
-                    ruta_imagen = FirebaseUtils.update_image(nueva_imagen, usuario.ruta_imagen)
-                    usuario.ruta_imagen = ruta_imagen
+            nueva_imagen = request.files.get('ruta_imagen')
+            if nueva_imagen and nueva_imagen.filename != '':
+                # Subir la nueva imagen a Firebase
+                ruta_imagen = FirebaseUtils.update_image(nueva_imagen, usuario.ruta_imagen)
+                if ruta_imagen:
+                    usuario.ruta_imagen = ruta_imagen  # Actualizar la URL de la imagen en la base de datos
 
             # Guardar los cambios en la base de datos
             db.session.commit()
 
             flash(f'Usuario con cédula {usuario.cedula} modificado exitosamente.', 'success')
-            return redirect(url_for('dashboard.perfil', id=id)) 
+            return redirect(url_for('dashboard.perfil', id=id))
         except Exception as e:
-            # Manejar el error y mostrar un mensaje al usuario
             db.session.rollback()
             flash(f'Error al actualizar el usuario: {e}', 'danger')
-            print(f"Detalles del error: {e}")
             return redirect(url_for('dashboard.usuarios_editar', id=id))
 
     return render_template('usuarios_editpublic.html', usuario=usuario, roles=roles, rol_usuario_sesion=rol_usuario_sesion)
+
+
 
     
 @dashboard_bp.route('/test')

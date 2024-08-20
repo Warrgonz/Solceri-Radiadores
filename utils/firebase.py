@@ -26,6 +26,7 @@ class FirebaseUtils:
             print(f"Error al subir la imagen a Firebase: {str(e)}")
             return None
 
+
     @staticmethod
     def get_image(filename):
         try:
@@ -73,15 +74,16 @@ class FirebaseUtils:
     @staticmethod
     def update_image(file, old_filename=None):
         try:
-        # Subir la nueva imagen
+            # Subir la nueva imagen
             new_image_url = FirebaseUtils.post_image(file)
 
-        # Eliminar la imagen antigua si hay un nombre de archivo anterior proporcionado
-            if old_filename:
-                FirebaseUtils.delete_image(old_filename)
+            # Verificar que la nueva imagen se haya subido correctamente antes de intentar eliminar la anterior
+            if new_image_url and old_filename:
+                old_blob = bucket.blob(old_filename)
+                if old_blob.exists():
+                    old_blob.delete()
 
             return new_image_url
         except Exception as e:
             print(f"Error al actualizar la imagen en Firebase: {str(e)}")
             return None
-
