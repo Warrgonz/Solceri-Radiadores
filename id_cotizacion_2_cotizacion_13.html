@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <title>Radiadores Solceri</title>
+    <link rel="icon" href="/static/images/faviconSolceri.png">
+    <link rel="stylesheet" href="/static//css/factura.css">
+</head>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;0,900;1,100;1,300;1,400;1,500;1,700;1,900&display=swap');
+
+.clearfix:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+
+a {
+  color: #0087C3;
+  text-decoration: none;
+}
+
+body {
+  position: relative;
+  width: 21cm;  
+  height: 29.7cm; 
+  margin: 0 auto; 
+  color: #555555;
+  background: #FFFFFF; 
+  font-family: "Roboto", sans-serif;
+  font-weight: 400;
+  font-style: normal;
+  font-size: 14px; 
+}
+
+header {
+  padding: 10px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #AAAAAA;
+}
+
+#logo {
+  float: left;
+  margin-top: 8px;
+}
+
+#logo img {
+  height: 70px;
+}
+
+#company {
+  float: right;
+  text-align: right;
+}
+
+#details {
+  margin-bottom: 50px;
+}
+
+#client {
+  padding-left: 6px;
+  border-left: 6px solid #0087C3;
+  float: left;
+}
+
+#client .to {
+  color: #777777;
+}
+
+h2.name {
+  font-size: 1.4em;
+  font-weight: normal;
+  margin: 0;
+}
+
+#invoice {
+  float: right;
+  text-align: right;
+}
+
+#invoice h1 {
+  color: #0087C3;
+  font-size: 2.4em;
+  line-height: 1em;
+  font-weight: normal;
+  margin: 0  0 10px 0;
+}
+
+#invoice .date {
+  font-size: 1.1em;
+  color: #777777;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: 20px;
+}
+
+table th,
+table td {
+  padding: 20px;
+  background: #EEEEEE;
+  text-align: center;
+  border-bottom: 1px solid #FFFFFF;
+}
+
+table th {
+  white-space: nowrap;        
+  font-weight: normal;
+}
+
+table td {
+  text-align: right;
+}
+
+table td h3{
+  color: #245071;
+  font-size: 1.2em;
+  font-weight: normal;
+  margin: 0 0 0.2em 0;
+}
+
+table .no {
+  color: #FFFFFF;
+  font-size: 1.6em;
+  background: #245071;
+}
+
+table .desc {
+  text-align: left;
+}
+
+table .unit {
+  background: #DDDDDD;
+}
+
+table .total {
+  background: #245071;
+  color: #FFFFFF;
+}
+
+table td.unit,
+table td.qty,
+table td.total {
+  font-size: 1.2em;
+}
+
+table tbody tr:last-child td {
+  border: none;
+}
+
+table tfoot td {
+  padding: 10px 20px;
+  background: #FFFFFF;
+  border-bottom: none;
+  font-size: 1.2em;
+  white-space: nowrap; 
+  border-top: 1px solid #AAAAAA; 
+}
+
+table tfoot tr:first-child td {
+  border-top: none; 
+}
+
+table tfoot tr:last-child td {
+  color: #245071;
+  font-size: 1.4em;
+  border-top: 1px solid #245071; 
+
+}
+
+table tfoot tr td:first-child {
+  border: none;
+}
+
+#thanks{
+  font-size: 2em;
+  margin-bottom: 50px;
+}
+
+#notices{
+  padding-left: 6px;
+  border-left: 6px solid #0087C3;  
+}
+
+#notices .notice {
+  font-size: 1.2em;
+}
+
+footer {
+  color: #777777;
+  width: 100%;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
+  border-top: 1px solid #AAAAAA;
+  padding: 8px 0;
+  text-align: center;
+}
+
+</style>
+
+<body>
+    <header class="clearfix">
+        <div id="logo">
+            <img src="https://firebasestorage.googleapis.com/v0/b/solceri-1650a.appspot.com/o/solceri_logo_black.png?alt=media&token=c0c906d6-2e7e-4349-83e8-444637836021" alt="Logo Solceri">
+        </div>
+        <div id="company">
+            <h2 class="name">Solceri Radiadores</h2>
+            <div>
+                Ruta 32 del cruce de San Luis, 300 m oeste y 100 norte , Santo Domingo, Costa Rica</div>
+            <div>+506 2268 8034</div>
+            <div><a href="mailto:Radiadoressolceri@gmail.com">radiadoressolceri@gmail.com</a></div>
+        </div>
+    </header>
+    <main>
+        <div id="details" class="clearfix">
+            <div id="client">
+                <div class="to">Recibo para:</div>
+                <h2 class="name">cas das das</h2>
+                <div class="email"><a href="mailto:a@a.com">a@a.com</a></div>
+            </div>
+            <div id="invoice">
+                <h1>Tu cotización</h1>
+                <div class="date">Fecha de creación: 20/08/2024</div>
+                <div class="date">Tiquete #: A0001</div>
+            </div>
+        </div>
+        <table border="0" cellspacing="0" cellpadding="0">
+            <thead>
+                <tr>
+                    <th class="no">#</th>
+                    <th class="desc">PRODUCTO</th>
+                    <th class="unit">PRECIO</th>
+                    <th class="qty">CANTIDAD</th>
+                    <th class="total">COSTO POR CANTIDAD</th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                <tr>
+                    <td class="no">1</td>
+                    <td class="desc">ASDS</td>
+                    <td class="unit">₡5000</td>
+                    <td class="qty">2</td>
+                    <td class="total">₡10000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">2</td>
+                    <td class="desc">Producto A</td>
+                    <td class="unit">₡1000</td>
+                    <td class="qty">5</td>
+                    <td class="total">₡5000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">3</td>
+                    <td class="desc">Producto B</td>
+                    <td class="unit">₡1500</td>
+                    <td class="qty">3</td>
+                    <td class="total">₡4500</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">4</td>
+                    <td class="desc">Producto C</td>
+                    <td class="unit">₡2000</td>
+                    <td class="qty">7</td>
+                    <td class="total">₡14000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">5</td>
+                    <td class="desc">Producto D</td>
+                    <td class="unit">₡2500</td>
+                    <td class="qty">2</td>
+                    <td class="total">₡5000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">6</td>
+                    <td class="desc">Producto E</td>
+                    <td class="unit">₡3000</td>
+                    <td class="qty">10</td>
+                    <td class="total">₡30000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">7</td>
+                    <td class="desc">Producto F</td>
+                    <td class="unit">₡3500</td>
+                    <td class="qty">4</td>
+                    <td class="total">₡14000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">8</td>
+                    <td class="desc">Producto G</td>
+                    <td class="unit">₡4000</td>
+                    <td class="qty">6</td>
+                    <td class="total">₡24000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">9</td>
+                    <td class="desc">Producto H</td>
+                    <td class="unit">₡4500</td>
+                    <td class="qty">8</td>
+                    <td class="total">₡36000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">10</td>
+                    <td class="desc">Producto I</td>
+                    <td class="unit">₡5000</td>
+                    <td class="qty">1</td>
+                    <td class="total">₡5000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">11</td>
+                    <td class="desc">Producto J</td>
+                    <td class="unit">₡5500</td>
+                    <td class="qty">9</td>
+                    <td class="total">₡49500</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">12</td>
+                    <td class="desc">Producto K</td>
+                    <td class="unit">₡6000</td>
+                    <td class="qty">11</td>
+                    <td class="total">₡66000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">13</td>
+                    <td class="desc">Producto L</td>
+                    <td class="unit">₡6500</td>
+                    <td class="qty">3</td>
+                    <td class="total">₡19500</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">14</td>
+                    <td class="desc">Producto M</td>
+                    <td class="unit">₡7000</td>
+                    <td class="qty">7</td>
+                    <td class="total">₡49000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">15</td>
+                    <td class="desc">Producto N</td>
+                    <td class="unit">₡7500</td>
+                    <td class="qty">5</td>
+                    <td class="total">₡37500</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">16</td>
+                    <td class="desc">Producto O</td>
+                    <td class="unit">₡8000</td>
+                    <td class="qty">4</td>
+                    <td class="total">₡32000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">17</td>
+                    <td class="desc">Producto P</td>
+                    <td class="unit">₡8500</td>
+                    <td class="qty">2</td>
+                    <td class="total">₡17000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">18</td>
+                    <td class="desc">Producto Q</td>
+                    <td class="unit">₡9000</td>
+                    <td class="qty">8</td>
+                    <td class="total">₡72000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">19</td>
+                    <td class="desc">Producto R</td>
+                    <td class="unit">₡9500</td>
+                    <td class="qty">6</td>
+                    <td class="total">₡57000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">20</td>
+                    <td class="desc">Producto S</td>
+                    <td class="unit">₡10000</td>
+                    <td class="qty">3</td>
+                    <td class="total">₡30000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">21</td>
+                    <td class="desc">Producto T</td>
+                    <td class="unit">₡10500</td>
+                    <td class="qty">1</td>
+                    <td class="total">₡10500</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">22</td>
+                    <td class="desc">Producto U</td>
+                    <td class="unit">₡11000</td>
+                    <td class="qty">9</td>
+                    <td class="total">₡99000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">23</td>
+                    <td class="desc">Producto V</td>
+                    <td class="unit">₡11500</td>
+                    <td class="qty">7</td>
+                    <td class="total">₡80500</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">24</td>
+                    <td class="desc">Producto W</td>
+                    <td class="unit">₡12000</td>
+                    <td class="qty">5</td>
+                    <td class="total">₡60000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">25</td>
+                    <td class="desc">Producto X</td>
+                    <td class="unit">₡12500</td>
+                    <td class="qty">4</td>
+                    <td class="total">₡50000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">26</td>
+                    <td class="desc">Producto Y</td>
+                    <td class="unit">₡13000</td>
+                    <td class="qty">2</td>
+                    <td class="total">₡26000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">27</td>
+                    <td class="desc">Producto Z</td>
+                    <td class="unit">₡13500</td>
+                    <td class="qty">8</td>
+                    <td class="total">₡108000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">28</td>
+                    <td class="desc">Producto AA</td>
+                    <td class="unit">₡14000</td>
+                    <td class="qty">6</td>
+                    <td class="total">₡84000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">29</td>
+                    <td class="desc">Producto BB</td>
+                    <td class="unit">₡14500</td>
+                    <td class="qty">3</td>
+                    <td class="total">₡43500</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">30</td>
+                    <td class="desc">Producto CC</td>
+                    <td class="unit">₡15000</td>
+                    <td class="qty">10</td>
+                    <td class="total">₡150000</td>
+                </tr>
+                
+                <tr>
+                    <td class="no">31</td>
+                    <td class="desc">Producto DD</td>
+                    <td class="unit">₡15500</td>
+                    <td class="qty">11</td>
+                    <td class="total">₡170500</td>
+                </tr>
+                
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2"></td>
+                    <td colspan="2">TOTAL</td>
+                    <td>₡1459000</td>
+                </tr>
+            </tfoot>
+        </table>
+        <div id="thanks">¡Muchas gracias! Si tienes alguna duda o consulta, favor contáctarnos y será un placer ayudarle
+        </div>
+        <div id="notices">
+            <div>CONSIDERE:</div>
+            <div class="notice">Esta cotización será válida durante los primeros 30 días, después de este tiempo solicite una nueva.</div>
+        </div>
+    </main>
+
+</body>
+
+</html>

@@ -9,6 +9,22 @@
 {% endif %}
 {% endwith %}
 
+<style>
+    @media (min-width: 768px) and (max-width: 1024px) {
+        .actions a button {
+            width: 100%;
+            margin-top: 3px;
+        }
+    }
+
+    @media (min-width: 320px) and (max-width: 480px) {
+        .actions a button {
+            width: 100%;
+            margin-top: 3px;
+        }
+    }
+</style>
+
 <div>
     <h1 class="pb-3 section-title">Cotizaciones</h1>
 </div>
@@ -18,28 +34,61 @@
     <table class="table table-striped table-bordered table-hover" style="width:100%">
         <thead>
             <tr class="text-center">
-                <th>ID Cotización</th>
-                <th>ID Tiquete</th>
+                <th>Tiquete</th>
                 <th>Usuario</th>
                 <th>Fecha de Creación</th>
+                <th>Detalles</th>
+                <th>Total</th>
+                <th>Acciones</th>
             </tr>
         </thead>
         <tbody class="text-center">
-            {% for cotizacion in cotizaciones %}
-            <tr class="cotizacion">
-                <td>{{ cotizacion.id_cotizacion }}</td>
-                <td>{{ cotizacion.id_tiquete }}</td>
-                <td>{{ cotizacion.usuario.nombre }} {{ cotizacion.usuario.primer_apellido }}</td>
-                <td>{{ cotizacion.fecha_creacion.strftime('%d/%m/%Y %H:%M') }}</td>
+            {% for cotizacion_info in cotizaciones %}
+            <tr>
+                <td>{{ cotizacion_info.cotizacion.tiquete.id_tiquete }}</td>
+                <td>{{ cotizacion_info.cotizacion.usuario.nombre }} {{
+                    cotizacion_info.cotizacion.usuario.primer_apellido }}</td>
+                <td>{{ cotizacion_info.cotizacion.fecha_creacion.strftime('%d/%m/%Y') }}</td>
+                <td>
+                    <a href="#" data-bs-toggle="modal" data-bs-target="#detallesModal">Ver detalles</a>
+
+                    <!-- Modal de Detalles -->
+                    <div class="modal fade" id="detallesModal" tabindex="-1" aria-labelledby="detallesModalLabel"
+                        aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                </div>
+                                <div class="modal-body">
+
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Cerrar</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </td>
+                <td>₡{{ cotizacion_info.total }}</td>
+                <td class="actions">
+                    <button class="btn btn-success btn-md"
+                        onclick="confirmarEnviarCotizacion('{{ cotizacion_info.cotizacion.id_cotizacion }}')">Enviar</button>
+                    <a href=""><button class="btn-solceri btn-md">Editar</button></a>
+                    <button class="btn btn-danger btn-md"
+                        onclick="confirmarEliminarCotizacion('{{ cotizacion_info.cotizacion.id_cotizacion }}')">Eliminar</button>
+                </td>
             </tr>
             {% endfor %}
         </tbody>
         <tfoot class="text-center">
             <tr>
-                <th>ID Cotización</th>
-                <th>ID Tiquete</th>
+                <th>Tiquete</th>
                 <th>Usuario</th>
                 <th>Fecha de Creación</th>
+                <th>Detalles</th>
+                <th>Total</th>
+                <th>Acciones</th>
             </tr>
         </tfoot>
     </table>

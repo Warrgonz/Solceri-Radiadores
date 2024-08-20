@@ -38,18 +38,6 @@ function ready() {
     document.getElementsByClassName('btn-pagar')[0].addEventListener('click', pagarClicked);
 }
 
-// Eliminamos todos los elementos del carrito y lo ocultamos
-function pagarClicked() {
-    alert("Gracias por la compra");
-    // Elimino todos los elementos del carrito
-    var carritoItems = document.getElementsByClassName('carrito-items')[0];
-    while (carritoItems.hasChildNodes()) {
-        carritoItems.removeChild(carritoItems.firstChild);
-    }
-    actualizarTotalCarrito();
-    ocultarCarrito();
-}
-
 // Función que controla el botón clickeado de agregar al carrito
 function agregarAlCarritoClicked(event) {
     var button = event.target;
@@ -216,48 +204,49 @@ function agregarArticuloPersonalizado(event) {
         method: 'POST',
         body: formData
     })
-        .then(response => response.json())
-        .then(data => {
-            if (data.status === 'success') {
-                agregarItemAlCarrito(data.nombre_producto, parseInt(data.precio), data.ruta_imagen);
+    .then(response => response.json())
+    .then(data => {
+        if (data.status === 'success') {
+            // Añadir el artículo personalizado al carrito
+            agregarItemAlCarrito(data.nombre_producto, parseInt(data.precio), data.ruta_imagen);
 
-                Swal.fire({
-                    icon: 'success',
-                    title: 'Artículo agregado',
-                    text: 'El artículo se ha agregado exitosamente a la cotización',
-                    showConfirmButton: false,
-                    timer: 2000
-                });
+            // Mostrar notificación de éxito
+            Swal.fire({
+                icon: 'success',
+                title: 'Artículo agregado',
+                text: 'El artículo se ha agregado exitosamente a la cotización',
+                showConfirmButton: false,
+                timer: 2000
+            });
 
-                form.reset();  
-                form.style.display = 'none';
-                document.getElementById('otroProductoLink').style.display = 'block';
-
-                var modal = bootstrap.Modal.getInstance(document.getElementById('otroProducto'));
-                if (modal) {
-                    modal.hide();
-                }
-            } else if (data.status === 'error') {
-                Swal.fire({
-                    icon: 'warning',
-                    title: 'Error',
-                    text: data.message,
-                });
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
+            // Resetear el formulario y ocultarlo
+            form.reset();  
+            form.style.display = 'none';
+            document.getElementById('otroProductoLink').style.display = 'block';
+        } else if (data.status === 'error') {
+            // Mostrar notificación de error si hubo un problema en la respuesta
             Swal.fire({
                 icon: 'error',
                 title: 'Error',
-                text: 'Hubo un problema al agregar el artículo. Por favor, intente nuevamente.',
+                text: data.message,
             });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Mostrar notificación de error si hubo un problema en la solicitud
+        Swal.fire({
+            icon: 'error',
+            title: 'Error',
+            text: 'Hubo un problema al agregar el artículo. Por favor, intente nuevamente.',
         });
+    });
 }
 
 document.querySelector('#crear-cotizacion button[type="submit"]').addEventListener('click', agregarArticuloPersonalizado);
 
-document.getElementById('completar-cotizacion-form').addEventListener('submit', function (event) {
+// Funcion para poder completar el detalle de la cotizacion
+document.getElementById('completar-cotizacion-form').addEventListener('submit', function(event) {
     event.preventDefault();
 
     var cartItems = [];
@@ -267,14 +256,38 @@ document.getElementById('completar-cotizacion-form').addEventListener('submit', 
         var item = carritoItems[i];
         var titulo = item.getElementsByClassName('carrito-item-titulo')[0].innerText;
         var precio = parseInt(item.getElementsByClassName('carrito-item-precio')[0].innerText.replace('₡', '').replace(/,/g, '').trim());
-        cartItems.push({
+        var cantidad = parseInt(item.getElementsByClassName('carrito-item-cantidad')[0].value);  // Captura la cantidad
+
+        var productoData = {
             'producto': titulo,
-            'precio': precio
-        });
+            'precio': precio,
+            'cantidad': cantidad  // Añade la cantidad al objeto
+        };
+
+        // Si es un artículo del catálogo, añade el ID del catálogo
+        if (item.dataset.idCatalogo) {
+            productoData['id_catalogo'] = item.dataset.idCatalogo;
+        }
+
+        cartItems.push(productoData);
     }
 
     document.getElementById('cart-items').value = JSON.stringify(cartItems);
 
-    // Submit the form
+    // Enviar el formulario
     this.submit();
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+

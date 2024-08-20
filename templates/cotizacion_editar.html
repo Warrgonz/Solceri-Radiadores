@@ -19,8 +19,9 @@
 
 </header>
 <section class="contenedor">
-
-  <!-- Contenedor de elementos -->
+  <!-- Verificar si hay artículos en el catálogo -->
+  {% if catalogo|length > 0 %}
+  <!-- Mostrar los artículos si existen -->
   <div class="contenedor-items row pt-3">
     {% for catalogo in catalogo %}
     <div class="col-12 col-sm-6 col-md-4 col-lg-3 mb-4">
@@ -42,7 +43,18 @@
     </div>
     {% endfor %}
   </div>
-
+  {% else %}
+  <!-- Mostrar mensaje de "No se han encontrado artículos" si no hay artículos -->
+  <div class="d-flex justify-content-center align-items-center flex-column" style="height: 50vh;">
+    <img src="{{ url_for('static', filename='images/empty.png') }}" alt="Not found" class="img-empty">
+    <p class="mt-3">No se han encontrado artículos en el catálogo</p>
+    {% if user_role == 1 %}
+    <div class="d-flex justify-content-end mb-3">
+        <a href="{{ url_for('catalogo.catalogo_crear') }}" class="btn btn-success">Agregar Catálogo</a>
+    </div>
+    {% endif %}
+  </div>
+  {% endif %}
 
   <!-- Modal Carrito -->
   <div class="modal fade" id="carritoModal" tabindex="-1" aria-labelledby="carritoModalLabel" aria-hidden="true">
@@ -98,7 +110,6 @@
               <form id="completar-cotizacion-form" method="POST" action="/cotizacion/completar">
                 <input type="hidden" name="id_cotizacion" value="{{ cotizacion.id_cotizacion }}">
                 <input type="hidden" id="cart-items" name="cart_items">
-
                 <button type="submit" class="btn-solceri" style="width: 100%;">Completar cotización</button>
               </form>
 

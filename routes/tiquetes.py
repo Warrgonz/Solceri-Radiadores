@@ -10,6 +10,8 @@ from models.tiquetes import Estados
 from models.comentarios import Comentarios
 from datetime import datetime
 from utils.servicio_mail import send_email_async
+from models.facturas import Factura
+from models.cotizaciones import Cotizaciones
 
 
 tiquetes_bp = Blueprint('tiquetes', __name__)
@@ -226,6 +228,8 @@ def tiquete_editar(id):
     user_id = session.get('user_id')
     usuario_sesion = Usuarios.query.filter_by(id_usuario=user_id).first()
     usuario_sesion_rol = usuario_sesion.id_rol
+    # Obtener las facturas asociadas al tiquete
+    facturas = Factura.query.filter_by(id_tiquete=id).all()
 
     # Filtrar comentarios según el rol del usuario en sesión
     if usuario_sesion_rol in [1, 2]:  # Admin o Colaborador
@@ -241,6 +245,7 @@ def tiquete_editar(id):
         trabajadores=trabajadores,
         categorias=categorias,
         estados=estados,
+        facturas=facturas, 
         comentarios=comentarios,
         fecha_actual=datetime.utcnow()
     )

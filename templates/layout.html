@@ -19,27 +19,32 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
-        
+
     <link
         href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
         rel="stylesheet">
     <!-- CSS Files -->
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/app.css') }}">
-    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
 
     <!--Favicon-->
     <link rel="icon" href="{{ url_for('static', filename='images/faviconSolceri.png') }}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.3.0/css/bootstrap.min.css">
 
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link rel="stylesheet"
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/carrito.css') }}">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css"
+        integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
 
-  </head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
 
-    <!--Title-->
-    <title>Solceri Radiadores</title>
+</head>
+
+<!--Title-->
+<title>Solceri Radiadores</title>
 
 </head>
 
@@ -73,13 +78,13 @@
                             <i class="align-middle" data-feather="user-plus"></i> <span
                                 class="align-middle">Usuarios</span>
                         </a>
-                    {% endif %}
+                        {% endif %}
                     </li>
                     {% if g.user.id_rol == 1 %}
                     <li class="sidebar-item">
                         <a class="sidebar-link" href="/grupos">
-                                </span>
-                                <i class="align-middle" data-feather="users"></i> <span class="align-middle">Equipos </span>
+                            </span>
+                            <i class="align-middle" data-feather="users"></i> <span class="align-middle">Equipos </span>
                         </a>
                     </li>
                     {% endif %}
@@ -165,8 +170,8 @@
                                 </a>
                             </a>
                             <div class="dropdown-menu dropdown-menu-end">
-                                <a class="dropdown-item" href="{{ url_for('dashboard.perfil') }}"><i class="align-middle me-1"
-                                        data-feather="user"></i>Mi perfil</a>
+                                <a class="dropdown-item" href="{{ url_for('dashboard.perfil') }}"><i
+                                        class="align-middle me-1" data-feather="user"></i>Mi perfil</a>
                             </div>
                         </li>
                     </ul>
@@ -231,6 +236,8 @@
     <script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
     <!--Dashboard-->
     <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+
+    <script src="{{ url_for('static', filename='js/cotizacion.js') }}"></script>
 
     <script src="https://kit.fontawesome.com/604f525b88.js" crossorigin="anonymous"></script>
 

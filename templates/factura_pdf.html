@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Factura de Cotización</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #dddddd;
+            text-align: left;
+            padding: 8px;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Factura de Cotización</h1>
+    <p><strong>ID Tiquete:</strong> {{ cotizacion.id_tiquete }}</p>
+    <p><strong>Usuario:</strong> {{ cotizacion.usuario.nombre }} {{ cotizacion.usuario.primer_apellido }}</p>
+    <p><strong>Fecha de Creación:</strong> {{ cotizacion.fecha_creacion.strftime('%d/%m/%Y') }}</p>
+
+    <h2>Detalles de la Cotización</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Precio</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% set total = 0 %}
+            {% for item in items %}
+            <tr>
+                <td>{{ item.producto }}</td>
+                <td>₡{{ item.precio }}</td>
+            </tr>
+            {% set total = total + item.precio %}
+            {% endfor %}
+        </tbody>
+        <tfoot>
+            <tr>
+                <td class="total">Total:</td>
+                <td>₡{{ total }}</td>
+            </tr>
+        </tfoot>
+    </table>
+</body>
+</html>
