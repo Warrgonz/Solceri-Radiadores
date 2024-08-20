@@ -197,12 +197,12 @@ def enviar_cotizacion(id_cotizacion):
             total=total
         )
 
-        with open(nombre_archivo, 'w', encoding='utf-8') as f:
-            f.write(html_content)
-        
-        with open(nombre_archivo, 'rb') as f:
-            file_bytes = BytesIO(f.read())
-        
+        # Escribir el contenido HTML en un BytesIO directamente
+        file_bytes = BytesIO()
+        file_bytes.write(html_content.encode('utf-8'))
+        file_bytes.seek(0)  # Asegúrate de posicionar el puntero al inicio del archivo
+
+        # Subir el archivo HTML a Firebase
         firebase_url = FirebaseUtils.post_cotizacion(file_bytes, filename=nombre_archivo)
         
         if not firebase_url:
