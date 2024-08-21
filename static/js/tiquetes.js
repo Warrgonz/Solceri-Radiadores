@@ -55,7 +55,9 @@ function convertirFecha(fecha) {
 }
 
 function calcularTiempoTranscurrido(fechaAsignacion) {
-    const ahora = new Date();
+    const offsetUTC6 = 6 * 60 * 60 * 1000;
+    var actualUTC = new Date() - offsetUTC6;
+    const ahora = actualUTC
     const fechaISO = convertirFecha(fechaAsignacion);
     const fecha = new Date(fechaISO);
 

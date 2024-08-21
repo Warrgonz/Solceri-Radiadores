@@ -8,7 +8,7 @@ from models.categorias import Categorias
 from models.tiquetes import Tiquetes
 from models.tiquetes import Estados
 from models.comentarios import Comentarios
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils.servicio_mail import send_email_async
 from models.facturas import Factura
 from models.cotizaciones import Cotizaciones
@@ -84,6 +84,7 @@ def tiquete_crear():
         direccion = request.form.get('direccion')
         id_estado = request.form.get('estado')
         fecha_asignacion = datetime.utcnow()
+        fecha_asignacion = fecha_asignacion - timedelta(hours=6)
 
         nuevo_id_tiquete = generar_id_tiquete()
 
@@ -128,6 +129,9 @@ def tiquete_crear():
     categorias = Categorias.query.all()
     estados = Estados.query.filter(Estados.id_estado.notin_([6, 7])).all()
 
+    fecha_actual=datetime.utcnow()
+    fecha_actual = fecha_actual - timedelta(hours=6)
+
     return render_template(
         'tiquete_crear.html',
         clientes=clientes,
@@ -135,7 +139,7 @@ def tiquete_crear():
         trabajadores=trabajadores,
         categorias=categorias,
         estados=estados,
-        fecha_actual=datetime.utcnow()
+        fecha_actual=fecha_actual
     )
 
 def generar_id_tiquete():
@@ -166,7 +170,8 @@ def allowed_file(filename):
 @role_required([1, 2])
 def tiquete_editar(id):
     tiquete = Tiquetes.query.get_or_404(id)
-
+    fecha_actual=datetime.utcnow()
+    fecha_actual = fecha_actual - timedelta(hours=6)
     if request.method == 'POST':
         nuevo_cliente = request.form.get('id_cliente')
         nuevo_grupo = request.form.get('grupo_asignado')
@@ -198,14 +203,18 @@ def tiquete_editar(id):
         tiquete.id_estado = int(nuevo_estado) if nuevo_estado else None
 
         # Solo actualizar la fecha de asignación si el trabajador designado ha cambiado
+
+        #TUKI WARREN
         if antiguo_trabajador != tiquete.trabajador_designado:
-            tiquete.fecha_asignacion = datetime.utcnow()
+            #Variable fecha actual - fecha asignacion = (TIEMPO) --->>> Subir a tabla reportes
+            #id usuario (Empleado), id_tiquete, datetime, TIEMPO, id usuario(cliente)?? opcional, o lo trae de tiqeute (STRING no ref)
+
+            tiquete.fecha_asignacion = fecha_actual
 
         if int(nuevo_estado) in [6, 7]:
-            tiquete.fecha_finalizacion = datetime.utcnow()
+            tiquete.fecha_finalizacion = fecha_actual
 
         #ARCHIVOS
-
         if 'archivos' in request.files:
             archivos = request.files.getlist('archivos')
             for archivo in archivos:
@@ -299,6 +308,9 @@ def tiquete_editar(id):
     else:  # Cliente
         comentarios = Comentarios.query.filter_by(id_tiquete=id, visible_cliente=1).order_by(Comentarios.fecha_creacion.desc()).all()
 
+    fecha_actual=datetime.utcnow()
+    fecha_actual = fecha_actual - timedelta(hours=6)
+
     return render_template(
         'tiquete_editar.html',
         tiquete=tiquete,
@@ -310,7 +322,7 @@ def tiquete_editar(id):
         facturas=facturas, 
         comentarios=comentarios,
         archivos=archivos,
-        fecha_actual=datetime.utcnow(),
+        fecha_actual=fecha_actual,
         usuario_sesion_rol = usuario_sesion_rol
     )
 

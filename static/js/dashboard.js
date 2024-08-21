@@ -7,7 +7,9 @@ function convertirFecha(fecha) {
 
 // Función para calcular el tiempo transcurrido
 function calcularTiempoTranscurrido(fechaAsignacion) {
-    const ahora = new Date();
+    const offsetUTC6 = 6 * 60 * 60 * 1000;
+    var actualUTC = new Date() - offsetUTC6;
+    const ahora = actualUTC
     const fechaISO = convertirFecha(fechaAsignacion);
     const fecha = new Date(fechaISO);
 
@@ -75,7 +77,9 @@ function actualizarColorSLA() {
 
 // Función para convertir el tiempo transcurrido a minutos
 function calcularTiempoTranscurridoEnMinutos(fechaAsignacion) {
-    const ahora = new Date();
+    const offsetUTC6 = 6 * 60 * 60 * 1000;
+    var actualUTC = new Date() - offsetUTC6;
+    const ahora = actualUTC
     const fechaISO = convertirFecha(fechaAsignacion);
     const fecha = new Date(fechaISO);
 
