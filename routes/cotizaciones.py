@@ -5,7 +5,7 @@ from utils.db import db
 from models.cotizaciones import Cotizaciones
 from models.mtl_cotizaciones import MtlCotizaciones
 from models.tiquetes import Tiquetes
-from datetime import datetime
+from datetime import datetime, timedelta
 from models.usuarios import Usuarios
 from utils.servicio_mail import send_email_async
 from models.facturas import Factura
@@ -45,6 +45,7 @@ def crear_cotizacion(id_tiquete):
             user_id = session.get('user_id') 
 
             fecha_creacion = datetime.utcnow()
+            fecha_creacion = fecha_creacion - timedelta(hours=6)
     
             nueva_cotizacion = Cotizaciones(id_tiquete=id_tiquete, id_usuario=user_id, fecha_creacion=fecha_creacion)
             

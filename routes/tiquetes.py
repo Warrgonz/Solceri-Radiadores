@@ -8,10 +8,12 @@ from models.categorias import Categorias
 from models.tiquetes import Tiquetes
 from models.tiquetes import Estados
 from models.comentarios import Comentarios
-from datetime import datetime
+from datetime import datetime, timedelta
 from utils.servicio_mail import send_email_async
 from models.facturas import Factura
 from models.cotizaciones import Cotizaciones
+from utils.firebase import FirebaseUtils
+from models.archivos import Archivos
 
 
 tiquetes_bp = Blueprint('tiquetes', __name__)
@@ -72,6 +74,7 @@ def tiquete_detalles(id):
 @role_required([1, 2])
 def tiquete_crear():
     if request.method == 'POST':
+        # Obtener datos del formulario
         id_cliente = request.form.get('id_cliente')
         grupo_asignado = request.form.get('grupo_asignado')
         trabajador_designado = request.form.get('trabajador_designado')
@@ -80,7 +83,8 @@ def tiquete_crear():
         descripcion = request.form.get('descripcion')
         direccion = request.form.get('direccion')
         id_estado = request.form.get('estado')
-        fecha_asignacion = datetime.utcnow() 
+        fecha_asignacion = datetime.utcnow()
+        fecha_asignacion = fecha_asignacion - timedelta(hours=6)
 
         nuevo_id_tiquete = generar_id_tiquete()
 
@@ -94,8 +98,19 @@ def tiquete_crear():
             descripcion=descripcion,
             direccion=direccion,
             id_estado=id_estado,
-            fecha_asignacion=fecha_asignacion 
+            fecha_asignacion=fecha_asignacion
         )
+
+        # Manejar archivos adjuntos
+        if 'archivos' in request.files:
+            archivos = request.files.getlist('archivos')
+            for archivo in archivos:
+                if archivo and allowed_file(archivo.filename):
+                    nombre_archivo = archivo.filename
+                    url = FirebaseUtils.post_image(archivo)
+                    if url:
+                        nuevo_archivo = Archivos(tiquete_id=nuevo_id_tiquete, ruta_imagen=url, nombre_archivo=nombre_archivo)
+                        db.session.add(nuevo_archivo)
 
         try:
             db.session.add(nuevo_tiquete)
@@ -108,11 +123,14 @@ def tiquete_crear():
             return redirect(url_for('tiquetes.tiquete_crear'))
 
     # Cargar datos necesarios para los selects
-    clientes = Usuarios.query.filter_by(id_rol=3).all()  # Filtrar por rol de cliente
+    clientes = Usuarios.query.filter_by(id_rol=3).all()
     grupos = Grupos.query.all()
-    trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()  # Admin y Collabs
+    trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
     categorias = Categorias.query.all()
     estados = Estados.query.filter(Estados.id_estado.notin_([6, 7])).all()
+
+    fecha_actual=datetime.utcnow()
+    fecha_actual = fecha_actual - timedelta(hours=6)
 
     return render_template(
         'tiquete_crear.html',
@@ -121,7 +139,7 @@ def tiquete_crear():
         trabajadores=trabajadores,
         categorias=categorias,
         estados=estados,
-        fecha_actual=datetime.utcnow()
+        fecha_actual=fecha_actual
     )
 
 def generar_id_tiquete():
@@ -143,12 +161,17 @@ def generar_id_tiquete():
     nuevo_id = f"{letra}{numero:04d}"
     return nuevo_id
 
+def allowed_file(filename):
+    allowed_extensions = {'pdf', 'doc', 'docx', 'png', 'jpg', 'webp'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
+
 @tiquetes_bp.route('/tiquete/editar/<string:id>', methods=['GET', 'POST'])
 @login_required
 @role_required([1, 2])
 def tiquete_editar(id):
     tiquete = Tiquetes.query.get_or_404(id)
-
+    fecha_actual=datetime.utcnow()
+    fecha_actual = fecha_actual - timedelta(hours=6)
     if request.method == 'POST':
         nuevo_cliente = request.form.get('id_cliente')
         nuevo_grupo = request.form.get('grupo_asignado')
@@ -180,11 +203,27 @@ def tiquete_editar(id):
         tiquete.id_estado = int(nuevo_estado) if nuevo_estado else None
 
         # Solo actualizar la fecha de asignación si el trabajador designado ha cambiado
+
+        #TUKI WARREN
         if antiguo_trabajador != tiquete.trabajador_designado:
-            tiquete.fecha_asignacion = datetime.utcnow()
+            #Variable fecha actual - fecha asignacion = (TIEMPO) --->>> Subir a tabla reportes
+            #id usuario (Empleado), id_tiquete, datetime, TIEMPO, id usuario(cliente)?? opcional, o lo trae de tiqeute (STRING no ref)
+
+            tiquete.fecha_asignacion = fecha_actual
 
         if int(nuevo_estado) in [6, 7]:
-            tiquete.fecha_finalizacion = datetime.utcnow()
+            tiquete.fecha_finalizacion = fecha_actual
+
+        #ARCHIVOS
+        if 'archivos' in request.files:
+            archivos = request.files.getlist('archivos')
+            for archivo in archivos:
+                if archivo and allowed_file(archivo.filename):
+                    url = FirebaseUtils.post_image(archivo)
+                    nombre_archivo = archivo.filename
+                    if url:
+                        nuevo_archivo = Archivos(tiquete_id=id, ruta_imagen=url, nombre_archivo=nombre_archivo)
+                        db.session.add(nuevo_archivo)    
 
         # Comparar valores y agregar comentario si hay cambios
         comentarios = []
@@ -217,7 +256,7 @@ def tiquete_editar(id):
                     <p>Se ha actualizado el estado de tu tiquete:</p>
                     <p><strong>Estado anterior:</strong> {get_nombre_estado(antiguo_estado)}</p>
                     <p><strong>Estado nuevo:</strong> {get_nombre_estado(tiquete_actualizado.id_estado)}</p>
-                    <p>Puedes ver los detalles del tiquete haciendo clic <a href="http://127.0.0.1:5000/tiquete/detalles/{id}">aquí</a>.</p>
+                    <p>Puedes ver los detalles del tiquete haciendo clic <a href="https://solceri.com/tiquete/detalles/{id}">aquí</a>.</p>
                 </body>
                 </html>
                 """
@@ -252,6 +291,9 @@ def tiquete_editar(id):
     categorias = Categorias.query.all()
     estados = Estados.query.all()
 
+    # Obtener archivos asociados al tiquete
+    archivos = Archivos.query.filter_by(tiquete_id=id).all()
+
     # Condición para mostrar comentarios según el rol del usuario
 
     user_id = session.get('user_id')
@@ -266,6 +308,9 @@ def tiquete_editar(id):
     else:  # Cliente
         comentarios = Comentarios.query.filter_by(id_tiquete=id, visible_cliente=1).order_by(Comentarios.fecha_creacion.desc()).all()
 
+    fecha_actual=datetime.utcnow()
+    fecha_actual = fecha_actual - timedelta(hours=6)
+
     return render_template(
         'tiquete_editar.html',
         tiquete=tiquete,
@@ -276,7 +321,9 @@ def tiquete_editar(id):
         estados=estados,
         facturas=facturas, 
         comentarios=comentarios,
-        fecha_actual=datetime.utcnow()
+        archivos=archivos,
+        fecha_actual=fecha_actual,
+        usuario_sesion_rol = usuario_sesion_rol
     )
 
 
@@ -373,7 +420,7 @@ def add_comment(id):
                 <h1 style="color:SlateGray;">¡Hola {cliente.nombre}!</h1>
                 <p>Se ha agregado un nuevo comentario en tu tiquete:</p>
                 <p><strong>{comentario_text}</strong></p>
-                <p>Puedes ver los detalles del tiquete haciendo clic <a href="http://127.0.0.1:5000/tiquete/detalle/{id}">aquí</a>.</p>
+                <p>Puedes ver los detalles del tiquete haciendo clic <a href="https://solceri.com/tiquete/detalles/{id}">aquí</a>.</p>
             </body>
             </html>
             """

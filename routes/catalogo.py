@@ -1,8 +1,9 @@
-from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, flash, jsonify, session
 from models.catalogo import Catalogo
 from utils.db import db
 from utils.firebase import FirebaseUtils
 from utils.auth import login_required, role_required
+from models.usuarios import Usuarios
 
 catalogo_bp = Blueprint('catalogo', __name__)
 
@@ -10,12 +11,19 @@ catalogo_bp = Blueprint('catalogo', __name__)
 @login_required
 @role_required([1])
 def catalogo():
+    user_id = session.get('user_id')
+    user = Usuarios.query.get(user_id)
+    user_role = user.id_rol
     catalogo = Catalogo.query.all()  # Select * from catalogo
     print(catalogo)  # Imprime el contenido de catalogo en la consola de Flask
-    return render_template('catalogo.html', catalogo=catalogo)
+    return render_template('catalogo.html', catalogo=catalogo, user_role=user_role)
 
 @catalogo_bp.route('/catalogo/create', methods=['GET', 'POST'])
 def catalogo_crear():
+    user_id = session.get('user_id')
+    user = Usuarios.query.get(user_id)
+    user_role = user.id_rol
+
     if request.method == 'POST':
         sku = request.form['sku']
         nombre_producto = request.form['producto']
@@ -64,7 +72,7 @@ def catalogo_crear():
             print(f"Error al crear producto: {str(e)}")
             db.session.rollback()
             flash('Hubo un error al agregar el producto. Por favor, intente de nuevo.', 'danger')
-            return render_template('catalogo_crear.html', sku=sku, nombre_producto=nombre_producto, descripcion=descripcion, precio=precio)
+            return render_template('catalogo_crear.html', sku=sku, nombre_producto=nombre_producto, descripcion=descripcion, precio=precio, user_role = user_role)
 
     return render_template('catalogo_crear.html')
 

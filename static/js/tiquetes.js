@@ -55,7 +55,9 @@ function convertirFecha(fecha) {
 }
 
 function calcularTiempoTranscurrido(fechaAsignacion) {
-    const ahora = new Date();
+    const offsetUTC6 = 6 * 60 * 60 * 1000;
+    var actualUTC = new Date() - offsetUTC6;
+    const ahora = actualUTC
     const fechaISO = convertirFecha(fechaAsignacion);
     const fecha = new Date(fechaISO);
 
@@ -150,4 +152,23 @@ function confirmarCrearCotizacion(id_tiquete) {
             });
         }
     });
+}
+
+function buscarTiquetes() {
+    const input = document.getElementById("buscar").value.toLowerCase();
+    const rows = document.querySelectorAll(".table tbody tr");
+    let found = false;
+
+    rows.forEach(row => {
+        const text = row.innerText.toLowerCase();
+        if (text.includes(input)) {
+            row.style.display = "";
+            found = true;
+        } else {
+            row.style.display = "none";
+        }
+    });
+
+    const noResultsRow = document.getElementById("no-results");
+    noResultsRow.style.display = found ? "none" : "";
 }
