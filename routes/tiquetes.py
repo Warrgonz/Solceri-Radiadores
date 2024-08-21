@@ -12,6 +12,8 @@ from datetime import datetime
 from utils.servicio_mail import send_email_async
 from models.facturas import Factura
 from models.cotizaciones import Cotizaciones
+from utils.firebase import FirebaseUtils
+from models.archivos import Archivos
 
 
 tiquetes_bp = Blueprint('tiquetes', __name__)
@@ -72,6 +74,7 @@ def tiquete_detalles(id):
 @role_required([1, 2])
 def tiquete_crear():
     if request.method == 'POST':
+        # Obtener datos del formulario
         id_cliente = request.form.get('id_cliente')
         grupo_asignado = request.form.get('grupo_asignado')
         trabajador_designado = request.form.get('trabajador_designado')
@@ -80,7 +83,7 @@ def tiquete_crear():
         descripcion = request.form.get('descripcion')
         direccion = request.form.get('direccion')
         id_estado = request.form.get('estado')
-        fecha_asignacion = datetime.utcnow() 
+        fecha_asignacion = datetime.utcnow()
 
         nuevo_id_tiquete = generar_id_tiquete()
 
@@ -94,8 +97,19 @@ def tiquete_crear():
             descripcion=descripcion,
             direccion=direccion,
             id_estado=id_estado,
-            fecha_asignacion=fecha_asignacion 
+            fecha_asignacion=fecha_asignacion
         )
+
+        # Manejar archivos adjuntos
+        if 'archivos' in request.files:
+            archivos = request.files.getlist('archivos')
+            for archivo in archivos:
+                if archivo and allowed_file(archivo.filename):
+                    nombre_archivo = archivo.filename
+                    url = FirebaseUtils.post_image(archivo)
+                    if url:
+                        nuevo_archivo = Archivos(tiquete_id=nuevo_id_tiquete, ruta_imagen=url, nombre_archivo=nombre_archivo)
+                        db.session.add(nuevo_archivo)
 
         try:
             db.session.add(nuevo_tiquete)
@@ -108,9 +122,9 @@ def tiquete_crear():
             return redirect(url_for('tiquetes.tiquete_crear'))
 
     # Cargar datos necesarios para los selects
-    clientes = Usuarios.query.filter_by(id_rol=3).all()  # Filtrar por rol de cliente
+    clientes = Usuarios.query.filter_by(id_rol=3).all()
     grupos = Grupos.query.all()
-    trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()  # Admin y Collabs
+    trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
     categorias = Categorias.query.all()
     estados = Estados.query.filter(Estados.id_estado.notin_([6, 7])).all()
 
@@ -142,6 +156,10 @@ def generar_id_tiquete():
     
     nuevo_id = f"{letra}{numero:04d}"
     return nuevo_id
+
+def allowed_file(filename):
+    allowed_extensions = {'pdf', 'doc', 'docx', 'png', 'jpg', 'webp'}
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_extensions
 
 @tiquetes_bp.route('/tiquete/editar/<string:id>', methods=['GET', 'POST'])
 @login_required
@@ -185,6 +203,18 @@ def tiquete_editar(id):
 
         if int(nuevo_estado) in [6, 7]:
             tiquete.fecha_finalizacion = datetime.utcnow()
+
+        #ARCHIVOS
+
+        if 'archivos' in request.files:
+            archivos = request.files.getlist('archivos')
+            for archivo in archivos:
+                if archivo and allowed_file(archivo.filename):
+                    url = FirebaseUtils.post_image(archivo)
+                    nombre_archivo = archivo.filename
+                    if url:
+                        nuevo_archivo = Archivos(tiquete_id=id, ruta_imagen=url, nombre_archivo=nombre_archivo)
+                        db.session.add(nuevo_archivo)    
 
         # Comparar valores y agregar comentario si hay cambios
         comentarios = []
@@ -252,6 +282,9 @@ def tiquete_editar(id):
     categorias = Categorias.query.all()
     estados = Estados.query.all()
 
+    # Obtener archivos asociados al tiquete
+    archivos = Archivos.query.filter_by(tiquete_id=id).all()
+
     # Condición para mostrar comentarios según el rol del usuario
 
     user_id = session.get('user_id')
@@ -276,6 +309,7 @@ def tiquete_editar(id):
         estados=estados,
         facturas=facturas, 
         comentarios=comentarios,
+        archivos=archivos,
         fecha_actual=datetime.utcnow()
     )
 
