@@ -94,6 +94,8 @@ def listar_vacaciones():
     return render_template('vacaciones.html', solicitudes=entries_list, user_role=user.rol.id_rol, entries=entries, page=page, total_pages=total_pages, range_start=range_start, range_end=range_end, dia_inicio=dia_inicio, dia_final=dia_final, estado=estado)
 
 @vacaciones_bp.route('/vacaciones/calendarizacion', methods=['GET'])
+@login_required
+@role_required([1, 2])
 def obtener_vacacion():
 
     # Access the query parameters
@@ -129,6 +131,8 @@ def obtener_vacacion():
 
 
 @vacaciones_bp.route('/vacaciones/info', methods=['GET'])
+@login_required
+@role_required([1, 2])
 def info_vacacion():
     # Get the ID from the request arguments
     id = request.args.get('id')
@@ -258,6 +262,9 @@ def nueva_vacacion():
 @login_required
 @role_required(allowed_roles=[1, 2])
 def detalle_vacacion(id):
+    user_id = session.get('user_id')
+    user = Usuarios.query.get(user_id)
+    user_role = user.id_rol
     solicitud = Vacaciones.query.get_or_404(id)
     solicitante = Usuarios.query.get(solicitud.id_solicitante)
     aprobador = Usuarios.query.get(solicitud.id_aprobador) if solicitud.id_aprobador else None
@@ -277,7 +284,7 @@ def detalle_vacacion(id):
             flash('Solicitud rechazada con éxito.', 'danger')
         return redirect(url_for('vacaciones.listar_vacaciones'))
     
-    return render_template("vacaciones_detalle.html", solicitud=solicitud, solicitante=solicitante, aprobador=aprobador)
+    return render_template("vacaciones_detalle.html", solicitud=solicitud, solicitante=solicitante, aprobador=aprobador, user_role=user_role)
 
 @vacaciones_bp.route('/vacaciones/modificar/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -344,6 +351,8 @@ def modificar_vacacion(id):
     return render_template("vacaciones_modificar.html", solicitud=solicitud, solicitante=solicitante, aprobador=aprobador)
 
 @vacaciones_bp.route('/cancelar_solicitud', methods=['POST'])
+@login_required
+@role_required([1, 2])
 def cancelar_solicitud():
     try:
         solicitud_id = request.form['solicitud_id']
@@ -392,6 +401,8 @@ def cancelar_solicitud():
 # Estados de vacaciones
 
 @vacaciones_bp.route('/vacaciones/aceptar_vacacion', methods=['POST'])
+@login_required
+@role_required([1])
 def aceptar_vacacion():
     if not request.is_json:
         return jsonify({'success': False, 'message': 'El tipo de contenido no es JSON'}), 415
@@ -436,6 +447,8 @@ def aceptar_vacacion():
 
 
 @vacaciones_bp.route('/vacaciones/rechazar_vacacion', methods=['POST'])
+@login_required
+@role_required([1])
 def rechazar_vacacion():
     if not request.is_json:
         return jsonify({'success': False, 'message': 'El contenido debe ser tipo JSON'}), 415
@@ -476,6 +489,8 @@ def rechazar_vacacion():
         return jsonify({'success': False, 'message': f'Error al procesar la solicitud: {str(e)}'})
 
 @vacaciones_bp.route('/vacaciones/cancelar_aprobacion', methods=['POST'])
+@login_required
+@role_required([1])
 def cancelar_aprobacion():
     if not request.is_json:
         return jsonify({'success': False, 'message': 'El tipo de contenido no es JSON'}), 415
@@ -516,6 +531,8 @@ def cancelar_aprobacion():
 # Para colaboradores 
 
 @vacaciones_bp.route('/vacaciones/cancelar_vacacion', methods=['POST'])
+@login_required
+@role_required([1, 2])
 def cancelar_vacacion():
     if not request.is_json:
         return jsonify({'success': False, 'message': 'El tipo de contenido no es JSON'}), 415
@@ -555,6 +572,8 @@ def cancelar_vacacion():
         return jsonify({'success': False, 'message': f'Error al cancelar la solicitud: {str(e)}'})
 
 @vacaciones_bp.route('/vacaciones/solicitud-cancelacion/<int:id_vacacion>', methods=['POST'])
+@login_required
+@role_required([1, 2])
 def solicitud_cancelacion(id_vacacion):
     try:
         # Obtener la solicitud de vacaciones

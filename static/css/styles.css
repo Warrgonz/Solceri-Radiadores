@@ -2,6 +2,12 @@
 @import url('https://fonts.googleapis.com/css2?family=Playwrite+NL:wght@100..400&display=swap');
 
 /*Index*/
+
+:root {
+    --color-primary: #f9bb63;
+    --color-secondary: #1d4d72;
+}
+
 .video-container {
     position: relative;
     width: 100%;
@@ -407,6 +413,16 @@ form span{
     background-color: #cc0000;
 }
 
+.numero_tiquete_dash a{
+    text-decoration: none !important;
+    color:white;
+}
+
+.numero_tiquete_dash a:hover{
+    color: var(--color-secondary);
+}
+
+
 /* Estilo para tabletas: 2 columnas */
 @media (max-width: 768px) {
     .my-cards-container .card {
@@ -444,3 +460,4 @@ form span{
         font-size: 1rem !important;
     }
 }
+

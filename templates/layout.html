@@ -235,7 +235,9 @@
     <script src="{{ url_for('static', filename='js/grupos.js') }}"></script>
     <script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
     <!--Dashboard-->
-    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    {% if not exclude_dashboard_js %}
+        <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+    {% endif %}
 
     <script src="{{ url_for('static', filename='js/cotizacion.js') }}"></script>
 

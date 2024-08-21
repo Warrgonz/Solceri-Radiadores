@@ -20,13 +20,20 @@ def grupos():
 @grupos_bp.route('/grupos/crear', methods=['GET', 'POST'])
 def grupos_crear():
     if request.method == 'POST':
-        nombre = request.form['nombre']
+        nombre = request.form['nombre'].strip()
         descripcion = request.form['descripcion']
 
         # Captura los tiempos en minutos desde el formulario
-        on_time = int(request.form['on_time'])
-        running_late = int(request.form['running_late'])
-        is_late = int(request.form['is_late'])
+        try:
+            on_time = int(request.form['on_time'])
+            running_late = int(request.form['running_late'])
+            is_late = int(request.form['is_late'])
+        except ValueError:
+            return jsonify({'error': 'Los valores de tiempo deben ser números enteros válidos'}), 400
+
+        # Validar la lógica de los tiempos
+        if not (on_time < running_late < is_late):
+            return jsonify({'error': 'Los tiempos de SLA deben cumplir con la lógica: On Time < Running Late < Is Late'}), 400
 
         # Validar que el nombre del grupo sea único
         nombre_existente = Grupos.query.filter(Grupos.nombre == nombre).first()
@@ -45,26 +52,51 @@ def grupos_crear():
 
     return render_template('grupos_crear.html')
 
+
 @grupos_bp.route('/grupos/editar/<int:id_grupo>', methods=['GET', 'POST'])
 def grupos_editar(id_grupo):
     grupo = Grupos.query.get(id_grupo)
     if request.method == 'POST':
         if grupo:
-            nuevo_nombre = request.form['nombre']
-            # Validar que el nombre del grupo sea único
+            nuevo_nombre = request.form['nombre'].strip()
+            nueva_descripcion = request.form['descripcion']
+
+            # Captura los tiempos en minutos desde el formulario
+            try:
+                on_time = int(request.form['on_time'])
+                running_late = int(request.form['running_late'])
+                is_late = int(request.form['is_late'])
+            except ValueError:
+                return jsonify({'error': 'Los valores de tiempo deben ser números enteros válidos'}), 400
+
+            # Validacion lógica de los tiempos
+            if not (on_time < running_late < is_late):
+                return jsonify({'error': 'Los tiempos de SLA deben cumplir con la lógica: On Time < Running Late < Is Late'}), 400
+
+            # Validacion unicidad de nombre
             nombre_existente = Grupos.query.filter(Grupos.nombre == nuevo_nombre, Grupos.id_grupo != id_grupo).first()
             if nombre_existente:
                 return jsonify({'error': 'Ya existe un grupo con este nombre'}), 400
 
+            # Actualizar los valores del grupo
             grupo.nombre = nuevo_nombre
-            grupo.descripcion = request.form['descripcion']
-            db.session.commit()
-            return jsonify({'message': 'Cambios guardados exitosamente'})
+            grupo.descripcion = nueva_descripcion
+            grupo.on_time = on_time
+            grupo.running_late = running_late
+            grupo.is_late = is_late
+
+            try:
+                db.session.commit()
+                return jsonify({'message': 'Cambios guardados exitosamente'}), 200
+            except Exception as e:
+                db.session.rollback()
+                return jsonify({'error': str(e)}), 500
         else:
             return jsonify({'error': 'El grupo no existe'}), 404
 
     usuarios = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
     return render_template('grupos_editar.html', grupo=grupo, usuarios=usuarios)
+
 
 
 @grupos_bp.route('/grupos/agregar_usuario/<int:id_grupo>/<int:id_usuario>', methods=['POST'])

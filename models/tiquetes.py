@@ -22,6 +22,8 @@ class Tiquetes(db.Model):
     fecha_creacion = db.Column(db.DateTime, default=datetime.utcnow)
     id_estado = db.Column(db.Integer, db.ForeignKey('estados.id_estado'), nullable=False)
     fecha_asignacion = db.Column(db.DateTime)
+    fecha_finalizacion = db.Column(db.DateTime, default=None)
+
 
     # Relaciones
     cliente = db.relationship('Usuarios', foreign_keys=[id_cliente])
@@ -34,7 +36,7 @@ class Tiquetes(db.Model):
 
     
 
-    def __init__(self, id_tiquete, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado, fecha_asignacion):
+    def __init__(self, id_tiquete, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado, fecha_asignacion, fecha_finalizacion=None):
         self.id_tiquete = id_tiquete
         self.id_cliente = id_cliente
         self.grupo_asignado = grupo_asignado
@@ -45,6 +47,7 @@ class Tiquetes(db.Model):
         self.direccion = direccion
         self.id_estado = id_estado
         self.fecha_asignacion = fecha_asignacion
+        self.fecha_finalizacion = fecha_finalizacion
 
     def __repr__(self):
         return f'<Tiquete #{self.id_tiquete}>'

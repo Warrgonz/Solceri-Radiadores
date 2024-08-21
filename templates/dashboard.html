@@ -5,7 +5,9 @@
 <!-- Interno -->
 <section class="container">
     <h1>¡Bienvenido, {{ nombre_usuario }}!</h1>
-
+    <div class="mb-3 text-end">
+        <button onclick="window.location.reload();" class="btn btn-secondary btn-solceri">Refrescar</button>
+    </div>
     <div class="d-flex justify-content-between">
         <h3>Tiquetes activos</h3>
     </div>
@@ -47,7 +49,13 @@
                         <div class="d-flex flex-column">
                             <!-- Número de tiquete -->
                             <div>
-                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                                <h3 class="mb-0"><strong class="numero_tiquete_dash">
+                                    {% if user_role == 1 or user_role == 2 %}
+                                        <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"># {{ tiquete.id_tiquete }}</a>
+                                    {% else %}
+                                        # {{ tiquete.id_tiquete }}
+                                    {% endif %}
+                                </strong></h3>
                             </div>
                             <!-- Status y Tiempo -->
                             <div class="d-flex py-2">
@@ -81,6 +89,9 @@
                         <div>
                             <strong>Resumen:</strong>
                             <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}" class="btn btn-solceri">Ver Detalles</a>
                         </div>
                     </div>
                 </div>
@@ -98,7 +109,13 @@
                         <div class="d-flex flex-column">
                             <!-- Número de tiquete -->
                             <div>
-                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                                <h3 class="mb-0"><strong class="numero_tiquete_dash">
+                                    {% if user_role == 1 or user_role == 2 %}
+                                        <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"># {{ tiquete.id_tiquete }}</a>
+                                    {% else %}
+                                        # {{ tiquete.id_tiquete }}
+                                    {% endif %}
+                                </strong></h3>
                             </div>
                             <!-- Status y Tiempo -->
                             <div class="d-flex py-2">
@@ -132,6 +149,9 @@
                         <div>
                             <strong>Resumen:</strong>
                             <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}" class="btn btn-solceri">Ver Detalles</a>
                         </div>
                     </div>
                 </div>
@@ -151,7 +171,13 @@
                         <div class="d-flex flex-column">
                             <!-- Número de tiquete -->
                             <div>
-                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                                <h3 class="mb-0"><strong class="numero_tiquete_dash">
+                                    {% if user_role == 1 or user_role == 2 %}
+                                        <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"># {{ tiquete.id_tiquete }}</a>
+                                    {% else %}
+                                        # {{ tiquete.id_tiquete }}
+                                    {% endif %}
+                                </strong></h3>
                             </div>
                             <!-- Status y Tiempo -->
                             <div class="d-flex py-2">
@@ -185,6 +211,9 @@
                         <div>
                             <strong>Resumen:</strong>
                             <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}" class="btn btn-solceri">Ver Detalles</a>
                         </div>
                     </div>
                 </div>
@@ -203,7 +232,13 @@
                         <div class="d-flex flex-column">
                             <!-- Número de tiquete -->
                             <div>
-                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                                <h3 class="mb-0"><strong class="numero_tiquete_dash">
+                                    {% if user_role == 1 or user_role == 2 %}
+                                        <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"># {{ tiquete.id_tiquete }}</a>
+                                    {% else %}
+                                        # {{ tiquete.id_tiquete }}
+                                    {% endif %}
+                                </strong></h3>
                             </div>
                             <!-- Status y Tiempo -->
                             <div class="d-flex py-2">
@@ -237,6 +272,9 @@
                         <div>
                             <strong>Resumen:</strong>
                             <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}" class="btn btn-solceri">Ver Detalles</a>
                         </div>
                     </div>
                 </div>
@@ -255,7 +293,13 @@
                         <div class="d-flex flex-column">
                             <!-- Número de tiquete -->
                             <div>
-                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                                <h3 class="mb-0"><strong class="numero_tiquete_dash">
+                                    {% if user_role == 1 or user_role == 2 %}
+                                        <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"># {{ tiquete.id_tiquete }}</a>
+                                    {% else %}
+                                        # {{ tiquete.id_tiquete }}
+                                    {% endif %}
+                                </strong></h3>
                             </div>
                             <!-- Status y Tiempo -->
                             <div class="d-flex py-2">
@@ -289,6 +333,9 @@
                         <div>
                             <strong>Resumen:</strong>
                             <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}" class="btn btn-solceri">Ver Detalles</a>
                         </div>
                     </div>
                 </div>
@@ -308,7 +355,13 @@
                         <div class="d-flex flex-column">
                             <!-- Número de tiquete -->
                             <div>
-                                <h3 class="mb-0"><strong># {{ tiquete.id_tiquete }}</strong></h3>
+                                <h3 class="mb-0"><strong class="numero_tiquete_dash">
+                                    {% if user_role == 1 or user_role == 2 %}
+                                        <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"># {{ tiquete.id_tiquete }}</a>
+                                    {% else %}
+                                        # {{ tiquete.id_tiquete }}
+                                    {% endif %}
+                                </strong></h3>
                             </div>
                             <!-- Status y Tiempo -->
                             <div class="d-flex py-2">
@@ -342,6 +395,9 @@
                         <div>
                             <strong>Resumen:</strong>
                             <p class="d-block">{{ tiquete.resumen }}</p>
+                        </div>
+                        <div class="d-flex justify-content-center mt-3">
+                            <a href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}" class="btn btn-solceri">Ver Detalles</a>
                         </div>
                     </div>
                 </div>
