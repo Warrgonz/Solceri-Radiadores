@@ -75,8 +75,8 @@ def crear_cotizacion(id_tiquete):
 
     return render_template('crear_cotizacion.html', usuarios=usuarios, tiquete=tiquete)
 
-@cotizaciones_bp.route('/cotizacion/editar/<int:id_cotizacion>', methods=['GET', 'POST'])
-def cotizacion_editar(id_cotizacion):
+@cotizaciones_bp.route('/cotizacion/crear/detalle/<int:id_cotizacion>', methods=['GET', 'POST'])
+def cotizacion_detalle(id_cotizacion):
     catalogo = Catalogo.query.all()
     cotizacion = Cotizaciones.query.get_or_404(id_cotizacion)
 
@@ -84,7 +84,7 @@ def cotizacion_editar(id_cotizacion):
 
     user = Usuarios.query.get(user_id)
     
-    return render_template('cotizacion_editar.html', cotizacion=cotizacion, catalogo=catalogo , user_role=user.rol.id_rol)
+    return render_template('detalle_cotizacion.html', cotizacion=cotizacion, catalogo=catalogo , user_role=user.rol.id_rol)
 
 # Esto sirve para insertar el articulo "Custom" de la cotizacion.
 @cotizaciones_bp.route('/cotizacion/crear/otro', methods=['GET', 'POST'])
@@ -271,8 +271,61 @@ def eliminar_cotizacion(id_cotizacion):
 
     return redirect(url_for('cotizaciones.inicio'))
 
+@cotizaciones_bp.route('/cotizacion/editar/<int:id_cotizacion>', methods=['GET'])
+def editar_cotizacion(id_cotizacion):
+    cotizacion = Cotizaciones.query.get_or_404(id_cotizacion)
+    catalogo = Catalogo.query.all() 
+    items = [{
+        'producto': item.producto,
+        'cantidad': item.cantidad,
+        'precio': item.precio,
+        'imagen_url': '', 
+        'id_cotizacionTiquete': item.id_cotizacionTiquete,
+    } for item in cotizacion.items]
+
+    return render_template('editar_cotizacion.html', cotizacion=cotizacion, items=items, catalogo=catalogo)
 
 
+@cotizaciones_bp.route('/cotizacion/completar/edicion', methods=['POST'])
+def completar_edicion_cotizacion():
+    try:
+        id_cotizacion = request.form.get('id_cotizacion')
+        cart_items = request.form.get('cart_items')
+        
+        if not id_cotizacion or not cart_items:
+            flash('No se recibieron productos o ID de cotización en la solicitud.', 'error')
+            return redirect(url_for('cotizaciones.inicio'))
 
+        productos = json.loads(cart_items)
 
+        if not productos:
+            flash('No se proporcionaron productos para la cotización.', 'error')
+            return redirect(url_for('cotizaciones.inicio'))
 
+        MtlCotizaciones.query.filter_by(id_cotizacion=id_cotizacion).delete()
+
+        for producto in productos:
+            nombre_producto = producto.get('producto')
+            precio = int(str(producto.get('precio')).replace('.', ''))  # Eliminar puntos y convertir a entero
+            cantidad = producto.get('cantidad')  # Obtener la cantidad
+
+            nueva_mtl_cotizacion = MtlCotizaciones(
+                producto=nombre_producto,
+                precio=precio,
+                cantidad=cantidad,
+                id_cotizacion=id_cotizacion
+            )
+            
+            db.session.add(nueva_mtl_cotizacion)
+        
+        # Guardar todos los cambios en la base de datos
+        db.session.commit()
+
+        flash('La cotización ha sido editada exitosamente', 'success')
+        return redirect(url_for('cotizaciones.inicio'))
+        
+    except Exception as e:
+        print(f"Error al editar la cotización: {str(e)}")
+        db.session.rollback()
+        flash('Hubo un error al editar la cotización.', 'error')
+        return redirect(url_for('cotizaciones.inicio'))

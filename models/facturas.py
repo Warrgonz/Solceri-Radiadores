@@ -1,5 +1,7 @@
 from utils.db import db
 from datetime import datetime
+from models.tiquetes import Tiquetes
+from models.usuarios import Usuarios 
 
 class Factura(db.Model):
     __tablename__ = 'facturas'
@@ -11,7 +13,7 @@ class Factura(db.Model):
     archivo = db.Column(db.String(255), nullable=False)  # URL del archivo PDF en Firebase
 
     # Relaciones
-    tiquete = db.relationship('Tiquetes', backref=db.backref('facturas', lazy=True))
+    tiquete = db.relationship('Tiquetes', backref=db.backref('facturas_tiquete', cascade="all, delete-orphan", lazy=True, overlaps="facturas,tiquete_factura"), overlaps="facturas,tiquete_factura")
     usuario = db.relationship('Usuarios', backref=db.backref('facturas', lazy=True))
 
     def __init__(self, id_tiquete, id_usuario, cantidad_productos, archivo):

@@ -18,7 +18,7 @@ function confirmarEnviarCotizacion(idCotizacion) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token() }}'  // Si estás usando protección CSRF
+                    'X-CSRFToken': '{{ csrf_token() }}'  
                 },
             })
             .then(response => response.json())
@@ -105,3 +105,18 @@ function buscarCotizacion() {
     noResultsRow.style.display = found ? "none" : "";
 }
 
+// Editar cotizacion
+
+function confirmarEditarCotizacion(idCotizacion) {
+    Swal.fire({
+        title: `¿Deseas modificar la cotización seleccionada?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: 'Sí, modificar',
+        cancelButtonText: 'No, cancelar'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = `/cotizacion/editar/${idCotizacion}`;
+        }
+    });
+}

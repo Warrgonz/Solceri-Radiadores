@@ -110,11 +110,10 @@
               </div>
               <!-- Formulario que completa la cotización -->
               <form id="completar-cotizacion-form" method="POST" action="/cotizacion/completar">
-                <input type="hidden" name="id_cotizacion" value="{{ cotizacion.id_cotizacion }}">
+                <input type="hidden" name="id_cotizacion" id="id_cotizacion" value="{{ cotizacion.id_cotizacion }}">
                 <input type="hidden" id="cart-items" name="cart_items">
                 <button type="submit" class="btn-solceri" style="width: 100%;">Completar cotización</button>
               </form>
-
             </div>
           </div>
         </div>
@@ -123,5 +122,9 @@
   </div>
 
 </section>
+
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/carrito.js') }}"></script>
+{% endblock %}
 
 {% endblock %}

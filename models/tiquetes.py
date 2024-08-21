@@ -5,9 +5,7 @@ from models.usuarios import Usuarios
 from models.grupos import Grupos  
 from models.categorias import Categorias
 from models.estados import Estados
-from models.categorias import Categorias
 from datetime import datetime
-
 
 class Tiquetes(db.Model):
     __tablename__ = 'tiquetes'
@@ -31,8 +29,8 @@ class Tiquetes(db.Model):
     categoria_obj = db.relationship('Categorias', backref=db.backref('tiquetes', lazy=True))
     comentarios = db.relationship('Comentarios', back_populates='tiquete', cascade="all, delete-orphan")
     
-
-    
+    cotizaciones = db.relationship('Cotizaciones', back_populates='tiquete', cascade="all, delete-orphan", overlaps="cotizaciones,tiquete_ref")
+    facturas = db.relationship('Factura', backref='tiquete_factura', cascade="all, delete-orphan", overlaps="facturas,tiquete_factura")
 
     def __init__(self, id_tiquete, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado, fecha_asignacion):
         self.id_tiquete = id_tiquete
@@ -48,4 +46,6 @@ class Tiquetes(db.Model):
 
     def __repr__(self):
         return f'<Tiquete #{self.id_tiquete}>'
+
+
     
