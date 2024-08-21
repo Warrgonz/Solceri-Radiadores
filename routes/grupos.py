@@ -1,10 +1,11 @@
 # routes/grupos.py
 
-from flask import Blueprint, render_template, request, redirect, url_for, jsonify
+from flask import Blueprint, render_template, request, redirect, url_for, jsonify, session
 from models.grupos import Grupos
 from utils.db import db
 from utils.auth import login_required, role_required
 from models.usuarios import Usuarios
+from utils.servicio_mail import send_email_async
 
 
 grupos_bp = Blueprint('grupos', __name__)
@@ -45,7 +46,28 @@ def grupos_crear():
         db.session.add(nuevo_grupo)
         try:
             db.session.commit()
+            user_id = session.get('user_id')
+            user = Usuarios.query.get(user_id)
+            if user and user.correo:
+                subject = f"Nuevo grupo creado (Grupo #{nuevo_grupo.id_grupo})"
+                body = f"""
+                <html>
+                <head></head>
+                <body>
+                    <h1 style="color:SlateGray;">¡Hola {user.nombre}!</h1>
+                    <p>Se ha creado un nuevo grupo en el sistema:</p>
+                    <p><strong>Nombre del grupo:</strong> {nuevo_grupo.nombre}</p>
+                    <p><strong>Descripción:</strong> {nuevo_grupo.descripcion}</p>
+                    <p><strong>On Time:</strong> {nuevo_grupo.on_time} minutos</p>
+                    <p><strong>Running Late:</strong> {nuevo_grupo.running_late} minutos</p>
+                    <p><strong>Is Late:</strong> {nuevo_grupo.is_late} minutos</p>
+                    <p>Puedes ver los detalles del grupo en la sección correspondiente del sistema.</p>
+                </body>
+                </html>
+                """
+                send_email_async(user.correo, subject, body)
             return jsonify({'message': 'Grupo creado exitosamente'}), 200
+
         except Exception as e:
             db.session.rollback()
             return jsonify({'error': str(e)}), 500
@@ -87,6 +109,27 @@ def grupos_editar(id_grupo):
 
             try:
                 db.session.commit()
+
+                user_id = session.get('user_id')
+                user = Usuarios.query.get(user_id)
+                if user and user.correo:
+                    subject = f"Grupo actualizado (Grupo #{grupo.id_grupo})"
+                    body = f"""
+                    <html>
+                    <head></head>
+                    <body>
+                        <h1 style="color:SlateGray;">¡Hola {user.nombre}!</h1>
+                        <p>Se ha actualizado un grupo en el sistema:</p>
+                        <p><strong>Nombre del grupo:</strong> {grupo.nombre}</p>
+                        <p><strong>Descripción:</strong> {grupo.descripcion}</p>
+                        <p><strong>On Time:</strong> {grupo.on_time} minutos</p>
+                        <p><strong>Running Late:</strong> {grupo.running_late} minutos</p>
+                        <p><strong>Is Late:</strong> {grupo.is_late} minutos</p>
+                        <p>Puedes ver los detalles del grupo en la sección correspondiente del sistema.</p>
+                    </body>
+                    </html>
+                    """
+                    send_email_async(user.correo, subject, body)
                 return jsonify({'message': 'Cambios guardados exitosamente'}), 200
             except Exception as e:
                 db.session.rollback()
