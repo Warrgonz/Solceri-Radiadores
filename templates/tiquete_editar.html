@@ -114,9 +114,11 @@
                 <button type="submit" class="btn btn-success" style="width: 100%;">Guardar</button>
                 <a href="{{ url_for('tiquetes.tiquetes_listar') }}"><button type="button" class="btn btn-danger mt-3"
                         style="width: 100%;">Cancelar</button></a>
-                <a href="#" onclick="confirmarCrearCotizacion('{{ tiquete.id_tiquete }}')">
-                    <button type="button" class="btn-solceri mt-3" style="width: 100%;">Crear cotización</button>
-                </a>
+                    {% if usuario_sesion_rol == 1%}
+                    <a href="#" onclick="confirmarCrearCotizacion('{{ tiquete.id_tiquete }}')">
+                        <button type="button" class="btn-solceri mt-3" style="width: 100%;">Crear cotización</button>
+                    </a>
+                    {% endif %}
             </div>
         </div>
     </form>
@@ -157,14 +159,6 @@
                                 </tr>
                                 {% endfor %}
                             </tbody>
-                            <tfoot class="text-center">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Creado por</th>
-                                    <th>Fecha de cotización</th>
-                                    <th>Archivo de Cotización</th>
-                                </tr>
-                            </tfoot>
                         </table>
                         {% else %}
                         <div class="d-flex justify-content-center align-items-center flex-column" style="height: 15vh;">
@@ -205,12 +199,6 @@
                                 </tr>
                                 {% endfor %}
                             </tbody>
-                            <tfoot class="text-center">
-                                <tr>
-                                    <th>#</th>
-                                    <th>Documento</th>
-                                </tr>
-                            </tfoot>
                         </table>
                         {% else %}
                         <div class="d-flex justify-content-center align-items-center flex-column" style="height: 15vh;">
@@ -233,7 +221,7 @@
             <div>
                 <label for="nota_interna">Comentario</label>
                 <textarea class="form-control" rows="3" id="nota_interna" name="nota_interna"
-                    placeholder="Escriba su comentario aquí" required></textarea>
+                    placeholder="Escriba su comentario aquí" maxlength="1024" required></textarea>
             </div>
             <div class="pt-3">
                 <div class="form-check">

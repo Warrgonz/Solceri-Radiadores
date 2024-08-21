@@ -247,7 +247,7 @@ def tiquete_editar(id):
                     <p>Se ha actualizado el estado de tu tiquete:</p>
                     <p><strong>Estado anterior:</strong> {get_nombre_estado(antiguo_estado)}</p>
                     <p><strong>Estado nuevo:</strong> {get_nombre_estado(tiquete_actualizado.id_estado)}</p>
-                    <p>Puedes ver los detalles del tiquete haciendo clic <a href="http://127.0.0.1:5000/tiquete/detalles/{id}">aquí</a>.</p>
+                    <p>Puedes ver los detalles del tiquete haciendo clic <a href="https://solceri.com/tiquete/detalles/{id}">aquí</a>.</p>
                 </body>
                 </html>
                 """
@@ -310,7 +310,8 @@ def tiquete_editar(id):
         facturas=facturas, 
         comentarios=comentarios,
         archivos=archivos,
-        fecha_actual=datetime.utcnow()
+        fecha_actual=datetime.utcnow(),
+        usuario_sesion_rol = usuario_sesion_rol
     )
 
 
@@ -407,7 +408,7 @@ def add_comment(id):
                 <h1 style="color:SlateGray;">¡Hola {cliente.nombre}!</h1>
                 <p>Se ha agregado un nuevo comentario en tu tiquete:</p>
                 <p><strong>{comentario_text}</strong></p>
-                <p>Puedes ver los detalles del tiquete haciendo clic <a href="http://127.0.0.1:5000/tiquete/detalle/{id}">aquí</a>.</p>
+                <p>Puedes ver los detalles del tiquete haciendo clic <a href="https://solceri.com/tiquete/detalles/{id}">aquí</a>.</p>
             </body>
             </html>
             """

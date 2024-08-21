@@ -14,10 +14,10 @@
     <h1 class="pb-3 section-title">Catálogo</h1>
 </div>
 
-<div class="d-flex justify-content-between">
-    <div>
+<div class="d-flex justify-content-between pb-3">
+    <div class="d-flex align-items-center">
         <label for="nombre">Buscar:</label>
-        <input type="text" id="inputBusqueda" placeholder="Datos del usuario">
+        <input type="text" class="form-control mx-3" id="inputBusqueda" placeholder="Datos del producto">
     </div>
     <div>
         <a href="/catalogo/create"><button class="btn-solceri">Agregar</button></a>
@@ -64,6 +64,9 @@
 <div class="d-flex justify-content-center align-items-center flex-column" style="height: 50vh;">
     <img src="{{ url_for('static', filename='images/empty.png') }}" alt="Not found" class="img-empty">
     <p class="mt-3">No se han encontrado artículos</p>
+    {% if user_role == 1%}
+        <a href="{{url_for('catalogo.catalogo_crear')}}"><button class="btn btn-success btn-md">Agregar</button> </a>
+    {% endif %}
 </div>
 {% endif %}
 
