@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, request, redirect, url_for, flash,
 from models.usuarios import Usuarios
 from models.roles import Roles
 from datetime import datetime
+from utils.auth import login_required
 from utils.db import db
 from utils.firebase import FirebaseUtils
 from models.tiquetes import Tiquetes
@@ -11,6 +12,7 @@ from models.grupos import Grupos
 dashboard_bp = Blueprint('dashboard', __name__)
 
 @dashboard_bp.route('/dashboard')
+@login_required
 def dashboard():
     user_id = session.get('user_id')
     
@@ -32,10 +34,15 @@ def dashboard():
             
             else:
                 # Para otros roles, se muestran todos los tiquetes y filtrados por estado
-                todos_los_tiquetes = Tiquetes.query.order_by(Tiquetes.fecha_asignacion.asc()).all()
+                todos_los_tiquetes = Tiquetes.query.join(Estados)\
+                                                    .filter(Estados.estado.in_(['En camino', 'Llamar cliente', 'En espera', 'En progreso']))\
+                                                    .order_by(Tiquetes.fecha_asignacion.asc()).all()
                 
                 # Filtrar tiquetes asignados al usuario actual
-                tiquetes_asignados = Tiquetes.query.filter_by(trabajador_designado=user.id_usuario).all()
+                tiquetes_asignados = Tiquetes.query.join(Estados)\
+                                                    .filter(Tiquetes.trabajador_designado == user.id_usuario)\
+                                                    .filter(Estados.estado.in_(['En camino', 'Llamar cliente', 'En espera', 'En progreso']))\
+                                                    .order_by(Tiquetes.fecha_asignacion.asc()).all()
 
                 # Filtrar tiquetes por estado
                 tiquetes_en_progreso = Tiquetes.query.join(Estados).filter(Estados.estado == 'En progreso')\
@@ -63,6 +70,7 @@ def dashboard():
 # Funcionalidades para internos
 
 @dashboard_bp.route('/perfil')
+@login_required
 def perfil():
     # Verificar si hay un usuario en la sesión
     if 'user_id' in session:
@@ -85,6 +93,7 @@ def perfil():
         return redirect(url_for('usuarios.login'))
     
 @dashboard_bp.route('/perfil/editar/<int:id>', methods=['GET', 'POST'])
+@login_required
 def usuarios_editar(id):
     usuario = Usuarios.query.get_or_404(id)
     roles = Roles.query.all()
@@ -134,27 +143,6 @@ def usuarios_editar(id):
             return redirect(url_for('dashboard.usuarios_editar', id=id))
 
     return render_template('usuarios_editpublic.html', usuario=usuario, roles=roles, rol_usuario_sesion=rol_usuario_sesion)
-
-
-
-    
-@dashboard_bp.route('/test')
-def test():
-    # Verifica si el usuario está en sesión
-    user_id = session.get('user_id')
-    
-    if user_id:
-        # Obtiene el usuario de la base de datos
-        user = Usuarios.query.get(user_id)
-        
-        if user:
-            # Obtiene el rol del usuario
-            user_role = user.rol.rol  # 'rol' es la relación, y 'rol' es el nombre del rol
-            return jsonify({'role': user_role})
-        else:
-            return jsonify({'error': 'Usuario no encontrado'}), 404
-    else:
-        return jsonify({'error': 'No hay usuario en sesión'}), 401
     
 @dashboard_bp.route('/404')
 def error404():

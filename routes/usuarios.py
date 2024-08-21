@@ -287,7 +287,7 @@ def login():
             if check_password_hash(user.contraseña, password):
                 if user.contraseña_temp and check_password_hash(user.contraseña_temp, password):
                     session['user_id'] = user.id_usuario
-                    response = make_response(jsonify({'redirect_url': url_for('usuarios.password_reset'), 'alert_type': 'warning', 'alert_message': 'Por favor, cambia tu contraseña temporal.'}))
+                    response = make_response(jsonify({'redirect_url': url_for('usuarios.password_reset')}))
                 else:
                     session['user_id'] = user.id_usuario
                     response = make_response(jsonify({'redirect_url': url_for('usuarios.usuarios')}))

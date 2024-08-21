@@ -20,22 +20,26 @@ tiquetes_bp = Blueprint('tiquetes', __name__)
 @login_required
 def tiquetes_listar():
     user_id = session.get('user_id')
-    user_role = session.get('user_role')
+    user = Usuarios.query.get(user_id)
+    user_role = user.id_rol
 
+    #Sorted por fecha_asignacion
     if user_role == 3:
-        # Usuario cliente, muestra solo sus tiquetes
-        tiquetes = Tiquetes.query.filter_by(id_cliente=user_id).all()
+        # Cliente
+        tiquetes = Tiquetes.query.filter_by(id_cliente=user_id)\
+                                .order_by(Tiquetes.fecha_asignacion.asc()).all()
     elif user_role in [1, 2]:
-        # Usuario administrador o colaborador, muestra todos los tiquetes
-        tiquetes = Tiquetes.query.all()
+        # User y Admin
+        tiquetes = Tiquetes.query.order_by(Tiquetes.fecha_asignacion.asc()).all()
     else:
-        # Para otros roles, muestra todos los tiquetes (puedes ajustar esto según el rol)
-        tiquetes = Tiquetes.query.all()
+        # Else
+        tiquetes = Tiquetes.query.order_by(Tiquetes.fecha_asignacion.asc()).all()
 
     return render_template('tiquetes.html', tiquetes=tiquetes, user_role=user_role, user_id=user_id)
 
 
 @tiquetes_bp.route('/tiquete/detalles/<string:id>', methods=['GET'])
+@login_required
 def tiquete_detalles(id):
     tiquete = Tiquetes.query.get_or_404(id)
 
@@ -64,6 +68,8 @@ def tiquete_detalles(id):
 
 
 @tiquetes_bp.route('/tiquete/crear', methods=['GET', 'POST'])
+@login_required
+@role_required([1, 2])
 def tiquete_crear():
     if request.method == 'POST':
         id_cliente = request.form.get('id_cliente')
@@ -74,7 +80,7 @@ def tiquete_crear():
         descripcion = request.form.get('descripcion')
         direccion = request.form.get('direccion')
         id_estado = request.form.get('estado')
-        fecha_asignacion = datetime.utcnow()  # Establecer la fecha de asignación actual
+        fecha_asignacion = datetime.utcnow() 
 
         nuevo_id_tiquete = generar_id_tiquete()
 
@@ -88,7 +94,7 @@ def tiquete_crear():
             descripcion=descripcion,
             direccion=direccion,
             id_estado=id_estado,
-            fecha_asignacion=fecha_asignacion  # Incluir la fecha de asignación
+            fecha_asignacion=fecha_asignacion 
         )
 
         try:
@@ -104,9 +110,9 @@ def tiquete_crear():
     # Cargar datos necesarios para los selects
     clientes = Usuarios.query.filter_by(id_rol=3).all()  # Filtrar por rol de cliente
     grupos = Grupos.query.all()
-    trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()  # Admin y Colaboradores
+    trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()  # Admin y Collabs
     categorias = Categorias.query.all()
-    estados = Estados.query.all()
+    estados = Estados.query.filter(Estados.id_estado.notin_([6, 7])).all()
 
     return render_template(
         'tiquete_crear.html',
@@ -138,6 +144,8 @@ def generar_id_tiquete():
     return nuevo_id
 
 @tiquetes_bp.route('/tiquete/editar/<string:id>', methods=['GET', 'POST'])
+@login_required
+@role_required([1, 2])
 def tiquete_editar(id):
     tiquete = Tiquetes.query.get_or_404(id)
 
@@ -175,6 +183,9 @@ def tiquete_editar(id):
         if antiguo_trabajador != tiquete.trabajador_designado:
             tiquete.fecha_asignacion = datetime.utcnow()
 
+        if int(nuevo_estado) in [6, 7]:
+            tiquete.fecha_finalizacion = datetime.utcnow()
+
         # Comparar valores y agregar comentario si hay cambios
         comentarios = []
         if antiguo_cliente != tiquete.id_cliente:
@@ -193,6 +204,24 @@ def tiquete_editar(id):
             comentarios.append(f"Dirección: {antiguo_direccion} ----> {tiquete.direccion}")
         if antiguo_estado != tiquete.id_estado:
             comentarios.append(f"Estado: {get_nombre_estado(antiguo_estado)} ----> {get_nombre_estado(tiquete.id_estado)}")
+
+            tiquete_actualizado = Tiquetes.query.get(id)
+            cliente = Usuarios.query.get(tiquete_actualizado.id_cliente)
+            if cliente and cliente.correo:
+                subject = f"Actualización en tu tiquete (Ticket #{id})"
+                body = f"""
+                <html>
+                <head></head>
+                <body>
+                    <h1 style="color:SlateGray;">¡Hola {cliente.nombre}!</h1>
+                    <p>Se ha actualizado el estado de tu tiquete:</p>
+                    <p><strong>Estado anterior:</strong> {get_nombre_estado(antiguo_estado)}</p>
+                    <p><strong>Estado nuevo:</strong> {get_nombre_estado(tiquete_actualizado.id_estado)}</p>
+                    <p>Puedes ver los detalles del tiquete haciendo clic <a href="http://127.0.0.1:5000/tiquete/detalles/{id}">aquí</a>.</p>
+                </body>
+                </html>
+                """
+                send_email_async(cliente.correo, subject, body)
 
         if comentarios:
             comentario_text = "<strong>Se realizaron los siguientes cambios:</strong> <br>" + "<br>".join(comentarios)
@@ -275,6 +304,8 @@ def get_nombre_estado(id_estado):
 
 
 @tiquetes_bp.route('/tiquete/eliminar/<string:id_tiquete>', methods=['POST'])
+@login_required
+@role_required([1, 2])
 def eliminar_tiquete(id_tiquete):
     try:
         # Obtener el tiquete de la base de datos
@@ -299,6 +330,7 @@ def eliminar_tiquete(id_tiquete):
 
 # Ruta para agregar comentario
 @tiquetes_bp.route('/tiquete/<string:id>/add_comment', methods=['POST'])
+@login_required
 def add_comment(id):
     comentario_text = request.form.get('nota_interna')
     visible_cliente = request.form.get('visible_cliente') == 'on'  # Capturar el estado del checkbox

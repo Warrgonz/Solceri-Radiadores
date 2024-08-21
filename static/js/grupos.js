@@ -3,44 +3,127 @@
 document.addEventListener('DOMContentLoaded', function () {
     
     // Manejar el formulario de creación de grupo
-const crearForm = document.getElementById('grupoCrearForm');
-if (crearForm) {
-    crearForm.addEventListener('submit', function (event) {
+    const crearForm = document.getElementById('grupoCrearForm');
+    if (crearForm) {
+        crearForm.addEventListener('submit', function (event) {
+            // Evita el envío del formulario
+            event.preventDefault();
+
+            // Obtener los valores de los campos de tiempo
+            const onTime = parseInt(document.getElementById('on_time').value);
+            const runningLate = parseInt(document.getElementById('running_late').value);
+            const isLate = parseInt(document.getElementById('is_late').value);
+
+            // Validar la lógica de los tiempos
+            if (onTime >= runningLate || runningLate >= isLate) {
+                Swal.fire(
+                    'Error',
+                    'Los tiempos de SLA deben cumplir con la siguiente lógica: On Time < Running Late < Is Late',
+                    'error'
+                );
+                return;
+            }
+
+            Swal.fire({
+                title: '¿Estás seguro?',
+                text: "¿Quieres crear este grupo?",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sí, crear grupo'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    const formData = new FormData(crearForm);
+
+                    fetch(crearForm.action, {
+                        method: 'POST',
+                        body: formData,
+                        headers: {
+                            'X-Requested-With': 'XMLHttpRequest'
+                        }
+                    })
+                    .then(response => {
+                        if (response.ok) {
+                            return response.json();
+                        } else {
+                            return response.json().then(data => {
+                                throw new Error(data.error || 'Error desconocido');
+                            });
+                        }
+                    })
+                    .then(data => {
+                        if (data.message) {
+                            Swal.fire(
+                                '¡Creado!',
+                                data.message,
+                                'success'
+                            ).then(() => {
+                                window.location.href = '/grupos';
+                            });
+                        } else if (data.error) {
+                            Swal.fire(
+                                'Error',
+                                data.error,
+                                'error'
+                            );
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error.message);
+                        Swal.fire(
+                            'Error',
+                            error.message || 'Hubo un problema al intentar crear el grupo.',
+                            'error'
+                        );
+                    });
+                }
+            });
+        });
+    }
+    // Manejar el formulario de edición de grupo
+    // Manejar el formulario de edición de grupo
+const editarForm = document.getElementById('grupoEditarForm');
+if (editarForm) {
+    editarForm.addEventListener('submit', function (event) {
         event.preventDefault(); // Evita el envío del formulario
+
+        // Obtener los valores de los campos de tiempo
+        const onTime = parseInt(document.getElementById('on_time').value);
+        const runningLate = parseInt(document.getElementById('running_late').value);
+        const isLate = parseInt(document.getElementById('is_late').value);
+
+        // Validar la lógica de los tiempos
+        if (onTime >= runningLate || runningLate >= isLate) {
+            Swal.fire(
+                'Error',
+                'Los tiempos de SLA deben cumplir con la siguiente lógica: On Time < Running Late < Is Late',
+                'error'
+            );
+            return;
+        }
 
         Swal.fire({
             title: '¿Estás seguro?',
-            text: "¿Quieres crear este grupo?",
+            text: "¿Quieres guardar los cambios?",
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#3085d6',
             cancelButtonColor: '#d33',
-            confirmButtonText: 'Sí, crear grupo'
+            confirmButtonText: 'Sí, guardar cambios'
         }).then((result) => {
             if (result.isConfirmed) {
-                const formData = new FormData(crearForm);
+                const formData = new FormData(editarForm);
 
-                fetch(crearForm.action, {
+                fetch(editarForm.action, {
                     method: 'POST',
-                    body: formData,
-                    headers: {
-                        'X-Requested-With': 'XMLHttpRequest'
-                    }
+                    body: formData
                 })
-                .then(response => {
-                    // Verificar si la respuesta es JSON
-                    if (response.ok) {
-                        return response.json();
-                    } else {
-                        return response.json().then(data => { // Tratar la respuesta JSON
-                            throw new Error(data.error || 'Error desconocido');
-                        });
-                    }
-                })
+                .then(response => response.json())
                 .then(data => {
                     if (data.message) {
                         Swal.fire(
-                            '¡Creado!',
+                            '¡Guardado!',
                             data.message,
                             'success'
                         ).then(() => {
@@ -58,7 +141,7 @@ if (crearForm) {
                     console.error('Error:', error);
                     Swal.fire(
                         'Error',
-                        'Hubo un problema al intentar crear el grupo.',
+                        'Hubo un problema al intentar guardar los cambios.',
                         'error'
                     );
                 });
@@ -66,58 +149,7 @@ if (crearForm) {
         });
     });
 }
-    // Manejar el formulario de edición de grupo
-    const editarForm = document.getElementById('grupoEditarForm');
-    if (editarForm) {
-        editarForm.addEventListener('submit', function (event) {
-            event.preventDefault(); // Evita el envío del formulario
 
-            Swal.fire({
-                title: '¿Estás seguro?',
-                text: "¿Quieres guardar los cambios?",
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#3085d6',
-                cancelButtonColor: '#d33',
-                confirmButtonText: 'Sí, guardar cambios'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    const formData = new FormData(editarForm);
-
-                    fetch(editarForm.action, {
-                        method: 'POST',
-                        body: formData
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.message) {
-                            Swal.fire(
-                                '¡Guardado!',
-                                data.message,
-                                'success'
-                            ).then(() => {
-                                window.location.href = '/grupos';
-                            });
-                        } else if (data.error) {
-                            Swal.fire(
-                                'Error',
-                                data.error,
-                                'error'
-                            );
-                        }
-                    })
-                    .catch(error => {
-                        console.error('Error:', error);
-                        Swal.fire(
-                            'Error',
-                            'Hubo un problema al intentar guardar los cambios.',
-                            'error'
-                        );
-                    });
-                }
-            });
-        });
-    }
 
     // Manejar formularios de agregar usuario
     document.querySelectorAll('.agregar-form').forEach(form => {
@@ -147,11 +179,6 @@ if (crearForm) {
             })
             .catch(error => {
                 console.error('Error:', error);
-                Swal.fire(
-                    'Error',
-                    'Hubo un problema al intentar agregar el usuario.',
-                    'error'
-                );
             });
         });
     });

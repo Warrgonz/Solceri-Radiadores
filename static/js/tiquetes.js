@@ -80,9 +80,16 @@ function calcularTiempoTranscurrido(fechaAsignacion) {
 
 function actualizarTiempoTranscurrido() {
     document.querySelectorAll('.tiquete').forEach(row => {
+        const estado = row.getAttribute('data-estado'); 
         const fechaAsignacion = row.getAttribute('data-fecha-asignacion');
-        const tiempoTranscurrido = calcularTiempoTranscurrido(fechaAsignacion);
-        row.querySelector('.tiempo_transcurrido').textContent = tiempoTranscurrido;
+        const tiempoTranscurridoElement = row.querySelector('.tiempo_transcurrido');
+        
+        if (estado === 'Finalizado' || estado === 'Cancelado') {
+            tiempoTranscurridoElement.textContent = '00:00:00';
+        } else {
+            const tiempoTranscurrido = calcularTiempoTranscurrido(fechaAsignacion);
+            tiempoTranscurridoElement.textContent = tiempoTranscurrido;
+        }
     });
 }
 

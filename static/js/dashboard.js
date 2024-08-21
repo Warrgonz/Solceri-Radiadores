@@ -1,3 +1,5 @@
+//js/dashboard.js
+
 // Función para convertir la fecha en formato ISO
 function convertirFecha(fecha) {
     return fecha.replace(' ', 'T') + 'Z'; 
@@ -28,12 +30,18 @@ function calcularTiempoTranscurrido(fechaAsignacion) {
     return `${formatoHoras}:${formatoMinutos}:${formatoSegundos}`;
 }
 
-// Función para actualizar el tiempo transcurrido en el DOM
 function actualizarTiempoTranscurrido() {
     document.querySelectorAll('.tiquete').forEach(row => {
+        const estado = row.getAttribute('data-estado'); // Obtener el estado del tiquete
         const fechaAsignacion = row.getAttribute('data-fecha-asignacion');
-        const tiempoTranscurrido = calcularTiempoTranscurrido(fechaAsignacion);
-        row.querySelector('.tiempo_transcurrido').textContent = tiempoTranscurrido;
+        const tiempoTranscurridoElement = row.querySelector('.tiempo_transcurrido');
+        
+        if (estado === 'Finalizado' || estado === 'Cancelado') {
+            tiempoTranscurridoElement.textContent = '00:00:00';
+        } else {
+            const tiempoTranscurrido = calcularTiempoTranscurrido(fechaAsignacion);
+            tiempoTranscurridoElement.textContent = tiempoTranscurrido;
+        }
     });
 }
 

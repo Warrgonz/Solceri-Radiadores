@@ -1,6 +1,7 @@
 {% extends "layout.html" %}
 
 {% block content %}
+{% set exclude_dashboard_js = true %}
 {% with messages = get_flashed_messages(with_categories=true) %}
 {% if messages %}
 {% for category, message in messages %}
@@ -43,7 +44,7 @@
         </thead>
         <tbody class="text-center">
             {% for tiquete in tiquetes %}
-            <tr class="tiquete" data-fecha-asignacion="{{ tiquete.fecha_asignacion }}">
+            <tr class="tiquete" data-fecha-asignacion="{{ tiquete.fecha_asignacion }}" data-estado="{{ tiquete.estado.estado}}" data-fecha-finalizacion="tiquete.fecha_finalizacion" data-fecha-creacion="tiquete.fecha_creacion">
                 <td class="id_tiquete">{{ tiquete.id_tiquete }}</td>
                 <td class="resumen">{{ tiquete.resumen }}</td>
                 <td class="cliente">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</td>
@@ -51,11 +52,13 @@
                 <td class="trabajador">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}</td>
                 <td class="estado">{{ tiquete.estado.estado }}</td>
                 <td class="ultima_asignacion">{{ tiquete.fecha_asignacion }}</td>
-                <td class="tiempo_transcurrido">Calculando...</td> <!-- Nueva celda -->
+                <td class="tiempo_transcurrido">Calculando...</td> 
                 <td>
                     <a href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}" class="btn-solceri">Detalles</a> 
-                    <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}" class="btn btn-primary">Editar</a>
-                    <a href="#" class="btn btn-danger btn-sm" onclick="confirmDeleteTiquete('{{ tiquete.id_tiquete }}')">Eliminar</a>
+                    {% if user_role == 1 or user_role == 2 %}
+                        <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}" class="btn btn-primary">Editar</a>
+                        <a href="#" class="btn btn-danger btn-sm" onclick="confirmDeleteTiquete('{{ tiquete.id_tiquete }}')">Eliminar</a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
@@ -80,6 +83,6 @@
     <img src="{{ url_for('static', filename='images/empty.png') }}" alt="Not found" class="img-empty">
     <p class="mt-3">No se han encontrado tiquetes</p>
 </div>
-{% endif %}
 
+{% endif %}
 {% endblock %}
