@@ -12,6 +12,7 @@ from datetime import datetime, timedelta
 from utils.servicio_mail import send_email_async
 from models.facturas import Factura
 from models.cotizaciones import Cotizaciones
+from models.reportes import Reportes
 from utils.firebase import FirebaseUtils
 from models.archivos import Archivos
 
@@ -74,7 +75,6 @@ def tiquete_detalles(id):
 @role_required([1, 2])
 def tiquete_crear():
     if request.method == 'POST':
-        # Obtener datos del formulario
         id_cliente = request.form.get('id_cliente')
         grupo_asignado = request.form.get('grupo_asignado')
         trabajador_designado = request.form.get('trabajador_designado')
@@ -101,19 +101,20 @@ def tiquete_crear():
             fecha_asignacion=fecha_asignacion
         )
 
-        # Manejar archivos adjuntos
-        if 'archivos' in request.files:
-            archivos = request.files.getlist('archivos')
-            for archivo in archivos:
-                if archivo and allowed_file(archivo.filename):
-                    nombre_archivo = archivo.filename
-                    url = FirebaseUtils.post_image(archivo)
-                    if url:
-                        nuevo_archivo = Archivos(tiquete_id=nuevo_id_tiquete, ruta_imagen=url, nombre_archivo=nombre_archivo)
-                        db.session.add(nuevo_archivo)
-
         try:
             db.session.add(nuevo_tiquete)
+            db.session.commit()
+
+            if 'archivos' in request.files:
+                archivos = request.files.getlist('archivos')
+                for archivo in archivos:
+                    if archivo and allowed_file(archivo.filename):
+                        nombre_archivo = archivo.filename
+                        url = FirebaseUtils.post_image(archivo)
+                        if url:
+                            nuevo_archivo = Archivos(tiquete_id=nuevo_id_tiquete, ruta_imagen=url, nombre_archivo=nombre_archivo)
+                            db.session.add(nuevo_archivo)
+
             db.session.commit()
             flash('Tiquete creado exitosamente', 'success')
             return redirect(url_for('tiquetes.tiquetes_listar'))
@@ -122,14 +123,13 @@ def tiquete_crear():
             flash(f'Error al crear el tiquete: {str(e)}', 'danger')
             return redirect(url_for('tiquetes.tiquete_crear'))
 
-    # Cargar datos necesarios para los selects
     clientes = Usuarios.query.filter_by(id_rol=3).all()
     grupos = Grupos.query.all()
     trabajadores = Usuarios.query.filter(Usuarios.id_rol.in_([1, 2])).all()
     categorias = Categorias.query.all()
     estados = Estados.query.filter(Estados.id_estado.notin_([6, 7])).all()
 
-    fecha_actual=datetime.utcnow()
+    fecha_actual = datetime.utcnow()
     fecha_actual = fecha_actual - timedelta(hours=6)
 
     return render_template(
@@ -170,8 +170,9 @@ def allowed_file(filename):
 @role_required([1, 2])
 def tiquete_editar(id):
     tiquete = Tiquetes.query.get_or_404(id)
-    fecha_actual=datetime.utcnow()
+    fecha_actual = datetime.utcnow()
     fecha_actual = fecha_actual - timedelta(hours=6)
+    
     if request.method == 'POST':
         nuevo_cliente = request.form.get('id_cliente')
         nuevo_grupo = request.form.get('grupo_asignado')
@@ -191,6 +192,14 @@ def tiquete_editar(id):
         antiguo_descripcion = tiquete.descripcion
         antiguo_direccion = tiquete.direccion
         antiguo_estado = tiquete.id_estado
+        fecha_asignacion_anterior = tiquete.fecha_asignacion
+
+        antiguo_colaborador = Usuarios.query.get(antiguo_trabajador)
+        nuevo_colaborador = Usuarios.query.get(int(nuevo_trabajador)) if nuevo_trabajador else None
+        cliente = Usuarios.query.get(tiquete.id_cliente)
+
+        nombre_antiguo_colaborador = f"{antiguo_colaborador.nombre} {antiguo_colaborador.primer_apellido} {antiguo_colaborador.segundo_apellido}" if antiguo_colaborador else None
+        nombre_cliente = f"{cliente.nombre} {cliente.primer_apellido} {cliente.segundo_apellido}" if cliente else None
 
         # Actualizar los campos del tiquete
         tiquete.id_cliente = int(nuevo_cliente) if nuevo_cliente else None
@@ -202,19 +211,26 @@ def tiquete_editar(id):
         tiquete.direccion = nuevo_direccion
         tiquete.id_estado = int(nuevo_estado) if nuevo_estado else None
 
-        # Solo actualizar la fecha de asignación si el trabajador designado ha cambiado
-
-        #TUKI WARREN
+        # Registrar cambios de colaborador en `Reportes`
         if antiguo_trabajador != tiquete.trabajador_designado:
-            #Variable fecha actual - fecha asignacion = (TIEMPO) --->>> Subir a tabla reportes
-            #id usuario (Empleado), id_tiquete, datetime, TIEMPO, id usuario(cliente)?? opcional, o lo trae de tiqeute (STRING no ref)
+            if fecha_asignacion_anterior is not None:
+                tiempo_duracion = (fecha_actual - fecha_asignacion_anterior).total_seconds() # Duración en segundos
+            else:
+                tiempo_duracion = None
+
+            # Crear un nuevo reporte para el cambio de colaborador
+            nuevo_reporte_colaborador = Reportes(
+                id_tiquete=tiquete.id_tiquete,
+                nombre_colaborador=nombre_antiguo_colaborador,
+                nombre_cliente=nombre_cliente,
+                tiempo_duracion=tiempo_duracion
+            )
+            nuevo_reporte_colaborador.fecha_cambio = fecha_actual  # Asignar la fecha actual
+            db.session.add(nuevo_reporte_colaborador)
 
             tiquete.fecha_asignacion = fecha_actual
 
-        if int(nuevo_estado) in [6, 7]:
-            tiquete.fecha_finalizacion = fecha_actual
-
-        #ARCHIVOS
+        # Manejo de archivos adjuntos
         if 'archivos' in request.files:
             archivos = request.files.getlist('archivos')
             for archivo in archivos:
@@ -295,10 +311,10 @@ def tiquete_editar(id):
     archivos = Archivos.query.filter_by(tiquete_id=id).all()
 
     # Condición para mostrar comentarios según el rol del usuario
-
     user_id = session.get('user_id')
     usuario_sesion = Usuarios.query.filter_by(id_usuario=user_id).first()
     usuario_sesion_rol = usuario_sesion.id_rol
+
     # Obtener las facturas asociadas al tiquete
     facturas = Factura.query.filter_by(id_tiquete=id).all()
 
@@ -308,8 +324,7 @@ def tiquete_editar(id):
     else:  # Cliente
         comentarios = Comentarios.query.filter_by(id_tiquete=id, visible_cliente=1).order_by(Comentarios.fecha_creacion.desc()).all()
 
-    fecha_actual=datetime.utcnow()
-    fecha_actual = fecha_actual - timedelta(hours=6)
+    fecha_actual = datetime.utcnow() - timedelta(hours=6)
 
     return render_template(
         'tiquete_editar.html',
@@ -323,10 +338,8 @@ def tiquete_editar(id):
         comentarios=comentarios,
         archivos=archivos,
         fecha_actual=fecha_actual,
-        usuario_sesion_rol = usuario_sesion_rol
+        usuario_sesion_rol=usuario_sesion_rol
     )
-
-
 
 def get_nombre_cliente(id_cliente):
     cliente = Usuarios.query.get(id_cliente)

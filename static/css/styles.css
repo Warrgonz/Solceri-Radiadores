@@ -422,6 +422,10 @@ form span{
     color: var(--color-secondary);
 }
 
+.report-error{
+    border: 3px solid red;
+}
+
 
 /* Estilo para tabletas: 2 columnas */
 @media (max-width: 768px) {

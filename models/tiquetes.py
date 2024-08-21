@@ -33,6 +33,7 @@ class Tiquetes(db.Model):
     
     cotizaciones = db.relationship('Cotizaciones', back_populates='tiquete', cascade="all, delete-orphan", overlaps="cotizaciones,tiquete_ref")
     facturas = db.relationship('Factura', backref='tiquete_factura', cascade="all, delete-orphan", overlaps="facturas,tiquete_factura")
+    reportes = db.relationship('Reportes', backref='tiquete', cascade="all, delete-orphan", lazy=True)
 
     def __init__(self, id_tiquete, id_cliente, grupo_asignado, trabajador_designado, categoria, resumen, descripcion, direccion, id_estado, fecha_asignacion, fecha_finalizacion=None):
         self.id_tiquete = id_tiquete
