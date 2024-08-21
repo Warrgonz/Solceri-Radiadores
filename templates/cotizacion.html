@@ -42,7 +42,8 @@
         <div class="col-sm-12 col-md-4">
             <div class="d-flex align-items-center">
                 <label for="buscar" class="px-3">Buscar:</label>
-                <input type="text" name="query" class="form-control" id="buscar" placeholder="Buscar datos" onkeyup="buscarCotizacion()">
+                <input type="text" name="query" class="form-control" id="buscar" placeholder="Buscar datos"
+                    onkeyup="buscarCotizacion()">
             </div>
         </div>
     </div>
@@ -123,7 +124,10 @@
                     <td class="text-center">
                         <button class="btn btn-success btn-md"
                             onclick="confirmarEnviarCotizacion('{{ cotizacion_info.cotizacion.id_cotizacion }}')">Enviar</button>
-                        <a href=""><button class="btn-solceri btn-md">Editar</button></a>
+                        <button class="btn-solceri btn-md"
+                            onclick="confirmarEditarCotizacion('{{ cotizacion_info.cotizacion.id_cotizacion }}')">
+                            Editar
+                        </button>
                         <button class="btn btn-danger btn-md"
                             onclick="confirmarEliminarCotizacion('{{ cotizacion_info.cotizacion.id_cotizacion }}')">Eliminar</button>
                     </td>

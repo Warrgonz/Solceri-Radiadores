@@ -32,6 +32,9 @@
                 <a href="{{ url_for('dashboard.usuarios_editar', id=usuario.id_usuario) }}">
                     <button class="btn-solceri" style="width: 100%;">Editar</button>
                 </a>
+                <a href="{{ url_for('usuarios.password_reset', id=usuario.id_usuario) }}">
+                    <button class="btn btn-warning btn-md" style="width: 100%; margin-top: 10px;">Cambiar contraseña</button>
+                </a>
             </div>
         </div>
 </div>

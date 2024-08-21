@@ -117,9 +117,9 @@ function confirmarCrearCotizacion(id_tiquete) {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'X-CSRFToken': '{{ csrf_token() }}'  // Si estás usando protección CSRF
+                    'X-CSRFToken': '{{ csrf_token() }}'  
                 },
-                body: JSON.stringify({})  // Puedes pasar datos adicionales aquí si es necesario
+                body: JSON.stringify({})  
             })
             .then(response => response.json())
             .then(data => {
@@ -130,7 +130,7 @@ function confirmarCrearCotizacion(id_tiquete) {
                         'success'
                     ).then(() => {
                         // Redirigir a la página de edición de la cotización
-                        window.location.href = `/cotizacion/editar/${data.cotizacion_id}`;
+                        window.location.href = `/cotizacion/crear/detalle/${data.cotizacion_id}`;
                     });
                 } else {
                     Swal.fire(
