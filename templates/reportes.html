@@ -1,95 +1,113 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12 col-md-6">
-            <h1>Reportes</h1>
-        </div>
-        <div class="col-sm-12 col-md-6">
-            <div class=" d-flex justify-content-end">
-                <button type="button" class="btn btn-success mx-3">
-                    Exportar
-                </button>
-                <button type="button" class="btn-solceri" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
-                    Configurar Reporte
-                </button>
+<div class="container">
+    <h1>Reportes de Tiquetes</h1>
+
+    <!-- Filtros por trabajador, cliente y rango de fechas -->
+    <form method="GET" action="{{ url_for('reportes.mostrar_reportes') }}">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="trabajador">Filtrar por Trabajador:</label>
+                    <select name="trabajador" id="trabajador" class="form-control">
+                        <option value="">Todos</option>
+                        {% for trabajador in trabajadores %}
+                        <option value="{{ trabajador }}" {% if request.args.get('trabajador') == trabajador %}selected{% endif %}>{{ trabajador }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="cliente">Filtrar por Cliente:</label>
+                    <select name="cliente" id="cliente" class="form-control">
+                        <option value="">Todos</option>
+                        {% for cliente in clientes %}
+                        <option value="{{ cliente }}" {% if request.args.get('cliente') == cliente %}selected{% endif %}>{{ cliente }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
             </div>
         </div>
-    </div>
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
-        aria-labelledby="staticBackdropLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="staticBackdropLabel">Generar Reporte</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fecha_inicio">Fecha de Inicio:</label>
+                    <input type="date" name="fecha_inicio" id="fecha_inicio" class="form-control" value="{{ request.args.get('fecha_inicio', '') }}">
                 </div>
-                <div class="modal-body mb-2">
-                    <form id="form-reporte" method="POST" action="{{ url_for('reportes.inicio') }}">
-                        <div class="form-group">
-                            <label for="id_tiquete">ID Tiquete:</label>
-                            <input type="text" name="id_tiquete" class="form-control" id="id_tiquete"
-                                value="{{ filtros.id_tiquete }}" placeholder="Ingrese el ID del tiquete">
-                        </div>
-                        <div class="form-group mb-2">
-                            <label for="colaborador">Colaborador:</label>
-                            <select name="colaborador" class="form-control" id="colaborador">
-                                <option disabled value="">Seleccione un colaborador</option>
-                                {% for colaborador in colaboradores %}
-                                <option value="{{ colaborador[0] }}" {% if filtros.colaborador==colaborador[0]
-                                    %}selected{% endif %}>{{ colaborador[0] }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group  mb-2">
-                            <label for="cliente">Cliente:</label>
-                            <select name="cliente" class="form-control" id="cliente">
-                                <option disabled value="">Seleccione un cliente</option>
-                                {% for cliente in clientes %}
-                                <option value="{{ cliente[0] }}" {% if filtros.cliente==cliente[0] %}selected{% endif
-                                    %}>{{ cliente[0] }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="form-group  mb-2">
-                            <label for="fecha_inicio">Fecha de Inicio:</label>
-                            <input type="date" name="fecha_inicio" class="form-control" id="fecha_inicio"
-                                value="{{ filtros.fecha_inicio }}">
-                        </div>
-                        <div class="form-group  mb-2">
-                            <label for="fecha_fin">Fecha de Fin:</label>
-                            <input type="date" name="fecha_fin" class="form-control" id="fecha_fin"
-                                value="{{ filtros.fecha_fin }}">
-                        </div>
-                        <div class="form-group  mb-2">
-                            <label for="duracion_inicio">Duración mínima (en minutos):</label>
-                            <input type="number" min="0" name="duracion_inicio" class="form-control"
-                                id="duracion_inicio" value="{{ filtros.duracion_inicio }}"
-                                placeholder="Duración mínima">
-                        </div>
-                        <div class="form-group  mb-2">
-                            <label for="duracion_fin">Duración máxima (en minutos):</label>
-                            <input type="number" min="0" name="duracion_fin" class="form-control" id="duracion_fin"
-                                value="{{ filtros.duracion_fin }}" placeholder="Duración máxima">
-                        </div>
+            </div>
+
+            <div class="col-md-6">
+                <div class="form-group">
+                    <label for="fecha_fin">Fecha de Fin:</label>
+                    <input type="date" name="fecha_fin" id="fecha_fin" class="form-control" value="{{ request.args.get('fecha_fin', '') }}">
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="button" class="btn btn-warning" onclick="limpiarFormulario()">Limpiar</button>
-                    <button type="submit" class="btn btn-primary" onclick="validarFormulario(event)">Generar
-                        Reporte</button>
+            </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary mt-3">Filtrar</button>
+    </form>
+
+    <!-- Mostrar estadísticas solo si hay reportes -->
+    {% if reportes %}
+    <!-- Tabla de Reportes -->
+    <div class="row mt-4">
+        <div class="col-md-6">
+            <div class="card statistics-card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Total de Tiquetes Trabajados</h2>
+                    <p class="card-text">{{ estadisticas.total_tiquetes }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card statistics-card">
+                <div class="card-body text-center">
+                    <h2 class="card-title">Tiempo Promedio de Duración</h2>
+                    <p class="card-text">{{ estadisticas.tiempo_promedio }}</p>
                 </div>
             </div>
         </div>
     </div>
-    <div class="d-flex justify-content-center align-items-center flex-column" style="height: 80vh;">
+    <div class="table-responsive mt-4">
+        <table class="table table-bordered">
+            <thead>
+                <tr class="text-center">
+                    <th>ID Reporte</th>
+                    <th>ID Tiquete</th>
+                    <th>Colaborador</th>
+                    <th>Cliente</th>
+                    <th>Fecha</th>
+                    <th>Tiempo de Duración (hh:mm:ss)</th>
+                </tr>
+            </thead>
+            <tbody class="text-center">
+                {% for reporte in reportes %}
+                <tr>
+                    <td>{{ reporte.id_reportes }}</td>
+                    <td>{{ reporte.id_tiquete }}</td>
+                    <td>{{ reporte.nombre_colaborador or 'N/A' }}</td>
+                    <td>{{ reporte.nombre_cliente or 'N/A' }}</td>
+                    <td>{{ reporte.fecha_cambio.strftime('%Y-%m-%d') }}</td>
+                    <td>{{ reporte.tiempo_duracion_formateado }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <a href="{{ url_for('reportes.exportar_reportes', trabajador=request.args.get('trabajador'), cliente=request.args.get('cliente'), fecha_inicio=request.args.get('fecha_inicio'), fecha_fin=request.args.get('fecha_fin')) }}" class="btn btn-success mt-3">Exportar a CSV</a>
+    {% else %}
+    <!-- Mostrar mensaje de no se han encontrado reportes -->
+    <div class="d-flex justify-content-center align-items-center flex-column" style="height: 50vh;">
         <img src="{{ url_for('static', filename='images/empty.png') }}" alt="Not found" class="img-empty">
         <p class="mt-3">No se han encontrado reportes</p>
     </div>
+    {% endif %}
 </div>
-{% block scripts %}
-<script src="{{ url_for('static', filename='js/reportes.js') }}"></script>
 {% endblock %}
 
-
+{% block scripts %}
+<script src="{{ url_for('static', filename='js/reportes.js') }}"></script>
 {% endblock %}
