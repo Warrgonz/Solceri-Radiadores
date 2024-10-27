@@ -290,7 +290,7 @@ def login():
                     response = make_response(jsonify({'redirect_url': url_for('usuarios.password_reset')}))
                 else:
                     session['user_id'] = user.id_usuario
-                    response = make_response(jsonify({'redirect_url': url_for('usuarios.usuarios')}))
+                    response = make_response(jsonify({'redirect_url': url_for('dashboard.dashboard')}))
 
                 if remember_me:
                     remember_token = user.generate_remember_token()

@@ -1,3 +1,8 @@
 solceri-1650a-firebase-adminsdk-vf2d0-4592ae5a29.json
 
+# Ignorar archivos .pyc
 *.pyc
+
+# Ignorar carpetas __pycache__
+__pycache__/
+**/__pycache__/
