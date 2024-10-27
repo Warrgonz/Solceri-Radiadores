@@ -74,8 +74,22 @@
             </div>
             <div class="pt-2">
                 <label for="archivos">Adjunte un archivo <strong>(Opcional)</strong></label>
-                <input type="file" id="archivos" name="archivos" multiple accept=".pdf, .doc, .docx, .png, .jpg, .webp">
+                <input type="file" id="archivos" name="archivos" multiple accept=".pdf, .doc, .docx, .png, .jpg, .webp" onchange="validarTamanoArchivo(this)">
             </div>
+            
+            <script>
+                function validarTamanoArchivo(input) {
+                    const maxSize = 1 * 1024 * 1024; // 100 MB en bytes
+                    for (let i = 0; i < input.files.length; i++) {
+                        if (input.files[i].size > maxSize) {
+                            alert("El archivo " + input.files[i].name + " supera el tamaño máximo de 100 MB.");
+                            input.value = ""; // Limpia el campo de carga
+                            break;
+                        }
+                    }
+                }
+            </script>
+            
         </div>
         <div class="col-sm-12 col-md-6 col-lg-6">
             <div>
