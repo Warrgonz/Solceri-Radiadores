@@ -9,6 +9,7 @@ from utils.servicio_mail import send_email_async
 from datetime import datetime, date
 from utils.auth import login_required, role_required
 from math import ceil
+import pytz
 
 vacaciones_bp = Blueprint('vacaciones', __name__)
 
@@ -188,12 +189,12 @@ def nueva_vacacion():
     user_id = session.get('user_id')
     if not user_id:
         flash('Debes iniciar sesión primero', 'danger')
-        return redirect(url_for('usuarios.login'))  # Redirige a la página de inicio de sesión si no hay usuario en sesión
+        return redirect(url_for('usuarios.login'))
     
     user = Usuarios.query.get(user_id)
     if not user:
         flash('Usuario no encontrado', 'danger')
-        return redirect(url_for('usuarios.login'))  # Redirige a la página de inicio de sesión si el usuario no existe
+        return redirect(url_for('usuarios.login'))
     
     user_name = f"{user.nombre} {user.primer_apellido} {user.segundo_apellido}"
     
@@ -207,8 +208,13 @@ def nueva_vacacion():
             flash('Todos los campos son requeridos.', 'danger')
             return redirect(url_for('vacaciones.nueva_vacacion'))
         
-        # Validar fechas
-        today = datetime.today().date()
+        # Validar fechas usando la zona horaria de Costa Rica
+        costa_rica_tz = pytz.timezone('America/Costa_Rica')
+        today = datetime.now(costa_rica_tz).date()
+        
+        # Imprime la fecha y hora actuales del servidor en la zona horaria de Costa Rica
+        print("Fecha y hora actuales en el servidor (Costa Rica):", datetime.now(costa_rica_tz))
+        
         try:
             fecha_inicio = datetime.strptime(dia_inicio, '%Y-%m-%d').date()
             fecha_final = datetime.strptime(dia_final, '%Y-%m-%d').date()
@@ -216,8 +222,9 @@ def nueva_vacacion():
             flash('Formato de fecha inválido.', 'danger')
             return redirect(url_for('vacaciones.nueva_vacacion'))
 
-        if fecha_inicio < today:
-            flash('La fecha de inicio debe ser de hoy en adelante.', 'danger')
+        # Validar que la fecha de inicio sea estrictamente mayor que hoy
+        if fecha_inicio <= today:
+            flash('La fecha de inicio debe ser posterior a la fecha de hoy.', 'danger')
             return redirect(url_for('vacaciones.nueva_vacacion'))
         
         if fecha_final <= fecha_inicio:
@@ -254,7 +261,7 @@ def nueva_vacacion():
             send_email_async(admin.correo, subject, body)
         
         flash('Solicitud de vacaciones enviada con éxito', 'success')
-        return redirect(url_for('vacaciones.listar_vacaciones', VacacionSolicitada_alert='success'))  # Redirige a la lista de vacaciones
+        return redirect(url_for('vacaciones.listar_vacaciones', VacacionSolicitada_alert='success'))
     
     return render_template('vacaciones_solicitud.html', user_name=user_name)
 
@@ -273,10 +280,10 @@ def detalle_vacacion(id):
     
     if request.method == 'POST':
         if 'aceptar' in request.form:
-            solicitud.estado = 'Aceptada'
+            solicitud.estado = 'Aprobado' 
             solicitud.id_aprobador = user_id
             db.session.commit()
-            flash('Solicitud aceptada con éxito.', 'success')
+            flash('Solicitud aprobada con éxito.', 'success')
         elif 'rechazar' in request.form:
             solicitud.estado = 'Rechazada'
             solicitud.id_aprobador = user_id
