@@ -1,99 +1,137 @@
-{% extends "layout.html" %}
-
-{% block content %}
-{% set exclude_dashboard_js = true %}
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-{% for category, message in messages %}
+{% extends "layout.html" %} {% block content %} {% set exclude_dashboard_js =
+true %} {% with messages = get_flashed_messages(with_categories=true) %} {% if
+messages %} {% for category, message in messages %}
 <div class="alert alert-{{ category }}">{{ message }}</div>
-{% endfor %}
-{% endif %}
-{% endwith %}
+{% endfor %} {% endif %} {% endwith %}
 
 <div>
-    <h1 class="pb-3 section-title">Tiquetes</h1>
+  <h1 class="pb-3 section-title">Tiquetes</h1>
 </div>
 
 <div>
-    <div class="row pb-3">
-        <div class="col-sm-12 col-md-4">
-            <div class="d-flex align-items-center">
-                <label for="buscar" class="px-3">Buscar:</label>
-                <input type="text" name="query" id="buscar" class="form-control" placeholder="Datos del tiquete"
-                    onkeyup="buscarTiquetes()">
-            </div>
-        </div>
-        <div class="col-sm-12 col-md-8">
-            <div class="d-flex justify-content-end">
-                <a href="{{ url_for('tiquetes.tiquete_crear') }}"><button class="btn-solceri" data-bs-toggle="modal"
-                        data-bs-target="#staticBackdrop">Crear Nuevo Tiquete</button></a>
-            </div>
-        </div>
+  <div class="row pb-3">
+    <div class="col-sm-12 col-md-4">
+      <div class="d-flex align-items-center">
+        <label for="buscar" class="px-3">Buscar:</label>
+        <input
+          type="text"
+          name="query"
+          id="buscar"
+          class="form-control"
+          placeholder="Datos del tiquete"
+          onkeyup="buscarTiquetes()"
+        />
+      </div>
     </div>
-
+    {% if g.user.id_rol in [1, 2] %}
+    <div class="col-sm-12 col-md-8">
+      <div class="d-flex justify-content-end">
+        <a href="{{ url_for('tiquetes.tiquete_crear') }}"
+          ><button
+            class="btn-solceri"
+            data-bs-toggle="modal"
+            data-bs-target="#staticBackdrop"
+          >
+            Crear Nuevo Tiquete
+          </button></a
+        >
+      </div>
+    </div>
+    {% endif %}
+  </div>
 </div>
 {% if tiquetes %}
 <div class="table-responsive">
-    <table class="table table-striped table-bordered table-hover" style="width:100%">
-        <thead>
-            <tr class="text-center">
-                <th>Tiquete</th>
-                <th>Resumen</th>
-                <th>Cliente</th>
-                <th>Grupo Asignado</th>
-                <th>Trabajador Designado</th>
-                <th>Estado</th>
-                <th>Última Asignación</th>
-                <th>Tiempo Transcurrido</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody class="text-center">
-            {% for tiquete in tiquetes %}
-            <tr class="tiquete" data-fecha-asignacion="{{ tiquete.fecha_asignacion }}"
-                data-estado="{{ tiquete.estado.estado}}" data-fecha-finalizacion="tiquete.fecha_finalizacion"
-                data-fecha-creacion="tiquete.fecha_creacion">
-                <td class="id_tiquete">{{ tiquete.id_tiquete }}</td>
-                <td class="resumen">{{ tiquete.resumen }}</td>
-                <td class="cliente">{{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}</td>
-                <td class="grupo">{{ tiquete.grupo.nombre if tiquete.grupo else 'No asignado' }}</td>
-                <td class="trabajador">{{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido }}</td>
-                <td class="estado">{{ tiquete.estado.estado }}</td>
-                <td class="ultima_asignacion">{{ tiquete.fecha_asignacion }}</td>
-                <td class="tiempo_transcurrido">Calculando...</td>
-                <td>
-                    <a href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}"
-                        class="btn-solceri">Detalles</a>
-                    {% if user_role == 1 or user_role == 2 %}
-                    <a href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"
-                        class="btn btn-primary">Editar</a>
-                    <a href="#" class="btn btn-danger btn-sm"
-                        onclick="confirmDeleteTiquete('{{ tiquete.id_tiquete }}')">Eliminar</a>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-        <tfoot class="text-center">
-            <tr>
-                <th>Tiquete</th>
-                <th>Resumen</th>
-                <th>Cliente</th>
-                <th>Grupo Asignado</th>
-                <th>Trabajador Designado</th>
-                <th>Estado</th>
-                <th>Última Asignación</th>
-                <th>Tiempo Transcurrido</th>
-                <th>Acciones</th>
-            </tr>
-        </tfoot>
-    </table>
+  <table
+    class="table table-striped table-bordered table-hover"
+    style="width: 100%"
+  >
+    <thead>
+      <tr class="text-center">
+        <th>Tiquete</th>
+        <th>Resumen</th>
+        <th>Cliente</th>
+        <th>Grupo Asignado</th>
+        <th>Trabajador Designado</th>
+        <th>Estado</th>
+        <th>Última Asignación</th>
+        <th>Tiempo Transcurrido</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody class="text-center">
+      {% for tiquete in tiquetes %}
+      <tr
+        class="tiquete"
+        data-fecha-asignacion="{{ tiquete.fecha_asignacion }}"
+        data-estado="{{ tiquete.estado.estado}}"
+        data-fecha-finalizacion="tiquete.fecha_finalizacion"
+        data-fecha-creacion="tiquete.fecha_creacion"
+      >
+        <td class="id_tiquete">{{ tiquete.id_tiquete }}</td>
+        <td class="resumen">{{ tiquete.resumen }}</td>
+        <td class="cliente">
+          {{ tiquete.cliente.nombre }} {{ tiquete.cliente.primer_apellido }}
+        </td>
+        <td class="grupo">
+          {{ tiquete.grupo.nombre if tiquete.grupo else 'No asignado' }}
+        </td>
+        <td class="trabajador">
+          {{ tiquete.trabajador.nombre }} {{ tiquete.trabajador.primer_apellido
+          }}
+        </td>
+        <td class="estado">{{ tiquete.estado.estado }}</td>
+        <td class="ultima_asignacion">{{ tiquete.fecha_asignacion }}</td>
+        <td class="tiempo_transcurrido">Calculando...</td>
+        <td>
+          <a
+            href="{{ url_for('tiquetes.tiquete_detalles', id=tiquete.id_tiquete) }}"
+            class="btn-solceri"
+            >Detalles</a
+          >
+          {% if user_role == 1 or user_role == 2 %}
+          <a
+            href="{{ url_for('tiquetes.tiquete_editar', id=tiquete.id_tiquete) }}"
+            class="btn btn-primary"
+            >Editar</a
+          >
+          <a
+            href="#"
+            class="btn btn-danger btn-sm"
+            onclick="confirmDeleteTiquete('{{ tiquete.id_tiquete }}')"
+            >Eliminar</a
+          >
+          {% endif %}
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+    <tfoot class="text-center">
+      <tr>
+        <th>Tiquete</th>
+        <th>Resumen</th>
+        <th>Cliente</th>
+        <th>Grupo Asignado</th>
+        <th>Trabajador Designado</th>
+        <th>Estado</th>
+        <th>Última Asignación</th>
+        <th>Tiempo Transcurrido</th>
+        <th>Acciones</th>
+      </tr>
+    </tfoot>
+  </table>
 </div>
 {% else %}
-<div class="d-flex justify-content-center align-items-center flex-column" style="height: 50vh;">
-    <img src="{{ url_for('static', filename='images/empty.png') }}" alt="Not found" class="img-empty">
-    <p class="mt-3">No se han encontrado tiquetes</p>
+<div
+  class="d-flex justify-content-center align-items-center flex-column"
+  style="height: 50vh"
+>
+  <img
+    src="{{ url_for('static', filename='images/empty.png') }}"
+    alt="Not found"
+    class="img-empty"
+  />
+  <p class="mt-3">No se han encontrado tiquetes</p>
 </div>
 
-{% endif %}
-{% endblock %}
+{% endif %} {% endblock %}

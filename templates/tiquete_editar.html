@@ -74,20 +74,45 @@
             </div>
             <div class="pt-2">
                 <label for="archivos">Adjunte un archivo <strong>(Opcional)</strong></label>
-                <input type="file" id="archivos" name="archivos" multiple accept=".pdf, .doc, .docx, .png, .jpg, .webp" onchange="validarTamanoArchivo(this)">
+                <input type="file" id="archivos" name="archivos" multiple accept=".pdf, .doc, .docx, .png, .jpg, .webp" onchange="validarArchivo(this)">
             </div>
             
             <script>
-                function validarTamanoArchivo(input) {
-                    const maxSize = 1 * 1024 * 1024; // 100 MB en bytes
-                    for (let i = 0; i < input.files.length; i++) {
-                        if (input.files[i].size > maxSize) {
-                            alert("El archivo " + input.files[i].name + " supera el tamaño máximo de 100 MB.");
-                            input.value = ""; // Limpia el campo de carga
-                            break;
-                        }
-                    }
-                }
+function validarArchivo(input) {
+    const maxSize = 100 * 1024 * 1024; 
+    const allowedExtensions = ['.webp', '.png', '.jpg', '.xlsx', '.pdf', '.docx'];
+    
+    for (let i = 0; i < input.files.length; i++) {
+        const file = input.files[i];
+        const fileName = file.name.toLowerCase();
+        const fileExtension = fileName.slice(fileName.lastIndexOf('.'));
+
+        // Validar tamaño de archivo
+        if (file.size > maxSize) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Archivo demasiado grande',
+                text: `El archivo ${file.name} supera el tamaño máximo de 100 MB.`,
+                confirmButtonText: 'Entendido',
+            });
+            input.value = ""; // Limpia el campo de carga
+            break;
+        }
+
+        // Validar extensión de archivo
+        if (!allowedExtensions.includes(fileExtension)) {
+            Swal.fire({
+                icon: 'error',
+                title: 'Formato de archivo no permitido',
+                text: `El archivo ${file.name} tiene un formato no permitido. Solo se permiten archivos con extensiones: ${allowedExtensions.join(', ')}.`,
+                confirmButtonText: 'Entendido',
+            });
+            input.value = ""; // Limpia el campo de carga
+            break;
+        }
+    }
+}
+
             </script>
             
         </div>
