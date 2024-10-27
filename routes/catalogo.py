@@ -89,6 +89,10 @@ def catalogo_editar(id):
             descripcion = request.form['descripcion']
             precio = request.form.get('precio', 0)
 
+            if Catalogo.query.filter_by(sku=sku).first():
+                flash('El SKU ya existe. Por favor, elija otro.', 'danger')
+                return render_template('catalogo_editar.html', sku=sku, nombre_producto=nombre_producto, descripcion=descripcion, precio=precio)
+
             # Actualizar la imagen si se proporciona un nuevo archivo
             nueva_imagen = None
             if 'ruta_imagen' in request.files and request.files['ruta_imagen'].filename != '':
