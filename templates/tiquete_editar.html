@@ -80,7 +80,7 @@
             <script>
 function validarArchivo(input) {
     const maxSize = 100 * 1024 * 1024; 
-    const allowedExtensions = ['.webp', '.png', '.jpg', '.xlsx', '.pdf', '.docx'];
+    const allowedExtensions = ['.webp', '.png', '.jpg', '.pdf', '.docx'];
     
     for (let i = 0; i < input.files.length; i++) {
         const file = input.files[i];
@@ -95,7 +95,7 @@ function validarArchivo(input) {
                 text: `El archivo ${file.name} supera el tamaño máximo de 100 MB.`,
                 confirmButtonText: 'Entendido',
             });
-            input.value = ""; // Limpia el campo de carga
+            input.value = "";
             break;
         }
 
