@@ -89,9 +89,12 @@ def catalogo_editar(id):
             descripcion = request.form['descripcion']
             precio = request.form.get('precio', 0)
 
-            if Catalogo.query.filter_by(sku=sku).first():
-                flash('El SKU ya existe. Por favor, elija otro.', 'danger')
-                return render_template('catalogo_editar.html', sku=sku, nombre_producto=nombre_producto, descripcion=descripcion, precio=precio)
+            # Verificar si el SKU ha cambiado y si ya existe en otro producto
+            if sku != producto.sku:
+                producto_existente = Catalogo.query.filter(Catalogo.sku == sku).first()
+                if producto_existente:
+                    flash('El SKU ya existe en otro producto. Por favor, elija otro.', 'danger')
+                    return render_template('catalogo_editar.html', producto=producto)
 
             # Actualizar la imagen si se proporciona un nuevo archivo
             nueva_imagen = None

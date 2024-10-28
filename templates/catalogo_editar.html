@@ -1,96 +1,142 @@
-{% extends "layout.html" %}
-{% block content %}
-
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-{% for category, message in messages %}
+{% extends "layout.html" %} {% block content %} {% with messages =
+get_flashed_messages(with_categories=true) %} {% if messages %} {% for category,
+message in messages %}
 <div class="alert alert-{{ category }}">{{ message }}</div>
-{% endfor %}
-{% endif %}
-{% endwith %}
+{% endfor %} {% endif %} {% endwith %}
 
 <div class="d-flex flex-column">
-    <h2 class="pb-3 section-title">Editar artículo del catálogo</h2>
-    <form method="POST" id="crear-producto-form"  action="{{ url_for('catalogo.catalogo_editar', id=producto.id_catalogo) }}" enctype="multipart/form-data">
-
-        <div class="pt-3">
-            <div class="pb-3">
-                <label for="sku">SKU<span>*</span></label>
-                <input type="text" class="form-control" name="sku" value="{{ producto.sku }}" placeholder="Código del producto">
-            </div>
-            <div class="pb-3">
-                <label for="producto">Nombre del producto<span>*</span></label>
-                <input type="text" class="form-control" name="producto" value="{{ producto.nombre_producto }}" placeholder="Nombre del producto">
-            </div>
-            <div class="pb-3">
-                <label for="descripcion">Descripción<span>*</span></label>
-                <textarea class="form-control" rows="3" name="descripcion" placeholder="Descripción del producto">{{ producto.descripcion }}</textarea>
-            </div>
-            <div class="pb-3">
-                <label for="precio">Precio</label>
-                <input type="text" min="0" class="form-control" name="precio" value="{{ producto.precio }}" placeholder="Precio del artículo">
-            </div>            
-            <div class="pt-3 pb-3">
-                <label for="ruta_imagen">Foto de perfil</label>
-                <input type="file" id="foto" name="ruta_imagen" accept=".png, .jpg, .webp" onchange="readURL(this);">
-            </div>
-            <div class="pt-3 pb-3" id="imagePreview">
-                <img id="blah" src="{{ producto.ruta_imagen }}" alt="Tu imagen" style="height: 200px;">
-            </div>        
-        </div>
-        <div class="modal-footer">
-            <a href="{{ url_for('catalogo.catalogo') }}" class="btn btn-danger btn-md mx-2">Cancelar</a>
-            <button type="submit" class="btn btn-success btn-md">Confirmar</button>
-        </div>
-    </form>
+  <h2 class="pb-3 section-title">Editar artículo del catálogo</h2>
+  <form
+    method="POST"
+    id="crear-producto-form"
+    action="{{ url_for('catalogo.catalogo_editar', id=producto.id_catalogo) }}"
+    enctype="multipart/form-data"
+  >
+    <div class="pt-3">
+      <div class="pb-3">
+        <label for="sku">SKU<span>*</span></label>
+        <input
+          type="text"
+          class="form-control"
+          name="sku"
+          value="{{ producto.sku }}"
+          placeholder="Código del producto"
+        />
+      </div>
+      <div class="pb-3">
+        <label for="producto">Nombre del producto<span>*</span></label>
+        <input
+          type="text"
+          class="form-control"
+          name="producto"
+          value="{{ producto.nombre_producto }}"
+          placeholder="Nombre del producto"
+        />
+      </div>
+      <div class="pb-3">
+        <label for="descripcion">Descripción<span>*</span></label>
+        <textarea
+          class="form-control"
+          rows="3"
+          name="descripcion"
+          placeholder="Descripción del producto"
+        >
+{{ producto.descripcion }}</textarea
+        >
+      </div>
+      <div class="pb-3">
+        <label for="precio">Precio</label>
+        <input
+          type="text"
+          min="0"
+          class="form-control"
+          name="precio"
+          value="{{ producto.precio }}"
+          placeholder="Precio del artículo"
+        />
+      </div>
+      <div class="pt-3 pb-3">
+        <label for="ruta_imagen">Foto de perfil</label>
+        <input
+          type="file"
+          id="foto"
+          name="ruta_imagen"
+          accept=".png, .jpg, .webp"
+          onchange="readURL(this);"
+        />
+      </div>
+      <div class="pt-3 pb-3" id="imagePreview">
+        <img
+          id="blah"
+          src="{{ producto.ruta_imagen }}"
+          alt="Tu imagen"
+          style="height: 200px"
+        />
+      </div>
+    </div>
+    <div class="modal-footer">
+      <a
+        href="{{ url_for('catalogo.catalogo') }}"
+        class="btn btn-danger btn-md mx-2"
+        >Cancelar</a
+      >
+      <button type="submit" class="btn btn-success btn-md">Confirmar</button>
+    </div>
+  </form>
 </div>
 
-
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
+  document.addEventListener("DOMContentLoaded", function () {
     // Seleccionar formularios de creación y edición
-    var crearProductoForm = document.getElementById('crear-producto-form');
-    var editarProductoForm = document.getElementById('editar-producto-form');
+    var crearProductoForm = document.getElementById("crear-producto-form");
+    var editarProductoForm = document.getElementById("editar-producto-form");
 
     // Añadir validación al formulario de creación
     if (crearProductoForm) {
-        crearProductoForm.addEventListener('submit', function (event) {
-            var precioInput = document.getElementById('precio').value.trim();
+      crearProductoForm.addEventListener("submit", function (event) {
+        var precioInput = document.getElementById("precio").value.trim();
 
-            if (!esNumeroEntero(precioInput)) {
-                event.preventDefault(); // Prevenir el envío del formulario
-                mostrarAlerta("Error en el precio", "El precio debe ser un número entero.", "error");
-            }
-        });
+        if (!esNumeroEntero(precioInput)) {
+          event.preventDefault(); // Prevenir el envío del formulario
+          mostrarAlerta(
+            "Error en el precio",
+            "El precio debe ser un número entero.",
+            "error"
+          );
+        }
+      });
     }
 
     // Añadir validación al formulario de edición
     if (editarProductoForm) {
-        editarProductoForm.addEventListener('submit', function (event) {
-            var precioInput = document.getElementById('precio').value.trim();
+      editarProductoForm.addEventListener("submit", function (event) {
+        var precioInput = document.getElementById("precio").value.trim();
 
-            if (!esNumeroEntero(precioInput)) {
-                event.preventDefault(); // Prevenir el envío del formulario
-                mostrarAlerta("Error en el precio", "El precio debe ser un número entero.", "error");
-            }
-        });
+        if (!esNumeroEntero(precioInput)) {
+          event.preventDefault(); // Prevenir el envío del formulario
+          mostrarAlerta(
+            "Error en el precio",
+            "El precio debe ser un número entero.",
+            "error"
+          );
+        }
+      });
     }
 
     // Función para verificar si el valor es un número entero
     function esNumeroEntero(valor) {
-        return /^-?\d+$/.test(valor); // Expresión regular para verificar números enteros
+      return /^-?\d+$/.test(valor); // Expresión regular para verificar números enteros
     }
 
     // Función para mostrar alertas con SweetAlert
     function mostrarAlerta(titulo, texto, icono) {
-        Swal.fire({
-            icon: icono,
-            title: titulo,
-            text: texto
-        });
+      Swal.fire({
+        icon: icono,
+        title: titulo,
+        text: texto,
+      });
     }
-});
-
+  });
 </script>
 
 {% endblock %}
